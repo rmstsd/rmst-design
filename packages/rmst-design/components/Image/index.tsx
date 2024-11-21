@@ -1,14 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import Mask from 'rmst-design/Mask'
 
 import './style.less'
+import { Mask } from '../Mask'
 
 interface ImageProps {
   src: string
 }
 
-export default function Image(props: ImageProps) {
+export function Image(props: ImageProps) {
   const { src } = props
 
   const imageRef = useRef<HTMLImageElement>(null)

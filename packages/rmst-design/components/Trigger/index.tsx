@@ -1,4 +1,13 @@
-import React, { CSSProperties, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  CSSProperties,
+  Children,
+  isValidElement,
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import { createPortal } from 'react-dom'
 import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
@@ -10,7 +19,7 @@ type TriggerProps = {
   children: ReactNode
 }
 
-export default function Trigger(props: TriggerProps) {
+export function Trigger(props: TriggerProps) {
   const { popup, children } = props
 
   const [popupVisible, setPopupVisible] = useState(false)
@@ -19,10 +28,14 @@ export default function Trigger(props: TriggerProps) {
   const triggerRef = useRef<HTMLElement>(null)
   const popupRef = useRef<HTMLDivElement>(null)
 
-  const childElement = React.cloneElement(children, {
-    ref: mergeRefs([children.props.ref, triggerRef]),
-    onClick: () => {
+  const triggerElement = getTriggerElement(children)
+
+  const childElement = React.cloneElement(triggerElement, {
+    ref: mergeRefs([triggerElement.props.ref, triggerRef]),
+    onClick: evt => {
       setPopupVisible(!popupVisible)
+
+      triggerElement.props.onClick?.(evt)
     }
   })
 
@@ -67,4 +80,12 @@ export default function Trigger(props: TriggerProps) {
         )}
     </>
   )
+}
+
+const getTriggerElement = (children): any => {
+  if (isValidElement(children)) {
+    return children
+  }
+
+  return <span>{children}</span>
 }

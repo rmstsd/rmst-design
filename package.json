@@ -1,7 +1,8 @@
 {
   "name": "rmst-design",
   "version": "0.0.1",
-  "description": "A react library developed with dumi",
+  "description": "",
+  "private": true,
   "license": "MIT",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,26 +10,17 @@
     "dist"
   ],
   "scripts": {
-    "dev": "dumi dev",
-    "build": "father build",
-    "build:watch": "father dev",
-    "docs:build": "dumi build",
-    "docs:preview": "dumi preview",
-    "doctor": "father doctor",
-    "prepare": "dumi setup",
-    "prepublishOnly": "father doctor && npm run build"
+    "dev": "pnpm -F playground dev"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react-merge-refs": "^2.1.1"
   },
   "devDependencies": {
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
-    "dumi": "^2.4.13",
-    "father": "^4.1.0",
     "react": "^19.0.0-rc-7ac8e612-20241113",
     "react-dom": "^19.0.0-rc-7ac8e612-20241113"
-  },
-  "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
   },
   "publishConfig": {
     "access": "public"
@@ -37,8 +29,5 @@
   "overrides": {
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc"
-  },
-  "dependencies": {
-    "react-merge-refs": "^2.1.1"
   }
 }

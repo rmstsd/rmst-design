@@ -1,0 +1,19 @@
+{
+  "name": "playground",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "rsbuild dev",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.0.19",
+    "@rsbuild/plugin-less": "^1.1.0",
+    "@rsbuild/plugin-react": "^1.0.6",
+    "typescript": "^5.6.3"
+  }
+}
