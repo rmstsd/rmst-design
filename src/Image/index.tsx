@@ -93,7 +93,7 @@ export default function Image(props: ImageProps) {
           height: `${endRect.height}px`
         }
       ],
-      { duration: 300, easing: 'ease-in-out' }
+      { duration: 300, easing: 'ease-in-out', fill: 'forwards' }
     )
 
     animation.onfinish = () => {
