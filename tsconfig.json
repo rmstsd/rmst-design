@@ -12,5 +12,5 @@
       "rmst-design/*": ["src/*", "*"]
     }
   },
-  "include": [".dumirc.ts", "src/**/*"]
+  "include": ["src/**/*"]
 }
