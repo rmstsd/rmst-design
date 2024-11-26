@@ -5,28 +5,65 @@ import Button from '../pages/Button'
 import Select from '../pages/Select'
 import Image from '../pages/Image'
 import Trigger from '../pages/Trigger'
+import DatePickerDd from '../pages/DatePicker'
+import InputDd from '../pages/Input'
+
+interface componentsConfig {
+  group: string
+  components: RouteObject[]
+}
+
+export const componentsConfig: componentsConfig[] = [
+  {
+    group: '基础',
+    components: [
+      {
+        path: 'button',
+        element: <Button />
+      }
+    ]
+  },
+  {
+    group: '数据输入',
+    components: [
+      {
+        path: 'input',
+        element: <InputDd />
+      },
+      {
+        path: 'select',
+        element: <Select />
+      },
+      {
+        path: 'datePicker',
+        element: <DatePickerDd />
+      }
+    ]
+  },
+  {
+    group: '数据展示',
+    components: [
+      {
+        path: 'image',
+        element: <Image />
+      }
+    ]
+  },
+  {
+    group: '其他',
+    components: [
+      {
+        path: 'trigger',
+        element: <Trigger />
+      }
+    ]
+  }
+]
 
 export const componentsRoute: RouteObject = {
   path: '/components',
   element: <Layout />,
-  children: [
-    {
-      path: 'button',
-      element: <Button />
-    },
-    {
-      path: 'image',
-      element: <Image />
-    },
-    {
-      path: 'select',
-      element: <Select />
-    },
-    {
-      path: 'trigger',
-      element: <Trigger />
-    }
-  ]
+  children: componentsConfig.reduce<RouteObject[]>((acc, item) => acc.concat(item.components), [])
 }
 
 const routes: RouteObject[] = [

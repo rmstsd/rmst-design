@@ -1,9 +1,5 @@
+import { Select } from "rmst-design";
 
-
-export default function Select() {
-  return (
-    <div>
-      Select
-    </div>
-  )
+export default function SelectDd() {
+  return <Select></Select>
 }

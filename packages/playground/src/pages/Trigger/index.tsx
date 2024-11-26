@@ -16,6 +16,16 @@ export default function TriggerDd() {
           click
         </Button>
       </Trigger>
+
+      <hr />
+
+      <Trigger popup={<div>popup</div>}>
+        <div style={{ border: '1px solid red' }}>
+          <input type="text" />
+          <h1>aa</h1>
+          <b>bb</b>
+        </div>
+      </Trigger>
     </div>
   )
 }

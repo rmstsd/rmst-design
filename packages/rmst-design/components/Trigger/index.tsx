@@ -29,20 +29,21 @@ export function Trigger(props: TriggerProps) {
   const popupRef = useRef<HTMLDivElement>(null)
 
   const triggerElement = getTriggerElement(children)
+  const triggerProps = triggerElement.props
 
   const childElement = React.cloneElement(triggerElement, {
-    ref: mergeRefs([triggerElement.props.ref, triggerRef]),
+    ref: mergeRefs([triggerProps.ref, triggerRef]),
     onClick: evt => {
       setPopupVisible(!popupVisible)
 
-      triggerElement.props.onClick?.(evt)
+      triggerProps.onClick?.(evt)
     }
   })
 
   useEffect(() => {
     const docClick = evt => {
       const target = evt.target as HTMLElement
-      if (target === triggerRef.current || (popupRef.current && popupRef.current.contains(target))) {
+      if (triggerRef.current.contains(target) || (popupRef.current && popupRef.current.contains(target))) {
         return
       }
 
@@ -57,10 +58,12 @@ export function Trigger(props: TriggerProps) {
   }, [])
 
   useLayoutEffect(() => {
-    const plc = getPlacement(triggerRef.current, popupRef.current)
-    const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false)
+    if (popupVisible) {
+      const plc = getPlacement(triggerRef.current, popupRef.current)
+      const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false)
 
-    setPopupStyle(pos)
+      setPopupStyle(pos)
+    }
   }, [popupVisible])
 
   return (

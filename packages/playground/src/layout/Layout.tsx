@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import './layout.less'
-import { componentsRoute } from '../routes'
+import { componentsConfig, componentsRoute } from '../routes'
 import clsx from 'clsx'
 
 function Layout() {
@@ -16,15 +16,24 @@ function Layout() {
       <div className="main">
         <aside>
           <div style={{ height: 40 }}></div>
-          {componentsRoute.children.map(item => (
-            <div
-              key={item.path}
-              className={clsx('item', cc === item.path && 'active')}
-              onClick={() => navigate(`${componentsRoute.path}/${item.path}`)}
-            >
-              {item.path}
-            </div>
-          ))}
+
+          {componentsConfig.map(gItem => {
+            return (
+              <div key={gItem.group}>
+                <div className="group-title p-10 text-gray-500 f-size-14">{gItem.group}</div>
+
+                {gItem.components.map(item => (
+                  <div
+                    key={item.path}
+                    className={clsx('item hover:bg-gray-200', cc === item.path && 'active')}
+                    onClick={() => navigate(`${componentsRoute.path}/${item.path}`)}
+                  >
+                    {item.path}
+                  </div>
+                ))}
+              </div>
+            )
+          })}
         </aside>
 
         <section className="right">

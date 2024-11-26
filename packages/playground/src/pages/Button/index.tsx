@@ -14,6 +14,14 @@ export default function ButtonDd() {
       >
         按钮
       </Button>
+
+      <Button
+        onClick={() => {
+          console.log('点击了按钮', ref.current)
+        }}
+      >
+        按钮
+      </Button>
     </div>
   )
 }
