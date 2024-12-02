@@ -1,9 +1,10 @@
 import { Image } from 'rmst-design'
+import qwe from './qwe.jpg'
 
 export default function ImageDd() {
   return (
     <div>
-      <Image src="https://sns-webpic-qc.xhscdn.com/202411211752/6270866734cada3ef44f096e040ee644/1040g008319fssmra6e2049vduhg2lfv2oucmif8!nd_dft_wlteh_webp_3" />
+      <Image src={qwe} />
 
       <hr />
 

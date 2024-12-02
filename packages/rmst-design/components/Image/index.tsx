@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom'
 
 import './style.less'
 import { Mask } from '../Mask'
+import { getPosition } from './util'
+import { on } from '../_util/dom'
 
 interface ImageProps {
   src: string
@@ -16,10 +18,11 @@ export function Image(props: ImageProps) {
   const [previewImageStyle, setPreviewImageStyle] = useState({})
 
   const [display, setDisplay] = useState(false)
-
   const [preview, setPreview] = useState(false)
 
-  const handleClick = () => {
+  const animationRef = useRef<Animation>(null)
+
+  const handleOriginClick = () => {
     setPreview(true)
   }
 
@@ -33,52 +36,57 @@ export function Image(props: ImageProps) {
 
   useLayoutEffect(() => {
     if (display) {
-      const previewImage = previewImageRef.current
-      const startRect = imageRef.current.getBoundingClientRect()
-      const endRect = previewImage.getBoundingClientRect()
-
-      previewImage.animate(
-        [
-          {
-            left: `${startRect.left}px`,
-            top: `${startRect.top}px`,
-            width: `${startRect.width}px`,
-            height: `${startRect.height}px`
-          },
-          {
-            left: `${endRect.left}px`,
-            top: `${endRect.top}px`,
-            width: `${endRect.width}px`,
-            height: `${endRect.height}px`
-          }
-        ],
-        { duration: 300, easing: 'ease-in-out' }
-      )
+      show()
     }
   }, [display])
 
   useEffect(() => {
-    const onResize = () => {
+    const abort = on(window, 'resize', () => {
       const previewImage = previewImageRef.current
       if (!previewImage) {
         return
       }
       const { x, y, width, height } = getPosition(previewImage.naturalWidth, previewImage.naturalHeight)
       setPreviewImageStyle({ left: `${x}px`, top: `${y}px`, width: `${width}px`, height: `${height}px` })
-    }
+    })
 
-    window.addEventListener('resize', onResize)
-    return () => {
-      window.removeEventListener('resize', onResize)
-    }
+    return abort
   }, [])
 
+  const show = () => {
+    const previewImage = previewImageRef.current
+    const startRect = imageRef.current.getBoundingClientRect()
+    const endRect = previewImage.getBoundingClientRect()
+
+    previewImage.animate(
+      [
+        {
+          left: `${startRect.left}px`,
+          top: `${startRect.top}px`,
+          width: `${startRect.width}px`,
+          height: `${startRect.height}px`
+        },
+        {
+          left: `${endRect.left}px`,
+          top: `${endRect.top}px`,
+          width: `${endRect.width}px`,
+          height: `${endRect.height}px`
+        }
+      ],
+      { duration: 300, easing: 'ease-in-out' }
+    )
+  }
+
   const hide = () => {
+    if (animationRef.current) {
+      return
+    }
+
     const previewImage = previewImageRef.current
     const startRect = previewImage.getBoundingClientRect()
     const endRect = imageRef.current.getBoundingClientRect()
 
-    const animation = previewImage.animate(
+    animationRef.current = previewImage.animate(
       [
         {
           left: `${startRect.left}px`,
@@ -96,16 +104,17 @@ export function Image(props: ImageProps) {
       { duration: 300, easing: 'ease-in-out', fill: 'forwards' }
     )
 
-    animation.onfinish = () => {
+    animationRef.current.onfinish = () => {
       setPreviewImageStyle({})
       setPreview(false)
       setDisplay(false)
+      animationRef.current = null
     }
   }
 
   return (
     <>
-      <img src={src} ref={imageRef} style={{ maxWidth: 400 }} onClick={handleClick}></img>
+      <img src={src} ref={imageRef} style={{ maxWidth: 400 }} onClick={handleOriginClick}></img>
 
       {preview &&
         createPortal(
@@ -124,29 +133,4 @@ export function Image(props: ImageProps) {
         )}
     </>
   )
-}
-
-function getPosition(naturalWidth, naturalHeight) {
-  const { innerWidth, innerHeight } = window
-
-  const containerRatio = innerWidth / innerHeight
-  const imageRatio = naturalWidth / naturalHeight
-
-  if (containerRatio > imageRatio) {
-    const width = imageRatio * innerHeight
-    const height = innerHeight
-
-    const x = (innerWidth - width) / 2
-    const y = 0
-
-    return { x, y, width, height }
-  } else {
-    const width = innerWidth
-    const height = innerWidth / imageRatio
-
-    const x = 0
-    const y = (innerHeight - height) / 2
-
-    return { x, y, width, height }
-  }
 }
