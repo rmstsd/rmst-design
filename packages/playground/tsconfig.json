@@ -20,7 +20,7 @@
     "noUnusedParameters": true,
     "paths": {
       "@": ["./src"],
-      "rmst-design": ["./../rmst-design/index.ts"]
+      "rmst-design": ["./../rmst-design/src/index.ts"]
     }
   },
   "include": ["src"]

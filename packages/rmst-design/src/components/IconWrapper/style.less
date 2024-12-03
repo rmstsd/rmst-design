@@ -1,0 +1,37 @@
+@import '../../style/var.less';
+
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  line-height: 0;
+
+  svg {
+    position: relative;
+    vertical-align: -0.09em;
+    width: 1em;
+    height: 1em;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    display: block;
+    border-radius: 100px;
+    background-color: transparent;
+    box-sizing: border-box;
+    .propertyTransition(background-color);
+  }
+
+  &:hover::before {
+    background-color: #eee;
+  }
+
+  &::before {
+    top: 50%;
+    left: 50%;
+    height: 20px;
+    width: 20px;
+    transform: translate(-50%, -50%);
+  }
+}
