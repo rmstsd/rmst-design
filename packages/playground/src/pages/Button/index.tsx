@@ -2,26 +2,33 @@ import { useRef } from 'react'
 import { Button } from 'rmst-design'
 
 export default function ButtonDd() {
-  const ref = useRef<HTMLButtonElement>(null)
-
   return (
     <div>
-      <Button
-        ref={ref}
-        onClick={() => {
-          console.log('点击了按钮', ref.current)
-        }}
-      >
-        按钮
-      </Button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <Button size="small" type="primary">
+          small primary
+        </Button>
+        <Button size="default" type="outline">
+          default outline
+        </Button>
+        <Button size="large" type="text">
+          large text
+        </Button>
+      </div>
 
-      <Button
-        onClick={() => {
-          console.log('点击了按钮', ref.current)
-        }}
-      >
-        按钮
-      </Button>
+      <br />
+
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <Button size="small" type="primary" disabled>
+          small primary
+        </Button>
+        <Button size="default" type="outline" disabled>
+          default outline
+        </Button>
+        <Button size="large" type="text" disabled>
+          large text
+        </Button>
+      </div>
     </div>
   )
 }

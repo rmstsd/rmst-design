@@ -1,0 +1,67 @@
+@import '../../../style/var.less';
+@import './token.less';
+// 
+@btn-prefix-cls: ~'@{prefixCls}-btn';
+
+.@{btn-prefix-cls} {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  .propertyTransition(background-color, color, border-color)
+}
+
+.btn-size(@size) {
+  .@{btn-prefix-cls}-size-@{size} {
+    @current: @sizeMap[@@size];
+    // 
+    height: @current[height];
+    font-size: @current[font-size];
+  }
+}
+
+.btn-type(@type) {
+  .@{btn-prefix-cls}-@{type}:not(.@{btn-prefix-cls}-disabled) {
+    @current: @typeMap[@@type][@quiet];
+    // 
+    background-color: @current[background-color];
+    color: @current[color];
+    border-color: @current[border-color];
+
+    &:hover {
+      @current: @typeMap[@@type][@hover];
+      // 
+      background-color: @current[background-color];
+      color: @current[color];
+      border-color: @current[border-color];
+    }
+
+    &:active {
+      @current: @typeMap[@@type][@active];
+      // 
+      background-color: @current[background-color];
+      color: @current[color];
+      border-color: @current[border-color];
+    }
+  }
+
+  .@{btn-prefix-cls}-@{type}.@{btn-prefix-cls}-disabled {
+    @current: @typeMap[@@type][@disabled];
+    // 
+    background-color: @current[background-color];
+    color: @current[color];
+    border-color: @current[border-color];
+    cursor: not-allowed;
+  }
+}
+
+.btn-size(small);
+.btn-size(default);
+.btn-size(large);
+// 
+.btn-type(primary);
+.btn-type(outline);
+.btn-type(text);
