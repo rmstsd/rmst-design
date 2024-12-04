@@ -1,8 +1,10 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Button, Trigger } from 'rmst-design'
 
 export default function TriggerDd() {
   const ref = useRef<HTMLButtonElement>(null)
+
+  const [open, setOpen] = useState(true)
 
   return (
     <div>
@@ -27,8 +29,12 @@ export default function TriggerDd() {
         </div>
       </Trigger>
 
-      <Trigger popup={<div style={{ backgroundColor: 'white', width: 200, height: 200 }}>popup</div>}>
-        <Button style={{ marginTop: 400 }}>click</Button>
+      <Trigger visible={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
+        <Button style={{ marginTop: 400 }}>受控</Button>
+      </Trigger>
+
+      <Trigger popup={<div>非受控 popup</div>}>
+        <Button style={{ marginTop: 400 }}>非受控</Button>
       </Trigger>
     </div>
   )

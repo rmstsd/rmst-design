@@ -4,12 +4,14 @@ import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
-import { mergeProps } from '../_util/hooks'
+import { mergeProps, useMergeValue } from '../_util/hooks'
 
 type TriggerProps = {
   popup?: ReactNode
   children?: ReactNode
   autoAlignPopupWidth?: boolean
+  visible?: boolean
+  onChange?: (visible: boolean) => void
 }
 
 const defaultProps: TriggerProps = {
@@ -19,9 +21,10 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { popup, children, autoAlignPopupWidth } = props
+  const { visible, onChange, popup, children, autoAlignPopupWidth } = props
 
-  const [popupVisible, setPopupVisible] = useState(false)
+  const [popupVisible, setPopupVisible] = useMergeValue(visible)
+
   const [popupStyle, setPopupStyle] = useState<CSSProperties>({})
 
   const triggerRef = useRef<HTMLElement>(null)
@@ -33,7 +36,12 @@ export function Trigger(props: TriggerProps) {
   const childElement = React.cloneElement(triggerElement, {
     ref: mergeRefs([triggerProps.ref, triggerRef]),
     onClick: evt => {
-      setPopupVisible(!popupVisible)
+      const newValue = !popupVisible
+      if (!Reflect.has(props, 'visible')) {
+        setPopupVisible(newValue)
+      }
+
+      onChange?.(newValue)
 
       triggerProps.onClick?.(evt)
     }
@@ -46,7 +54,11 @@ export function Trigger(props: TriggerProps) {
         return
       }
 
-      setPopupVisible(false)
+      if (!Reflect.has(props, 'visible')) {
+        setPopupVisible(false)
+      }
+
+      onChange?.(false)
     }
 
     document.addEventListener('click', docClick)
@@ -60,8 +72,6 @@ export function Trigger(props: TriggerProps) {
     if (popupVisible) {
       const plc = getPlacement(triggerRef.current, popupRef.current)
       const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false, autoAlignPopupWidth)
-
-      console.log(pos)
 
       setPopupStyle(pos)
     }

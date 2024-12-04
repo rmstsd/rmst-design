@@ -49,6 +49,17 @@ export const useInteract = (componentCls: string, props: InteractProps) => {
   return { cls, isFocused, setIsFocused, domRef }
 }
 
+export const useMergeValue = propsValue => {
+  const [value, setValue] = useState(propsValue)
+
+  // undefined 认为是非受控
+  if (propsValue !== undefined && propsValue !== value) {
+    setValue(propsValue)
+  }
+
+  return [value, setValue]
+}
+
 export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
   return { ...defaultProps, ...componentProps }
 }
