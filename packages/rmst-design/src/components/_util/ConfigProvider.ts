@@ -9,7 +9,7 @@ interface ConfigProviderProps {
 
 export type InteractProps = Partial<{
   size: Size
-  readonly: boolean
+  readOnly: boolean
   disabled: boolean
 }>
 

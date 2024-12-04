@@ -1,26 +1,25 @@
-import React, {
-  CSSProperties,
-  Children,
-  isValidElement,
-  ReactNode,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState
-} from 'react'
+import React, { CSSProperties, isValidElement, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
+import { mergeProps } from '../_util/hooks'
 
 type TriggerProps = {
-  popup: ReactNode
-  children: ReactNode
+  popup?: ReactNode
+  children?: ReactNode
+  autoAlignPopupWidth?: boolean
+}
+
+const defaultProps: TriggerProps = {
+  autoAlignPopupWidth: false
 }
 
 export function Trigger(props: TriggerProps) {
-  const { popup, children } = props
+  props = mergeProps(defaultProps, props)
+
+  const { popup, children, autoAlignPopupWidth } = props
 
   const [popupVisible, setPopupVisible] = useState(false)
   const [popupStyle, setPopupStyle] = useState<CSSProperties>({})
@@ -60,7 +59,9 @@ export function Trigger(props: TriggerProps) {
   useLayoutEffect(() => {
     if (popupVisible) {
       const plc = getPlacement(triggerRef.current, popupRef.current)
-      const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false)
+      const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false, autoAlignPopupWidth)
+
+      console.log(pos)
 
       setPopupStyle(pos)
     }

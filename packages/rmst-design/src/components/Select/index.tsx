@@ -1,40 +1,47 @@
-import './style.less'
+import { use } from 'react'
+import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
+import clsx from 'clsx'
 
-import dayjs, { Dayjs } from 'dayjs'
+import './style/style.less'
+import { mergeProps, useInteract } from '../_util/hooks'
+import { Trigger } from '../Trigger'
+import { Empty } from '../Empty'
 
-type SelectProps = {}
-
-export function Select(props: SelectProps) {
-  console.log(getDateListByDy(dayjs().month(2)))
-
-  return <div className="select">select发发发</div>
+type OptionItem = { value: string | number; label: string | number }
+interface SelectProps extends InteractProps {
+  options?: OptionItem[]
 }
 
-function getDateListByDy(dy: Dayjs) {
-  const today = dy
-  const week = today.date(1).day()
-  const days = Array.from({ length: 42 }, () => '')
-  const index = week - 1
+const defaultProps: SelectProps = {
+  options: []
+}
 
-  days[index] = today.date(1).format('YYYY-MM-DD')
+export function Select(props: SelectProps) {
+  props = mergeProps(defaultProps, props)
+  const { size, readOnly, disabled, options } = props
+  const { prefixCls, size: ctxSize } = use(ConfigContext)
 
-  for (let i = 0; i < index; i++) {
-    days[i] = today.date(-index + 1 + i).format('YYYY-MM-DD')
-  }
+  const merSize = size ?? ctxSize
 
-  for (let i = index; i < days.length; i++) {
-    days[i] = today.date(i - index + 1).format('YYYY-MM-DD')
-  }
+  const selectPrefixCls = `${prefixCls}-select`
 
-  const ans = days.reduce((acc, cur, index) => {
-    if (index % 7 === 0) {
-      acc.push([cur])
-    } else {
-      acc[acc.length - 1].push(cur)
-    }
+  const interact = useInteract(selectPrefixCls, { size: merSize, readOnly, disabled })
 
-    return acc
-  }, [])
+  const popup = (
+    <div className={`${selectPrefixCls}-options-wrapper`}>
+      {options.length === 0 && <Empty />}
 
-  return ans
+      {options.map(item => (
+        <div key={item.value} className={`${selectPrefixCls}-option-item`}>{item.label}</div>
+      ))}
+    </div>
+  )
+
+  return (
+    <Trigger popup={popup} autoAlignPopupWidth>
+      <div className={clsx(selectPrefixCls, interact.cls)}>
+        <input onFocus={() => interact.setIsFocused(true)} />
+      </div>
+    </Trigger>
+  )
 }

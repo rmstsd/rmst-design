@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { on } from './dom'
+import clsx from 'clsx'
+import { InteractProps } from './ConfigProvider'
 
 export function useEventCallback<Args extends unknown[], Return>(
   fn: (...args: Args) => Return
@@ -28,13 +30,25 @@ export const useClickOutside = (cb: () => void, domRef: React.RefObject<HTMLElem
   }, [domRef.current])
 }
 
-export const useInteract = () => {
+export const useInteract = (componentCls: string, props: InteractProps) => {
+  const { size, readOnly, disabled } = props
+
   const [isFocused, setIsFocused] = useState(false)
   const domRef = useRef<HTMLElement>(null)
 
-  useClickOutside(() => {
-    setIsFocused(false)
-  }, domRef)
+  // useClickOutside(() => {
+  //   setIsFocused(false)
+  // }, domRef)
 
-  return { isFocused, setIsFocused, domRef }
+  const cls = clsx(componentCls, `${componentCls}-size-${size}`, {
+    [`${componentCls}-focus`]: isFocused,
+    [`${componentCls}-readonly`]: readOnly,
+    [`${componentCls}-disabled`]: disabled
+  })
+
+  return { cls, isFocused, setIsFocused, domRef }
+}
+
+export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
+  return { ...defaultProps, ...componentProps }
 }

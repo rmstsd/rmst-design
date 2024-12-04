@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react'
+
 const windowPadding = 16
 const offset = 8 // trigger 元素 与 popup 之间的距离
 
@@ -25,7 +27,8 @@ export const getPopupPosition = (
   triggerElement: HTMLElement,
   popupElement: HTMLElement,
   placement: Placement,
-  notOver: boolean
+  notOver: boolean,
+  autoAlignPopupWidth: boolean
 ) => {
   if (!triggerElement || !popupElement) {
     return { top: 0, left: 0 }
@@ -48,8 +51,16 @@ export const getPopupPosition = (
       break
     }
   }
+  const style: CSSProperties = {}
 
-  const left = Math.min(triggerRect.left, window.innerHeight - popupRect.width - windowPadding)
+  if (autoAlignPopupWidth) {
+    style.width = triggerRect.width
+  }
 
-  return { top, left }
+  const left = triggerRect.left
+
+  style.left = left
+  style.top = top
+
+  return style
 }

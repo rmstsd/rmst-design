@@ -26,6 +26,10 @@ export default function TriggerDd() {
           <b>bb</b>
         </div>
       </Trigger>
+
+      <Trigger popup={<div style={{ backgroundColor: 'white', width: 200, height: 200 }}>popup</div>}>
+        <Button style={{ marginTop: 400 }}>click</Button>
+      </Trigger>
     </div>
   )
 }

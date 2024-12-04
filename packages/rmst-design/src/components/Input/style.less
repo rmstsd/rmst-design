@@ -6,9 +6,9 @@
 .@{input-wrapper-prefix-cls} {
   width: 100%;
   display: inline-flex;
-  border: 1px solid #bcbcbc;
   padding: 0 10px;
   align-items: center;
+  .propertyTransition(border-color);
 
   .@{input-prefix-cls} {
     width: 100%;
@@ -16,6 +16,10 @@
     border: none;
     padding: 0;
     background-color: transparent;
+
+    &::placeholder {
+      color: #bbbbbb;
+    }
   }
 
   .interact()
@@ -24,6 +28,7 @@
 .input-size(@size) {
   .@{input-prefix-cls}-size-@{size} {
     height: @sizeMap[@@size][height];
+    line-height: @sizeMap[@@size][height];
     font-size: @sizeMap[@@size][font-size];
   }
 }
@@ -32,21 +37,26 @@
 .input-size(default);
 .input-size(large);
 
+// 
 .interact() {
-  &-focus {
-    border-color: red;
+  & {
+    border: 1px solid #bcbcbc;
   }
 
   &:hover:not(&-focus):not(&-disabled) {
-    border-color: blue;
+    border-color: @input-hover-border-color;
+  }
+
+  &-focus {
+    border-color: @input-focus-border-color;
   }
 
   &-readonly {
-    background-color: #fafafa;
+    background-color: @input-readonly-background-color;
   }
 
   &-disabled {
-    background-color: #f5f5f5;
+    background-color: @input-disabled-background-color;
     cursor: not-allowed;
 
     input {

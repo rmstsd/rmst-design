@@ -1,5 +1,10 @@
 @prefixCls: rmst;
 @main-color: #175cff;
+//
+@input-hover-border-color: #40a9ff;
+@input-focus-border-color: #096dd9;
+@input-readonly-background-color: #fafafa;
+@input-disabled-background-color: #f5f5f5;
 
 .propertyTransition(...) {
   @value: ~`"@{arguments}" .replace(/[\[\]]|\,\sX/g, '')`; // https://stackoverflow.com/questions/11419741/less-css-mixins-with-variable-number-of-arguments

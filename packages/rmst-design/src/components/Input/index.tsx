@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import './style.less'
-import { HTMLAttributes, PropsWithChildren, use } from 'react'
+import { use, useRef } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { useInteract } from '../_util/hooks'
-import CloseIcon from '../../icons/close'
 import { IconWrapper } from '../IconWrapper'
+
+import './style.less'
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, InteractProps {}
 
@@ -17,11 +17,14 @@ export function Input(props: InputProps) {
 
   const inputPrefixCls = `${prefixCls}-input`
 
-  const interact = useInteract()
+  const interact = useInteract(inputPrefixCls, {})
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const onFocusChange = (isFocus: boolean) => {
     if (isFocus) {
       interact.setIsFocused(true)
+    } else {
+      interact.setIsFocused(false)
     }
   }
 
@@ -38,10 +41,20 @@ export function Input(props: InputProps) {
     }
   }
 
+  const canInput = !(readOnly || disabled)
+
   return (
-    <span className={wrapperCls} ref={interact.domRef} onClick={() => interact.setIsFocused(true)}>
+    <span
+      className={wrapperCls}
+      ref={interact.domRef}
+      onClick={() => {
+        interact.setIsFocused(true)
+        inputRef.current?.focus()
+      }}
+    >
       <input
         {...rest}
+        ref={inputRef}
         type="text"
         readOnly={readOnly}
         disabled={disabled}
@@ -49,9 +62,10 @@ export function Input(props: InputProps) {
         onFocus={() => onFocusChange(true)}
         onBlur={() => onFocusChange(false)}
         onKeyDown={onKeyDownHandler}
+        placeholder="asdas"
       />
 
-      <IconWrapper></IconWrapper>
+      {canInput && <IconWrapper onClick={() => {}}></IconWrapper>}
     </span>
   )
 }
