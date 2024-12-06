@@ -17,17 +17,13 @@
     "react-merge-refs": "^2.1.1"
   },
   "devDependencies": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
-    "react": "^19.0.0-rc-7ac8e612-20241113",
-    "react-dom": "^19.0.0-rc-7ac8e612-20241113"
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "authors": [],
-  "overrides": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc"
-  }
+  "authors": []
 }
