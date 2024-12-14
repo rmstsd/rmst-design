@@ -1,0 +1,53 @@
+.rt-ld-layout {
+  height: 600px;
+  border: 1px solid #ccc;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+
+  & > * {
+    flex: 1;
+  }
+
+  .flex {
+    display: flex;
+    gap: 10px;
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  .flex-column {
+    flex-direction: column;
+  }
+
+  .tabset {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+  }
+
+  .tab-header {
+    display: flex;
+    gap: 8px;
+    overflow: auto;
+    border-bottom: 1px solid #ccc;
+
+    .tab-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .tab-item-active {
+      background-color: pink;
+      color: white;
+    }
+  }
+
+  .outlet {
+    padding: 10px;
+    flex: 1;
+  }
+}

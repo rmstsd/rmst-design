@@ -7,6 +7,7 @@ import Image from '../pages/Image'
 import Trigger from '../pages/Trigger'
 import DatePickerDd from '../pages/DatePicker'
 import InputDd from '../pages/Input'
+import { LdLayout } from 'rmst-design'
 
 interface componentsConfig {
   group: string
@@ -55,6 +56,10 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'trigger',
         element: <Trigger />
+      },
+      {
+        path: 'LdLayout',
+        element: <LdLayout />
       }
     ]
   }
