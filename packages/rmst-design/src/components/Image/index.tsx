@@ -119,7 +119,7 @@ export function Image(props: ImageProps) {
       {preview &&
         createPortal(
           <div className="preview-container" style={{ display: display ? 'block' : 'none' }}>
-            <Mask onClick={hide} />
+            <Mask onClick={hide} open={display} />
 
             <img
               className="preview-image"

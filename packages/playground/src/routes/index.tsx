@@ -8,6 +8,7 @@ import Trigger from '../pages/Trigger'
 import DatePickerDd from '../pages/DatePicker'
 import InputDd from '../pages/Input'
 import { LdLayout } from 'rmst-design'
+import MaskDd from '../pages/Mask'
 
 interface componentsConfig {
   group: string
@@ -60,6 +61,10 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'LdLayout',
         element: <LdLayout />
+      },
+      {
+        path: 'mask',
+        element: <MaskDd />
       }
     ]
   }
