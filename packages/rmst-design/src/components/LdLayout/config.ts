@@ -4,6 +4,28 @@ export interface IConfig {
   children?: IConfig[]
 }
 
+export const getComponentByName = (name: string) => {
+  return dfs(config, null)
+
+  function dfs(config: IConfig, parent: IConfig | null) {
+    if (config.component === name) {
+      return { config, parent }
+    } else {
+      if (config.children) {
+        for (const item of config.children) {
+          const ans = dfs(item, config)
+
+          if (ans) {
+            return ans
+          }
+        }
+      }
+    }
+
+    return null
+  }
+}
+
 export const config = {
   type: 'row',
   children: [

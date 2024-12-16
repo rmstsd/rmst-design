@@ -34,7 +34,7 @@ const Tabs = ({ config }) => {
       <div className="tab-header">
         {config.children?.map((childConfig, index) => (
           <div
-            data-component={childConfig.component}
+            data-component-id={childConfig.component}
             className={clsx('tab-item', { 'tab-item-active': childConfig.component === componentName })}
             key={index}
             onClick={() => setComponentName(childConfig.component)}
