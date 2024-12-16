@@ -31,37 +31,20 @@ export const config = {
   children: [
     {
       type: 'row',
+      weight: 36.95987365295846,
       children: [
         {
-          type: 'row',
+          type: 'tabset',
           weight: 26.357466063348415,
+          foldBeforeWeight: 25.76810994689382,
           children: [
             {
-              type: 'tabset',
-              weight: 50,
-              foldBeforeWeight: 37.5,
-              children: [
-                {
-                  type: 'tab',
-                  component: 'code',
-                  enableRenderOnDemand: false
-                }
-              ],
-              selected: 0
-            },
-            {
-              type: 'tabset',
-              weight: 50,
-              foldBeforeWeight: 50,
-              children: [
-                {
-                  type: 'tab',
-                  component: 'solutions'
-                }
-              ],
-              selected: 0
+              type: 'tab',
+              component: 'code',
+              enableRenderOnDemand: false
             }
-          ]
+          ],
+          selected: 0
         },
         {
           type: 'row',
@@ -70,7 +53,7 @@ export const config = {
             {
               type: 'tabset',
               weight: 25.178753830439224,
-              foldBeforeWeight: 50,
+              foldBeforeWeight: 25.178753830439224,
               children: [
                 {
                   type: 'tab',
@@ -81,45 +64,31 @@ export const config = {
             },
             {
               type: 'tabset',
-              weight: 25.178753830439224,
-              foldBeforeWeight: 33.333333333333336,
+              weight: 43.85293582143441,
+              selected: 1,
+              foldBeforeWeight: 34.12140324488491,
               children: [
                 {
                   type: 'tab',
                   component: 'submissions'
+                },
+                {
+                  type: 'tab',
+                  component: 'testcase'
+                }
+              ]
+            },
+            {
+              type: 'tabset',
+              weight: 30.968310348126362,
+              foldBeforeWeight: 31.54746172965864,
+              children: [
+                {
+                  type: 'tab',
+                  component: 'result'
                 }
               ],
               selected: 0
-            },
-            {
-              type: 'row',
-              weight: 49.64249233912155,
-              children: [
-                {
-                  type: 'tabset',
-                  weight: 50,
-                  foldBeforeWeight: 50,
-                  children: [
-                    {
-                      type: 'tab',
-                      component: 'testcase'
-                    }
-                  ],
-                  selected: 0
-                },
-                {
-                  type: 'tabset',
-                  weight: 50,
-                  foldBeforeWeight: 50,
-                  children: [
-                    {
-                      type: 'tab',
-                      component: 'result'
-                    }
-                  ],
-                  selected: 0
-                }
-              ]
             }
           ]
         }
@@ -127,17 +96,21 @@ export const config = {
     },
     {
       type: 'tabset',
-      weight: 33.333333333333336,
-      foldBeforeWeight: 41.66666666666667,
+      weight: 26.443330656310742,
+      selected: 1,
+      foldBeforeWeight: 21.748254902122284,
       children: [
         {
           type: 'tab',
           component: 'note',
           enableClose: true
+        },
+        {
+          type: 'tab',
+          component: 'solutions'
         }
       ],
-      active: true,
-      selected: 0
+      active: true
     }
   ]
 }

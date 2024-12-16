@@ -11,7 +11,7 @@ interface ItemProps {
 export const Item = ({ config, useColumn }: ItemProps) => {
   if (config.type === 'row') {
     return (
-      <div className={clsx('flex', useColumn && 'flex-column')}>
+      <div className={clsx('node-item flex', useColumn && 'flex-column')}>
         {(config.children ?? []).map((childConfig, index) => (
           <Item config={childConfig} key={index} useColumn={!useColumn} />
         ))}
@@ -30,7 +30,7 @@ const Tabs = ({ config }) => {
   const [componentName, setComponentName] = useState(config.children[0].component)
 
   return (
-    <div className="tabset">
+    <div className="node-item tabset">
       <div className="tab-header">
         {config.children?.map((childConfig, index) => (
           <div
