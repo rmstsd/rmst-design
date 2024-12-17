@@ -82,6 +82,7 @@ export function Image(props: ImageProps) {
       return
     }
 
+    setDisplay(false)
     const previewImage = previewImageRef.current
     const startRect = previewImage.getBoundingClientRect()
     const endRect = imageRef.current.getBoundingClientRect()
@@ -107,7 +108,6 @@ export function Image(props: ImageProps) {
     animationRef.current.onfinish = () => {
       setPreviewImageStyle({})
       setPreview(false)
-      setDisplay(false)
       animationRef.current = null
     }
   }
@@ -116,21 +116,21 @@ export function Image(props: ImageProps) {
     <>
       <img src={src} ref={imageRef} style={{ maxWidth: 400 }} onClick={handleOriginClick}></img>
 
-      {preview &&
-        createPortal(
-          <div className="preview-container" style={{ display: display ? 'block' : 'none' }}>
-            <Mask onClick={hide} open={display} />
-
+      {preview && (
+        <>
+          <Mask onClick={hide} open={display} />
+          {createPortal(
             <img
               className="preview-image"
               ref={previewImageRef}
               src={src}
               style={previewImageStyle}
               onLoad={onPreviewImageLoad}
-            />
-          </div>,
-          document.body
-        )}
+            />,
+            document.body
+          )}
+        </>
+      )}
     </>
   )
 }

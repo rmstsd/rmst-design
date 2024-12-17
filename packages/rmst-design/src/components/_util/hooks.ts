@@ -63,3 +63,15 @@ export const useMergeValue = propsValue => {
 export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
   return { ...defaultProps, ...componentProps }
 }
+
+export function usePrevious<T>(state: T): T | undefined {
+  const prevRef = useRef<T>(undefined)
+  const curRef = useRef<T>(undefined)
+
+  if (!Object.is(curRef.current, state)) {
+    prevRef.current = curRef.current
+    curRef.current = state
+  }
+
+  return prevRef.current
+}
