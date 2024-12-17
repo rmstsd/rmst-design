@@ -9,6 +9,7 @@ import DatePickerDd from '../pages/DatePicker'
 import InputDd from '../pages/Input'
 import { LdLayout } from 'rmst-design'
 import MaskDd from '../pages/Mask'
+import ModalDd from '../pages/Modal'
 
 interface componentsConfig {
   group: string
@@ -20,8 +21,16 @@ export const componentsConfig: componentsConfig[] = [
     group: '基础',
     components: [
       {
-        path: 'button',
+        path: 'Button',
         element: <Button />
+      }
+    ]
+  },  {
+    group: '反馈',
+    components: [
+      {
+        path: 'Modal',
+        element: <ModalDd />
       }
     ]
   },
@@ -29,11 +38,11 @@ export const componentsConfig: componentsConfig[] = [
     group: '数据输入',
     components: [
       {
-        path: 'input',
+        path: 'Input',
         element: <InputDd />
       },
       {
-        path: 'select',
+        path: 'Select',
         element: <Select />
       },
       {
@@ -46,7 +55,7 @@ export const componentsConfig: componentsConfig[] = [
     group: '数据展示',
     components: [
       {
-        path: 'image',
+        path: 'Image',
         element: <Image />
       }
     ]
@@ -55,7 +64,7 @@ export const componentsConfig: componentsConfig[] = [
     group: '其他',
     components: [
       {
-        path: 'trigger',
+        path: 'Trigger',
         element: <Trigger />
       },
       {
@@ -63,7 +72,7 @@ export const componentsConfig: componentsConfig[] = [
         element: <LdLayout />
       },
       {
-        path: 'mask',
+        path: 'Mask',
         element: <MaskDd />
       }
     ]

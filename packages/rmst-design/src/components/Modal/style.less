@@ -1,0 +1,26 @@
+.rmst-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5555;
+  text-align: center;
+  white-space: nowrap;
+
+  &-content {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    height: 300px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+    white-space: normal;
+  }
+
+  &::after {
+    content: '';
+    vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+    width: 0;
+  }
+}

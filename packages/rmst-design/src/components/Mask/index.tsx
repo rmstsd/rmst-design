@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import './style.less'
 import { createPortal } from 'react-dom'
 import { usePrevious } from '../_util/hooks'
+import { Portal } from '../Portal'
 
 interface MaskProps extends React.HTMLAttributes<HTMLDivElement> {
   open: boolean
@@ -12,7 +13,11 @@ export function Mask(props: MaskProps) {
 
   const { shouldMount, domRef } = useAnTransition({ open })
 
-  return shouldMount ? createPortal(<div {...rest} className="mask" ref={domRef}></div>, document.body) : null
+  return shouldMount ? (
+    <Portal>
+      <div {...rest} className="mask" ref={domRef}></div>
+    </Portal>
+  ) : null
 }
 
 const useAnTransition = ({ open }) => {
