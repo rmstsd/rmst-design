@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
@@ -74,4 +74,52 @@ export function usePrevious<T>(state: T): T | undefined {
   }
 
   return prevRef.current
+}
+
+type Animate = {
+  open: boolean
+  Keyframes: any[]
+}
+
+const options: KeyframeAnimationOptions = {
+  duration: 200,
+  easing: 'cubic-bezier(0.34, 0.69, 0.1, 1)',
+  fill: 'forwards'
+}
+
+export const useAnTransition = (config: Animate) => {
+  const { open, Keyframes } = config
+
+  const prevOpen = usePrevious(open)
+  const domRef = useRef<HTMLDivElement>(null)
+  const [shouldMount, setShouldMount] = useState(open)
+
+  if (open && open !== shouldMount) {
+    setShouldMount(open)
+  }
+
+  useLayoutEffect(() => {
+    if ((prevOpen === undefined || !prevOpen) && open) {
+      // 初始化就是开 或者 由关到开
+      show()
+    } else if (prevOpen && !open) {
+      // 由开到关
+      close().onfinish = () => {
+        setShouldMount(false)
+      }
+    }
+  }, [open, prevOpen])
+
+  const show = () => {
+    return domRef.current.animate(Keyframes, options)
+  }
+
+  const close = () => {
+    return domRef.current.animate(Keyframes.slice().reverse(), options)
+  }
+
+  return {
+    shouldMount,
+    domRef
+  }
 }

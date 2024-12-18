@@ -4,7 +4,7 @@ import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
-import { mergeProps, useMergeValue } from '../_util/hooks'
+import { mergeProps, useAnTransition, useMergeValue } from '../_util/hooks'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -77,16 +77,22 @@ export function Trigger(props: TriggerProps) {
     }
   }, [popupVisible])
 
+  const { shouldMount, domRef } = useAnTransition({
+    open: popupVisible,
+    Keyframes: [
+      { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },
+      { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
+    ]
+  })
+
   return (
     <>
       {childElement}
 
-      {popupVisible &&
+      {shouldMount &&
         createPortal(
           <div className="rmst-popup-root">
-            {/* <div className="rmst-mask" onClick={() => setPopupVisible(false)}></div> */}
-
-            <div className="rmst-popup-content" ref={popupRef} style={popupStyle}>
+            <div className="rmst-popup-content" ref={mergeRefs([popupRef, domRef])} style={popupStyle}>
               {popup}
             </div>
           </div>,
