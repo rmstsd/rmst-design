@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import './style.less'
 
@@ -9,14 +9,14 @@ const defaultProps = {
   defaultExpanded: false
 }
 
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator?.userAgent ?? '')
+
 export const TextEllipsis = baseProps => {
   const props = { ...defaultProps, ...baseProps }
-  const { className, style, rows, disabled, showTooltip, children, expandable, expandRender, onExpand, onEllipsis } =
-    props
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator?.userAgent ?? '')
+  const { className, style, rows, disabled, children, expandable, expandRender } = props
+
   const wrapperRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
-  const [text, setText] = useState('')
 
   const mirrorContentRef = useRef<HTMLDivElement>(null)
   const mirrorTextRef = useRef<HTMLDivElement>(null)
@@ -30,20 +30,8 @@ export const TextEllipsis = baseProps => {
     return rows === 1
   }, [rows, expandable])
 
-  const tooltipData = useMemo(() => {
-    return {
-      tooltip: Boolean(showTooltip),
-      tooltipProps: showTooltip
-    }
-  }, [showTooltip])
-
   useEffect(() => {
-    if (textRef.current) {
-      const content = textRef.current.textContent
-      if (content) {
-        setText(content)
-      }
-    }
+    onResize()
   }, [children, textRef])
 
   useEffect(() => {
@@ -74,10 +62,8 @@ export const TextEllipsis = baseProps => {
           onClick={ev => {
             if (expanded) {
               setExpanded(false)
-              onExpand?.(false, ev)
             } else {
               setExpanded(true)
-              onExpand?.(true, ev)
             }
           }}
         >
@@ -88,23 +74,15 @@ export const TextEllipsis = baseProps => {
     return null
   }
 
-  const onResize = useCallback(() => {
-    console.log('onResize')
+  const onResize = () => {
     if (mirrorTextRef.current && mirrorContentRef.current) {
       const isOverflow = single
         ? mirrorTextRef.current.offsetWidth > mirrorContentRef.current.offsetWidth
         : mirrorTextRef.current.offsetHeight > mirrorContentRef.current.offsetHeight
-      if (isOverflow) {
-        if (overflow === false) {
-          setOverflow(true)
-          onEllipsis?.(true)
-        }
-      } else if (overflow === true) {
-        setOverflow(false)
-        onEllipsis?.(false)
-      }
+
+      setOverflow(isOverflow)
     }
-  }, [overflow, single])
+  }
 
   const renderMirror = () => {
     if (disabled) {
@@ -146,7 +124,7 @@ export const TextEllipsis = baseProps => {
       return (
         <div
           className={clsx(`${prefix}-content`, `${prefix}-multiple`)}
-          title={!tooltipData.tooltip && overflow && !expanded ? text : undefined}
+          // title={!tooltipData.tooltip && overflow && !expanded ? text : undefined}
         >
           {!expanded && renderAction()}
           <span
@@ -177,7 +155,7 @@ export const TextEllipsis = baseProps => {
           MozBoxOrient: 'vertical',
           WebkitLineClamp: rows
         }}
-        title={!tooltipData.tooltip && overflow && !expanded ? text : undefined}
+        // title={!tooltipData.tooltip && overflow && !expanded ? text : undefined}
       >
         {!expanded && renderAction()}
         <span ref={textRef} className={`${prefix}-text`}>
