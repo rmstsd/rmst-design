@@ -1,4 +1,4 @@
-import { TextEllipsis } from "rmst-design";
+import { TextEllipsis } from 'rmst-design'
 
 export default function TextEllipsisDd() {
   return (
