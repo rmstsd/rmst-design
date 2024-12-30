@@ -2,7 +2,6 @@ import { Trigger } from '../Trigger'
 
 import dayjs, { Dayjs } from 'dayjs'
 
-
 interface DatePickerProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function DatePicker(props: DatePickerProps) {
@@ -21,13 +20,11 @@ export function DatePicker(props: DatePickerProps) {
   )
 }
 
-
-
 function getDateListByDy(dy: Dayjs) {
   const today = dy
   const week = today.date(1).day()
   const days = Array.from({ length: 42 }, () => '')
-  const index = week - 1
+  const index = week === 0 ? 6 : week - 1
 
   days[index] = today.date(1).format('YYYY-MM-DD')
 
@@ -51,3 +48,5 @@ function getDateListByDy(dy: Dayjs) {
 
   return ans
 }
+
+console.log(getDateListByDy(dayjs()))

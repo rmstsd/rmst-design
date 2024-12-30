@@ -1,5 +1,4 @@
-import { useRef } from 'react'
-import { Button } from 'rmst-design'
+import { Button, TextEllipsis } from 'rmst-design'
 
 export default function ButtonDd() {
   return (

@@ -1,5 +1,6 @@
 import { Navigate, RouteObject } from 'react-router-dom'
 import Layout from '../layout/Layout'
+import { LdLayout } from 'rmst-design'
 
 import Button from '../pages/Button'
 import Select from '../pages/Select'
@@ -7,9 +8,9 @@ import Image from '../pages/Image'
 import Trigger from '../pages/Trigger'
 import DatePickerDd from '../pages/DatePicker'
 import InputDd from '../pages/Input'
-import { LdLayout } from 'rmst-design'
 import MaskDd from '../pages/Mask'
 import ModalDd from '../pages/Modal'
+import TextEllipsisDd from '../pages/TextEllipsis'
 
 interface componentsConfig {
   group: string
@@ -23,9 +24,14 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'Button',
         element: <Button />
+      },
+      {
+        path: 'TextEllipsis',
+        element: <TextEllipsisDd />
       }
     ]
-  },  {
+  },
+  {
     group: '反馈',
     components: [
       {
