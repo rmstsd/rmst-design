@@ -1,21 +1,18 @@
 .my {
-  width: 600px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  .text {
-    &::after {
-      content: '  ';
-      height: 100%;
-      float: right;
-      margin-bottom: -22px;
-    }
+  &.multi-ell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .show-btn {
+    clear: right;
     float: right;
     color: blue;
     cursor: pointer;
+  }
+
+  .plc {
+    float: right;
   }
 }
