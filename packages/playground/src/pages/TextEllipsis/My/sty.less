@@ -1,0 +1,21 @@
+.my {
+  width: 600px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .text {
+    &::after {
+      content: '  ';
+      height: 100%;
+      float: right;
+      margin-bottom: -22px;
+    }
+  }
+
+  .show-btn {
+    float: right;
+    color: blue;
+    cursor: pointer;
+  }
+}

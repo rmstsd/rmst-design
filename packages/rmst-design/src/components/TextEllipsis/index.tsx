@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import './style.less'
 
@@ -13,7 +13,7 @@ const isSafari = /^((?!chrome|android).)*safari/i.test(navigator?.userAgent ?? '
 
 export const TextEllipsis = baseProps => {
   const props = { ...defaultProps, ...baseProps }
-  const { className, style, rows, disabled, children, expandable, expandRender } = props
+  const { className, style, rows, disabled, children, expandable } = props
 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
@@ -30,7 +30,7 @@ export const TextEllipsis = baseProps => {
     return rows === 1
   }, [rows, expandable])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onResize()
   }, [children, textRef])
 
@@ -39,16 +39,17 @@ export const TextEllipsis = baseProps => {
       onResize()
     })
 
-    ob.observe(mirrorContentRef.current)
-    ob.observe(mirrorTextRef.current)
+    if (mirrorContentRef.current) ob.observe(mirrorContentRef.current)
+    if (mirrorTextRef.current) ob.observe(mirrorTextRef.current)
+
+    return () => {
+      ob.disconnect()
+    }
   }, [])
 
   const prefix = 'ellipsis'
 
   const renderActionContent = () => {
-    if (expandRender) {
-      return expandRender(expanded)
-    }
     return <span className={`${prefix}-action-text`}>{expanded ? '收起' : '展开'}</span>
   }
 
@@ -59,13 +60,7 @@ export const TextEllipsis = baseProps => {
           className={clsx(`${prefix}-action`, {
             [`${prefix}-action-collapsed`]: !expanded
           })}
-          onClick={ev => {
-            if (expanded) {
-              setExpanded(false)
-            } else {
-              setExpanded(true)
-            }
-          }}
+          onClick={() => setExpanded(!expanded)}
         >
           {renderActionContent()}
         </div>
@@ -80,6 +75,7 @@ export const TextEllipsis = baseProps => {
         ? mirrorTextRef.current.offsetWidth > mirrorContentRef.current.offsetWidth
         : mirrorTextRef.current.offsetHeight > mirrorContentRef.current.offsetHeight
 
+      console.log(isOverflow)
       setOverflow(isOverflow)
     }
   }
@@ -96,11 +92,7 @@ export const TextEllipsis = baseProps => {
             ? clsx(`${prefix}-content-mirror`, `${prefix}-single`)
             : clsx(`${prefix}-content-mirror`, `${prefix}-multiple`, `${prefix}-collapsed`)
         }
-        style={{
-          WebkitBoxOrient: 'vertical',
-          MozBoxOrient: 'vertical',
-          WebkitLineClamp: rows
-        }}
+        style={{ WebkitBoxOrient: 'vertical', MozBoxOrient: 'vertical', WebkitLineClamp: rows }}
         ref={mirrorContentRef}
       >
         <span ref={mirrorTextRef} className={`${prefix}-text`}>
