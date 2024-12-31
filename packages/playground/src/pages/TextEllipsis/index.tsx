@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 export default function TextEllipsisDd() {
   const [value, setValue] = useState(
-    `  A design is a plan or specification for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification. A design is a plan or specification for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification.`
+    `  A design is a plan or   for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification. A design is a plan or specification for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification.`
   )
 
   return (
