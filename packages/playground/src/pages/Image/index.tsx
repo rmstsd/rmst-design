@@ -4,6 +4,10 @@ import qwe from './qwe.jpg'
 export default function ImageDd() {
   return (
     <div>
+      <b>图片预览 (flip 动画)</b>
+
+      <hr />
+
       <Image src={qwe} />
 
       <hr />

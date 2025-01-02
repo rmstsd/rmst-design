@@ -1,4 +1,4 @@
-import { use } from 'react'
+import { use, useState } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import clsx from 'clsx'
 
@@ -58,6 +58,9 @@ export function Select(props: SelectProps) {
         keyboardKey.Tab,
         evt => {
           console.log('tab')
+
+          setVisible(false)
+          interact.setIsFocused(false)
         }
       ],
       [
@@ -75,10 +78,30 @@ export function Select(props: SelectProps) {
     ])
   )
 
+  const [visible, setVisible] = useState(false)
+
   return (
-    <Trigger popup={popup} autoAlignPopupWidth>
-      <div className={clsx(selectPrefixCls, interact.cls)}>
-        <input onFocus={() => interact.setIsFocused(true)} onKeyDown={onKeyDown} />
+    <Trigger
+      popup={popup}
+      autoAlignPopupWidth
+      visible={visible}
+      onChange={visible => {
+        console.log(visible)
+        setVisible(visible)
+
+        if (visible === false) {
+          interact.setIsFocused(false)
+        }
+      }}
+    >
+      <div className={clsx(selectPrefixCls, interact.cls)} tabIndex={0}>
+        <input
+          onFocus={() => {
+            interact.setIsFocused(true)
+            setVisible(true)
+          }}
+          onKeyDown={onKeyDown}
+        />
       </div>
     </Trigger>
   )

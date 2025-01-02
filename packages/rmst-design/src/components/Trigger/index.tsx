@@ -4,7 +4,7 @@ import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
-import { mergeProps, useAnTransition, useMergeValue } from '../_util/hooks'
+import { mergeProps, useAnTransition, useEventCallback, useMergeValue } from '../_util/hooks'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -23,7 +23,7 @@ export function Trigger(props: TriggerProps) {
 
   const { visible, onChange, popup, children, autoAlignPopupWidth } = props
 
-  const [popupVisible, setPopupVisible] = useMergeValue(visible)
+  const [popupVisible, setPopupVisible] = useMergeValue(false, { propsValue: visible })
 
   const [popupStyle, setPopupStyle] = useState<CSSProperties>({})
 
@@ -35,32 +35,46 @@ export function Trigger(props: TriggerProps) {
 
   const childElement = React.cloneElement(triggerElement, {
     ref: mergeRefs([triggerProps.ref, triggerRef]),
-    onClick: evt => {
+    // onClick: evt => {
+    //   const newValue = !popupVisible
+    //   if (!Reflect.has(props, 'visible')) {
+    //     setPopupVisible(newValue)
+    //   }
+
+    //   triggerPropsChange(newValue)
+
+    //   triggerProps.onClick?.(evt)
+    // },
+
+    onFocus: evt => {
       const newValue = !popupVisible
       if (!Reflect.has(props, 'visible')) {
         setPopupVisible(newValue)
       }
 
-      onChange?.(newValue)
+      triggerPropsChange(newValue)
 
-      triggerProps.onClick?.(evt)
+      triggerProps.onFocus?.(evt)
     }
   })
 
-  useEffect(() => {
-    const docClick = evt => {
-      const target = evt.target as HTMLElement
-      if (triggerRef.current.contains(target) || (popupRef.current && popupRef.current.contains(target))) {
-        return
-      }
+  const docClick = useEventCallback((evt: MouseEvent) => {
+    const target = evt.target as HTMLElement
 
-      if (!Reflect.has(props, 'visible')) {
-        setPopupVisible(false)
-      }
-
-      onChange?.(false)
+    if (triggerRef.current.contains(target) || (popupRef.current && popupRef.current.contains(target))) {
+      return
     }
 
+    const nv = false
+
+    if (!Reflect.has(props, 'visible')) {
+      setPopupVisible(nv)
+    }
+
+    triggerPropsChange(nv)
+  })
+
+  useEffect(() => {
     document.addEventListener('click', docClick)
 
     return () => {
@@ -84,6 +98,12 @@ export function Trigger(props: TriggerProps) {
       { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
     ]
   })
+
+  const triggerPropsChange = (newValue: boolean) => {
+    if (newValue !== popupVisible) {
+      onChange?.(newValue)
+    }
+  }
 
   return (
     <>

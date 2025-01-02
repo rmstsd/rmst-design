@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
+import { isUndefined } from './is'
 
 export function useEventCallback<Args extends unknown[], Return>(
   fn: (...args: Args) => Return
@@ -49,8 +50,14 @@ export const useInteract = (componentCls: string, props: InteractProps) => {
   return { cls, isFocused, setIsFocused, domRef }
 }
 
-export const useMergeValue = propsValue => {
-  const [value, setValue] = useState(propsValue)
+export const useMergeValue = <T>(defaultInnerValue: T, { propsValue }) => {
+  const [value, setValue] = useState(() => {
+    if (isUndefined(propsValue)) {
+      return defaultInnerValue
+    }
+
+    return propsValue
+  })
 
   // undefined 认为是非受控
   if (propsValue !== undefined && propsValue !== value) {
@@ -104,18 +111,22 @@ export const useAnTransition = (config: Animate) => {
       show()
     } else if (prevOpen && !open) {
       // 由开到关
-      close().onfinish = () => {
-        setShouldMount(false)
+      const animation = close()
+
+      if (animation) {
+        animation.onfinish = () => {
+          setShouldMount(false)
+        }
       }
     }
   }, [open, prevOpen])
 
   const show = () => {
-    return domRef.current.animate(Keyframes, options)
+    return domRef.current?.animate(Keyframes, options)
   }
 
   const close = () => {
-    return domRef.current.animate(Keyframes.slice().reverse(), options)
+    return domRef.current?.animate(Keyframes.slice().reverse(), options)
   }
 
   return {

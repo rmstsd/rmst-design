@@ -9,10 +9,13 @@ export default function TextEllipsisDd() {
 
   return (
     <div>
+      <b>单行</b>
       <My rows={1} />
       <hr />
+      <b>2行</b>
       <My rows={2} />
       <hr />
+      <b>3行</b>
       <My rows={3} />
 
       {/* <Input value={value} onChange={evt => setValue(evt.target.value)}></Input>

@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import './sty.less'
 import clsx from 'clsx'
 
+const text = `长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本`
+
 export default function My({ rows }: { rows: number }) {
   const [open, setOpen] = useState(false)
   const [isOverflow, setIsOverflow] = useState(false)
@@ -51,16 +53,14 @@ export default function My({ rows }: { rows: number }) {
     <div style={{ display: 'flex', position: 'relative' }}>
       <div className="mirror" style={{ position: 'absolute', visibility: 'hidden' }}>
         <div className={clsx('my', 'multi-ell')} ref={contentRef} style={{ WebkitLineClamp: rows }}>
-          上面虽然完成了右下加环绕，但是高度是固定的，如何动态设置呢？这里可以用到
-          但是高度是固定的，如何动态设置呢？这里可以用到
+          {text}
         </div>
       </div>
 
       <div className={clsx('my', !open && 'multi-ell')} style={{ WebkitLineClamp: rows }}>
         {!open && <span className="plc" style={{ height: `calc(100% - ${lh}px)` }}></span>}
         {!open && renderAction()}
-        上面虽然完成了右下加环绕，但是高度是固定的，如何动态设置呢？这里可以用到
-        但是高度是固定的，如何动态设置呢？这里可以用到
+        {text}
         {open && renderAction()}
       </div>
     </div>
