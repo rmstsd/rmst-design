@@ -1,4 +1,4 @@
-import { use, useState } from 'react'
+import { RefObject, use, useRef, useState } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import clsx from 'clsx'
 
@@ -8,6 +8,7 @@ import { Trigger } from '../Trigger'
 import { Empty } from '../Empty'
 import { keyboardKey } from '../_util/keycode'
 import getHotkeyHandler from '../_util/getHotkeyHandler'
+import SelectElement from './SelectElement'
 
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {
@@ -28,6 +29,8 @@ export function Select(props: SelectProps) {
   const selectPrefixCls = `${prefixCls}-select`
 
   const interact = useInteract(selectPrefixCls, { size: merSize, readOnly, disabled })
+  const [visible, setVisible] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const keepFocus = (evt: React.PointerEvent<HTMLDivElement>) => {
     evt.preventDefault()
@@ -43,50 +46,45 @@ export function Select(props: SelectProps) {
           </div>
         ))}
       </div>
+
+      <input type="text" />
     </div>
   )
+
+  const hide = () => {
+    setVisible(false)
+    interact.setIsFocused(false)
+    inputRef.current.blur()
+  }
 
   const onKeyDown = getHotkeyHandler(
     new Map([
       [
         keyboardKey.Esc,
-        evt => {
-          console.log('esc')
+        () => {
+          hide()
         }
       ],
       [
         keyboardKey.Tab,
-        evt => {
-          console.log('tab')
-
-          setVisible(false)
-          interact.setIsFocused(false)
+        () => {
+          hide()
         }
       ],
-      [
-        keyboardKey.ArrowUp,
-        evt => {
-          console.log('arrow up')
-        }
-      ],
-      [
-        keyboardKey.ArrowDown,
-        evt => {
-          console.log('arrow down')
-        }
-      ]
+      [keyboardKey.ArrowUp, evt => {}],
+      [keyboardKey.ArrowDown, evt => {}]
     ])
   )
-
-  const [visible, setVisible] = useState(false)
 
   return (
     <Trigger
       popup={popup}
       autoAlignPopupWidth
+      trigger="focus"
       visible={visible}
       onChange={visible => {
         console.log(visible)
+
         setVisible(visible)
 
         if (visible === false) {
@@ -94,15 +92,26 @@ export function Select(props: SelectProps) {
         }
       }}
     >
-      <div className={clsx(selectPrefixCls, interact.cls)} tabIndex={0}>
-        <input
-          onFocus={() => {
-            interact.setIsFocused(true)
-            setVisible(true)
-          }}
-          onKeyDown={onKeyDown}
-        />
-      </div>
+      <SelectElement
+        className={clsx(selectPrefixCls, interact.cls)}
+        onKeyDown={onKeyDown}
+        onClick={() => {
+          console.log('root click')
+          inputRef.current.focus()
+        }}
+      />
+      {/* <div
+        onPointerDown={keepFocus}
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+        onFocus={() => {
+          console.log('focus')
+          interact.setIsFocused(true)
+          setVisible(true)
+        }}
+      >
+        <input ref={inputRef} />
+      </div> */}
     </Trigger>
   )
 }
