@@ -1,0 +1,30 @@
+@import '../../style/var.less';
+// 
+@picker-prefix-cls: ~'@{prefixCls}-picker';
+
+.@{picker-prefix-cls} {
+  input {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    outline: none;
+    height: 100%;
+    padding: 0;
+  }
+
+  .interact()
+}
+
+.select-size(small);
+.select-size(default);
+.select-size(large);
+
+.select-size(@size) {
+  .@{picker-prefix-cls}-size-@{size} {
+    input {
+      height: @sizeMap[@@size][height];
+      line-height: @sizeMap[@@size][height];
+      font-size: @sizeMap[@@size][font-size];
+    }
+  }
+}

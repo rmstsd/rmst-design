@@ -11,7 +11,7 @@ const options2 = Array.from({ length: 20 }, (_, idx) => ({ value: `option${idx +
 export default function SelectDd() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <Select size="small"></Select>
+      <Select size="small" options={options} placeholder="Select"></Select>
 
       <Select size="default" options={options} readOnly></Select>
 

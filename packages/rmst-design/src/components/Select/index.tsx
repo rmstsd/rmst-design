@@ -1,17 +1,18 @@
 import { RefObject, use, useRef, useState } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
-import clsx from 'clsx'
 
-import './style/style.less'
 import { mergeProps, useInteract } from '../_util/hooks'
 import { Trigger } from '../Trigger'
 import { Empty } from '../Empty'
 import { keyboardKey } from '../_util/keycode'
 import getHotkeyHandler from '../_util/getHotkeyHandler'
 
+import './style/style.less'
+
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {
   options?: OptionItem[]
+  placeholder?: string
 }
 
 const defaultProps: SelectProps = {
@@ -20,7 +21,7 @@ const defaultProps: SelectProps = {
 
 export function Select(props: SelectProps) {
   props = mergeProps(defaultProps, props)
-  const { size, readOnly, disabled, options } = props
+  const { size, readOnly, disabled, options, placeholder } = props
   const { prefixCls, size: ctxSize } = use(ConfigContext)
 
   const merSize = size ?? ctxSize
@@ -70,8 +71,6 @@ export function Select(props: SelectProps) {
           </div>
         ))}
       </div>
-
-      <input type="text" />
     </div>
   )
 
@@ -106,7 +105,14 @@ export function Select(props: SelectProps) {
           }
         }}
       >
-        <input ref={inputRef} disabled={disabled} readOnly={readOnly} value="asdf" onChange={() => {}} />
+        <input
+          ref={inputRef}
+          disabled={disabled}
+          readOnly={readOnly}
+          placeholder={placeholder}
+          value=""
+          onChange={() => {}}
+        />
       </div>
     </Trigger>
   )

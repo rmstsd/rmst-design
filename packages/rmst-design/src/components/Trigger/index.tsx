@@ -1,10 +1,10 @@
 import React, { CSSProperties, isValidElement, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { mergeRefs } from 'react-merge-refs'
 import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
 import { mergeProps, useAnTransition, useEventCallback, useMergeValue } from '../_util/hooks'
+import { Portal } from '../Portal'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -105,15 +105,15 @@ export function Trigger(props: TriggerProps) {
     <>
       {childElement}
 
-      {shouldMount &&
-        createPortal(
+      {shouldMount && (
+        <Portal>
           <div className="rmst-popup-root">
             <div className="rmst-popup-content" ref={mergeRefs([popupRef, domRef])} style={popupStyle}>
               {popup}
             </div>
-          </div>,
-          document.body
-        )}
+          </div>
+        </Portal>
+      )}
     </>
   )
 }

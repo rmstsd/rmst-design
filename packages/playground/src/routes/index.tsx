@@ -11,6 +11,8 @@ import InputDd from '../pages/Input'
 import MaskDd from '../pages/Mask'
 import ModalDd from '../pages/Modal'
 import TextEllipsisDd from '../pages/TextEllipsis'
+import DrawerDd from '../pages/Drawer/DrawerDd'
+import CollapseDd from '../pages/Collapse/CollapseDd'
 
 interface componentsConfig {
   group: string
@@ -37,6 +39,10 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'Modal',
         element: <ModalDd />
+      },
+      {
+        path: 'Drawer',
+        element: <DrawerDd />
       }
     ]
   },
@@ -63,6 +69,10 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'Image',
         element: <Image />
+      },
+      {
+        path: 'Collapse',
+        element: <CollapseDd />
       }
     ]
   },

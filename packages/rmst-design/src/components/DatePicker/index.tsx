@@ -1,4 +1,4 @@
-import { use } from 'react'
+import { use, useRef, useState } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { Trigger } from '../Trigger'
 
@@ -6,23 +6,55 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useInteract } from '../_util/hooks'
 import clsx from 'clsx'
 
-interface DatePickerProps extends React.HTMLAttributes<HTMLDivElement>, InteractProps {}
+import './style.less'
+
+interface DatePickerProps extends InteractProps {
+  placeholder?: string
+}
 
 export function DatePicker(props: DatePickerProps) {
-  const { size, readOnly, disabled } = props
+  const { size, readOnly, disabled, placeholder } = props
   const { prefixCls, size: ctxSize } = use(ConfigContext)
 
   const merSize = size ?? ctxSize
 
   const selectPrefixCls = `${prefixCls}-select`
   const interact = useInteract(selectPrefixCls, { size: merSize, readOnly, disabled })
+  const [visible, setVisible] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const content = <div>DatePicker</div>
 
   return (
-    <Trigger popup={content}>
-      <div className={clsx(interact.cls)}>
-        <input type="text" />
+    <Trigger
+      popup={content}
+      trigger="focus"
+      visible={visible}
+      disabled={readOnly}
+      onChange={visible => {
+        setVisible(visible)
+        if (visible === false) {
+          interact.setIsFocused(false)
+        }
+      }}
+    >
+      <div
+        className={clsx(interact.cls)}
+        onPointerDown={evt => {
+          evt.preventDefault()
+          inputRef.current.focus()
+        }}
+        tabIndex={disabled ? undefined : -1}
+        onFocus={() => {
+          interact.setIsFocused(true)
+        }}
+        onBlur={() => {
+          if (readOnly) {
+            interact.setIsFocused(false)
+          }
+        }}
+      >
+        <input ref={inputRef} readOnly={readOnly} placeholder={placeholder} disabled={disabled} />
       </div>
     </Trigger>
   )

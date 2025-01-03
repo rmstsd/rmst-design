@@ -5,7 +5,6 @@
 @input-focus-border-color: #096dd9;
 @input-readonly-background-color: #fafafa;
 @input-disabled-background-color: #f5f5f5;
-
 @input-disabled-color: #afafaf;
 
 .propertyTransition(...) {
@@ -28,5 +27,33 @@
   @large: {
     height: 36px;
     font-size: 18px;
+  }
+}
+
+.interact() {
+  & {
+    border: 1px solid #bcbcbc;
+  }
+
+  &:hover:not(&-focus):not(&-disabled) {
+    border-color: @input-hover-border-color;
+  }
+
+  &-focus {
+    border-color: @input-focus-border-color;
+  }
+
+  &-readonly {
+    background-color: @input-readonly-background-color;
+  }
+
+  &-disabled {
+    background-color: @input-disabled-background-color;
+    cursor: not-allowed;
+
+    input {
+      cursor: not-allowed;
+      color: @input-disabled-color;
+    }
   }
 }
