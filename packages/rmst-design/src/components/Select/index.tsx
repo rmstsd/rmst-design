@@ -8,7 +8,6 @@ import { Trigger } from '../Trigger'
 import { Empty } from '../Empty'
 import { keyboardKey } from '../_util/keycode'
 import getHotkeyHandler from '../_util/getHotkeyHandler'
-import SelectElement from './SelectElement'
 
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {
@@ -36,21 +35,6 @@ export function Select(props: SelectProps) {
     evt.preventDefault()
   }
 
-  const popup = (
-    <div>
-      <div className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
-        {options.length === 0 && <Empty />}
-        {options.map(item => (
-          <div key={item.value} className={`${selectPrefixCls}-option-item`}>
-            {item.label}
-          </div>
-        ))}
-      </div>
-
-      <input type="text" />
-    </div>
-  )
-
   const hide = () => {
     setVisible(false)
     interact.setIsFocused(false)
@@ -76,44 +60,53 @@ export function Select(props: SelectProps) {
     ])
   )
 
+  const popup = (
+    <div>
+      <div className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
+        {options.length === 0 && <Empty />}
+        {options.map(item => (
+          <div key={item.value} className={`${selectPrefixCls}-option-item`}>
+            {item.label}
+          </div>
+        ))}
+      </div>
+
+      <input type="text" />
+    </div>
+  )
+
   return (
     <Trigger
       popup={popup}
       autoAlignPopupWidth
       trigger="focus"
       visible={visible}
+      disabled={readOnly}
       onChange={visible => {
-        console.log(visible)
-
         setVisible(visible)
-
         if (visible === false) {
           interact.setIsFocused(false)
         }
       }}
     >
-      {/* <SelectElement
-        className={clsx(selectPrefixCls, interact.cls)}
-        onKeyDown={onKeyDown}
-        onClick={() => {
-          console.log('root click')
-          inputRef.current.focus()
-        }}
-      /> */}
       <div
-        className={clsx(selectPrefixCls, interact.cls)}
-        onPointerDown={() => {
+        className={interact.cls}
+        onPointerDown={evt => {
+          evt.preventDefault()
           inputRef.current.focus()
         }}
-        tabIndex={-1}
+        tabIndex={disabled ? undefined : -1}
         onKeyDown={onKeyDown}
         onFocus={() => {
-          console.log('focus')
           interact.setIsFocused(true)
-          setVisible(true)
+        }}
+        onBlur={() => {
+          if (readOnly) {
+            interact.setIsFocused(false)
+          }
         }}
       >
-        <input ref={inputRef} />
+        <input ref={inputRef} disabled={disabled} readOnly={readOnly} value="asdf" onChange={() => {}} />
       </div>
     </Trigger>
   )

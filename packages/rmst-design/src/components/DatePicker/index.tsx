@@ -1,19 +1,27 @@
+import { use } from 'react'
+import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { Trigger } from '../Trigger'
 
 import dayjs, { Dayjs } from 'dayjs'
+import { useInteract } from '../_util/hooks'
+import clsx from 'clsx'
 
-interface DatePickerProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface DatePickerProps extends React.HTMLAttributes<HTMLDivElement>, InteractProps {}
 
 export function DatePicker(props: DatePickerProps) {
+  const { size, readOnly, disabled } = props
+  const { prefixCls, size: ctxSize } = use(ConfigContext)
+
+  const merSize = size ?? ctxSize
+
+  const selectPrefixCls = `${prefixCls}-select`
+  const interact = useInteract(selectPrefixCls, { size: merSize, readOnly, disabled })
+
   const content = <div>DatePicker</div>
 
   return (
     <Trigger popup={content}>
-      <div
-        onClick={() => {
-          console.log('div click')
-        }}
-      >
+      <div className={clsx(interact.cls)}>
         <input type="text" />
       </div>
     </Trigger>

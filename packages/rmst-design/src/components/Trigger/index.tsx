@@ -13,17 +13,19 @@ type TriggerProps = {
   visible?: boolean
   onChange?: (visible: boolean) => void
   trigger?: 'click' | 'focus'
+  disabled?: boolean
 }
 
 const defaultProps: TriggerProps = {
   autoAlignPopupWidth: false,
-  trigger: 'click'
+  trigger: 'click',
+  disabled: false
 }
 
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { visible, onChange, popup, children, autoAlignPopupWidth, trigger } = props
+  const { visible, onChange, popup, children, autoAlignPopupWidth, trigger, disabled } = props
 
   const [popupVisible, setPopupVisible] = useMergeValue(false, { propsValue: visible })
 
@@ -35,17 +37,18 @@ export function Trigger(props: TriggerProps) {
   const triggerElement = getTriggerElement(children)
   const triggerProps = triggerElement.props
 
-  console.log(triggerProps.ref)
-
   const triggerReactOneventName = `on${trigger.slice(0, 1).toUpperCase() + trigger.slice(1)}`
   const childElement = React.cloneElement(triggerElement, {
     ref: mergeRefs([triggerProps.ref, triggerRef]),
     [triggerReactOneventName]: evt => {
       const newValue = trigger === 'focus' ? true : !popupVisible
-      if (!Reflect.has(props, 'visible')) {
-        setPopupVisible(newValue)
+
+      if (!disabled) {
+        if (!Reflect.has(props, 'visible')) {
+          setPopupVisible(newValue)
+        }
+        triggerPropsChange(newValue)
       }
-      triggerPropsChange(newValue)
 
       triggerProps[triggerReactOneventName]?.(evt)
     }
