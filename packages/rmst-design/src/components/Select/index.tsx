@@ -92,16 +92,19 @@ export function Select(props: SelectProps) {
         }
       }}
     >
-      <SelectElement
+      {/* <SelectElement
         className={clsx(selectPrefixCls, interact.cls)}
         onKeyDown={onKeyDown}
         onClick={() => {
           console.log('root click')
           inputRef.current.focus()
         }}
-      />
-      {/* <div
-        onPointerDown={keepFocus}
+      /> */}
+      <div
+        className={clsx(selectPrefixCls, interact.cls)}
+        onPointerDown={() => {
+          inputRef.current.focus()
+        }}
         tabIndex={-1}
         onKeyDown={onKeyDown}
         onFocus={() => {
@@ -111,7 +114,7 @@ export function Select(props: SelectProps) {
         }}
       >
         <input ref={inputRef} />
-      </div> */}
+      </div>
     </Trigger>
   )
 }
