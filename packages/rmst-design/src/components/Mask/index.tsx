@@ -15,9 +15,15 @@ export function Mask(props: MaskProps) {
 
   const { shouldMount, domRef } = useAnTransition({ open, Keyframes })
 
-  return shouldMount ? (
-    <Portal>
-      <div {...rest} className="mask" ref={domRef}></div>
-    </Portal>
-  ) : null
+  if (shouldMount) {
+    const maskElement = <div {...rest} className="mask" ref={domRef}></div>
+
+    if (isRenderToBody) {
+      return <Portal>{maskElement}</Portal>
+    }
+
+    return maskElement
+  }
+
+  return null
 }

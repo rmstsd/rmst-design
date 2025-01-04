@@ -2,4 +2,18 @@
 // 
 @drawer-prefix-cls: ~'@{prefixCls}-drawer';
 
-.@{drawer-prefix-cls} {}
+.rmst-drawer-wrapper {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+}
+
+.@{drawer-prefix-cls} {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  background-color: white;
+  z-index: 5005;
+}

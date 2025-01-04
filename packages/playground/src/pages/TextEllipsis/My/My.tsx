@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import './sty.less'
 import clsx from 'clsx'
 
-const text = `长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本`
+const text = `长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本长文本`
 
 export default function My({ rows }: { rows: number }) {
   const [open, setOpen] = useState(false)
@@ -53,14 +53,14 @@ export default function My({ rows }: { rows: number }) {
     <div style={{ display: 'flex', position: 'relative' }}>
       <div className="mirror" style={{ position: 'absolute', visibility: 'hidden' }}>
         <div className={clsx('my', 'multi-ell')} ref={contentRef} style={{ WebkitLineClamp: rows }}>
-          {text}
+          <b>哈哈</b> {text}
         </div>
       </div>
 
       <div className={clsx('my', !open && 'multi-ell')} style={{ WebkitLineClamp: rows }}>
         {!open && <span className="plc" style={{ height: `calc(100% - ${lh}px)` }}></span>}
         {!open && renderAction()}
-        {text}
+        <b>哈哈</b> {text}
         {open && renderAction()}
       </div>
     </div>

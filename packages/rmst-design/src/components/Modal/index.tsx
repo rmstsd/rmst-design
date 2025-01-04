@@ -1,8 +1,9 @@
 import React, { PropsWithChildren } from 'react'
-import './style.less'
 import { Mask } from '../Mask'
 import { Portal } from '../Portal'
 import { useAnTransition } from '../_util/hooks'
+
+import './style.less'
 
 interface ModalProps {
   open?: boolean
@@ -27,7 +28,7 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
   return (
     shouldMount && (
       <Portal>
-        <div>
+        <div className="rmst-modal-wrapper">
           <Mask open={open}></Mask>
           <div className="rmst-modal" onClick={onClickMask}>
             <div className="rmst-modal-content" ref={domRef}>

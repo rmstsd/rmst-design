@@ -6,7 +6,7 @@ export default function ModalDd() {
 
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>open</Button>
+      <Button onClick={() => setOpen(true)}>open Modal</Button>
 
       <Modal open={open} onCancel={() => setOpen(false)}></Modal>
     </div>
