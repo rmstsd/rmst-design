@@ -1,10 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 import './style.less'
 import { Mask } from '../Mask'
 import { getPosition } from './util'
 import { on } from '../_util/dom'
+import { Portal } from '../Portal'
 
 interface ImageProps {
   src: string
@@ -117,19 +117,18 @@ export function Image(props: ImageProps) {
       <img src={src} ref={imageRef} style={{ maxWidth: 400 }} onClick={handleOriginClick}></img>
 
       {preview && (
-        <>
-          <Mask onClick={hide} open={display} />
-          {createPortal(
+        <Portal>
+          <div className="rmst-preview-image-container">
+            <Mask onClick={hide} open={display} />
             <img
               className="preview-image"
               ref={previewImageRef}
               src={src}
               style={previewImageStyle}
               onLoad={onPreviewImageLoad}
-            />,
-            document.body
-          )}
-        </>
+            />
+          </div>
+        </Portal>
       )}
     </>
   )

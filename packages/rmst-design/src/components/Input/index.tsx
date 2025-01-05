@@ -5,6 +5,7 @@ import { useInteract } from '../_util/hooks'
 import { IconWrapper } from '../IconWrapper'
 
 import './style.less'
+import CloseIcon from '../../icons/close'
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, InteractProps {}
 
@@ -65,7 +66,11 @@ export function Input(props: InputProps) {
         placeholder="asdas"
       />
 
-      {canInput && <IconWrapper onClick={() => {}}></IconWrapper>}
+      {canInput && (
+        <IconWrapper onClick={() => {}}>
+          <CloseIcon />
+        </IconWrapper>
+      )}
     </span>
   )
 }

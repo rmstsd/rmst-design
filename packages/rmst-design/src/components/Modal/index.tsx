@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren, useRef } from 'react'
 import { Mask } from '../Mask'
 import { Portal } from '../Portal'
 import { useAnTransition } from '../_util/hooks'
@@ -13,26 +13,38 @@ interface ModalProps {
 export function Modal(props: PropsWithChildren<ModalProps>) {
   const { open, onCancel, children } = props
 
-  const onClickMask = (evt: React.MouseEvent<HTMLDivElement>) => {
-    if (evt.target === evt.currentTarget) {
-      onCancel?.()
-    }
+  const pointerDownDomRef = useRef(null)
+  const isClickMaskRef = useRef(false)
+
+  const onClickMask = () => {
+    onCancel?.()
   }
 
-  const Keyframes = [
+  const keyframes = [
     { opacity: 0, transform: 'translateY(100px) scale(0.8)' },
     { opacity: 1, transform: 'translateY(0) scale(1)' }
   ]
-  const { shouldMount, domRef } = useAnTransition({ open, Keyframes })
+  const { shouldMount, setDomRef } = useAnTransition({ open, keyframes })
 
   return (
     shouldMount && (
       <Portal>
         <div className="rmst-modal-wrapper">
           <Mask open={open}></Mask>
-          <div className="rmst-modal" onClick={onClickMask}>
-            <div className="rmst-modal-content" ref={domRef}>
-              rmst-modal
+          <div
+            className="rmst-modal"
+            onPointerDown={evt => {
+              pointerDownDomRef.current = evt.target
+            }}
+            onPointerUp={evt => {
+              isClickMaskRef.current = pointerDownDomRef.current === evt.target && evt.target === evt.currentTarget
+              if (isClickMaskRef.current) {
+                onClickMask()
+              }
+            }}
+          >
+            <div className="rmst-modal-content" ref={setDomRef}>
+              {children}
             </div>
           </div>
         </div>

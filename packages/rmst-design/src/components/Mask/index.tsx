@@ -11,12 +11,12 @@ interface MaskProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Mask(props: MaskProps) {
   const { open, isRenderToBody, className, ...rest } = props
 
-  const Keyframes = [{ opacity: 0 }, { opacity: 1 }]
+  const keyframes = [{ opacity: 0 }, { opacity: 1 }]
 
-  const { shouldMount, domRef } = useAnTransition({ open, Keyframes })
+  const { shouldMount, setDomRef } = useAnTransition({ open, keyframes })
 
   if (shouldMount) {
-    const maskElement = <div {...rest} className="mask" ref={domRef}></div>
+    const maskElement = <div {...rest} className="mask" ref={setDomRef}></div>
 
     if (isRenderToBody) {
       return <Portal>{maskElement}</Portal>

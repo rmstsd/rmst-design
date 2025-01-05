@@ -1,5 +1,4 @@
 import { HTMLAttributes, PropsWithChildren } from 'react'
-import CloseIcon from '../../icons/close'
 
 import './style.less'
 
@@ -9,7 +8,7 @@ export function IconWrapper(props: PropsWithChildren<IconHoverProps>) {
 
   return (
     <span {...rest} className="icon-wrapper">
-      <CloseIcon />
+      {children}
     </span>
   )
 }

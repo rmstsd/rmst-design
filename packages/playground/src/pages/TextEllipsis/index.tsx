@@ -1,31 +1,31 @@
 import { Input, TextEllipsis } from 'rmst-design'
-import My from './My/My'
 import { useState } from 'react'
 
 export default function TextEllipsisDd() {
   const [value, setValue] = useState(
-    `  A design is a plan or   for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification. A design is a plan or specification for the construction of an object or system or for the implementation of an activity or process, or the result of that plan or specification.`
+    `君不见黄河之水天上来，奔流到海不复回。
+    君不见高堂明镜悲白发，朝如青丝暮成雪。
+    人生得意须尽欢，莫使金樽空对月。
+    天生我材必有用，千金散尽还复来。
+    烹羊宰牛且为乐，会须一饮三百杯。
+    岑夫子，丹丘生，将进酒，杯莫停。
+    与君歌一曲，请君为我倾耳听。
+    钟鼓馔玉不足贵，但愿长醉不愿醒。
+    古来圣贤皆寂寞，惟有饮者留其名。
+    陈王昔时宴平乐，斗酒十千恣欢谑。
+    主人何为言少钱，径须沽取对君酌。
+    五花马、千金裘，呼儿将出换美酒，与尔同销万古愁。
+  `
   )
 
   return (
     <div>
-      <b>单行</b>
-      <My rows={1} />
-      <hr />
-      <b>2行</b>
-      <My rows={2} />
-      <hr />
-      <b>3行</b>
-      <My rows={3} />
-
-      {/* <Input value={value} onChange={evt => setValue(evt.target.value)}></Input>
-      <TextEllipsis rows={3}>{value}</TextEllipsis>
+      <Input value={value} onChange={evt => setValue(evt.target.value)}></Input>
+      <TextEllipsis rows={1}>{value}</TextEllipsis>
       <hr />
       <TextEllipsis rows={2}>{value}</TextEllipsis>
       <hr />
-      <TextEllipsis rows={1} expandable={true ? { single: true } : true}>
-        {value}
-      </TextEllipsis> */}
+      <TextEllipsis rows={3}>{value}</TextEllipsis>
     </div>
   )
 }

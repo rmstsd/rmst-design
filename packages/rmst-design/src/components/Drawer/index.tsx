@@ -12,9 +12,9 @@ interface DrawerProps {
 export function Drawer(props: PropsWithChildren<DrawerProps>) {
   const { open, onCancel, children } = props
 
-  const { shouldMount, domRef } = useAnTransition({
+  const { shouldMount, setDomRef } = useAnTransition({
     open,
-    Keyframes: [{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }]
+    keyframes: [{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }]
   })
 
   return (
@@ -22,7 +22,7 @@ export function Drawer(props: PropsWithChildren<DrawerProps>) {
       <Portal>
         <div className="rmst-drawer-wrapper">
           <Mask open={open} onClick={onCancel}></Mask>
-          <div ref={domRef} className="rmst-drawer">
+          <div ref={setDomRef} className="rmst-drawer">
             {children}
           </div>
         </div>

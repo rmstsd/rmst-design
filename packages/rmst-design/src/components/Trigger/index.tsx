@@ -87,9 +87,9 @@ export function Trigger(props: TriggerProps) {
     }
   }, [popupVisible])
 
-  const { shouldMount, domRef } = useAnTransition({
+  const { shouldMount, setDomRef } = useAnTransition({
     open: popupVisible,
-    Keyframes: [
+    keyframes: [
       { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },
       { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
     ]
@@ -108,7 +108,7 @@ export function Trigger(props: TriggerProps) {
       {shouldMount && (
         <Portal>
           <div className="rmst-popup-root">
-            <div className="rmst-popup-content" ref={mergeRefs([popupRef, domRef])} style={popupStyle}>
+            <div className="rmst-popup-content" ref={mergeRefs([popupRef, setDomRef])} style={popupStyle}>
               {popup}
             </div>
           </div>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
-import { isUndefined } from './is'
+import { isFunction, isUndefined } from './is'
 
 export function useEventCallback<Args extends unknown[], Return>(
   fn: (...args: Args) => Return
@@ -36,10 +36,6 @@ export const useInteract = (componentCls: string, props: InteractProps) => {
 
   const [isFocused, setIsFocused] = useState(false)
   const domRef = useRef<HTMLElement>(null)
-
-  // useClickOutside(() => {
-  //   setIsFocused(false)
-  // }, domRef)
 
   const cls = clsx(componentCls, `${componentCls}-size-${size}`, {
     [`${componentCls}-focus`]: isFocused,
@@ -85,20 +81,20 @@ export function usePrevious<T>(state: T): T | undefined {
 
 type Animate = {
   open: boolean
-  Keyframes: any[]
+  appear?: boolean // 首次渲染时是否有动画
+  keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
 }
 
 const options: KeyframeAnimationOptions = {
   duration: 200,
-  easing: 'cubic-bezier(0.34, 0.69, 0.1, 1)',
-  fill: 'forwards'
+  easing: 'ease'
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { open, Keyframes } = config
+  const { appear, open, keyframes } = config
 
-  const prevOpen = usePrevious(open)
-  const domRef = useRef<HTMLDivElement>(null)
+  const domRef = useRef<HTMLElement>(null)
+  const firstMountRef = useRef(true)
   const [shouldMount, setShouldMount] = useState(open)
 
   if (open && open !== shouldMount) {
@@ -106,31 +102,49 @@ export const useAnTransition = (config: Animate) => {
   }
 
   useLayoutEffect(() => {
-    if ((prevOpen === undefined || !prevOpen) && open) {
-      // 初始化就是开 或者 由关到开
-      show()
-    } else if (prevOpen && !open) {
-      // 由开到关
-      const animation = close()
-
-      if (animation) {
-        animation.onfinish = () => {
-          setShouldMount(false)
+    if (firstMountRef.current) {
+      firstMountRef.current = false
+      if (appear) {
+        if (open) {
+          show()
+        } else {
+          close(() => {
+            setShouldMount(false)
+          })
         }
       }
+      return
     }
-  }, [open, prevOpen])
+
+    if (open) {
+      show()
+    } else {
+      close(() => {
+        setShouldMount(false)
+      })
+    }
+  }, [open])
+
+  const setDomRef = (el: HTMLElement) => {
+    domRef.current = el
+  }
 
   const show = () => {
-    return domRef.current?.animate(Keyframes, options)
+    if (!domRef.current) {
+      return
+    }
+    const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
+    domRef.current.animate(_kf, { ...options, fill: 'none' })
   }
 
-  const close = () => {
-    return domRef.current?.animate(Keyframes.slice().reverse(), options)
+  const close = (onfinish?: () => void) => {
+    if (!domRef.current) {
+      return
+    }
+    const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
+    const ani = domRef.current.animate(_kf.slice().reverse(), { ...options, fill: 'forwards' })
+    ani.onfinish = onfinish
   }
 
-  return {
-    shouldMount,
-    domRef
-  }
+  return { shouldMount, setDomRef }
 }

@@ -2,4 +2,31 @@
 // 
 @collapse-prefix-cls: ~'@{prefixCls}-collapse';
 
-.@{collapse-prefix-cls} {}
+.@{collapse-prefix-cls} {
+  border: 1px solid #ddd;
+
+  &-item {
+    &:not(:last-child) {
+      border-bottom: 1px solid #ddd;
+    }
+
+    &-header {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+
+      &-active {
+        border-color: #ddd;
+      }
+    }
+
+    &-content {
+      overflow: hidden;
+
+      &-box {
+        padding: 10px 15px;
+        background-color: #fbfbfb;
+      }
+    }
+  }
+}

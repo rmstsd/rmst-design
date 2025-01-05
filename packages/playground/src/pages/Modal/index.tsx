@@ -8,7 +8,9 @@ export default function ModalDd() {
     <div>
       <Button onClick={() => setOpen(true)}>open Modal</Button>
 
-      <Modal open={open} onCancel={() => setOpen(false)}></Modal>
+      <Modal open={open} onCancel={() => setOpen(false)}>
+        modal-content
+      </Modal>
     </div>
   )
 }

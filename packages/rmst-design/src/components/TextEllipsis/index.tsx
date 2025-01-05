@@ -1,193 +1,114 @@
+import { PropsWithChildren, use, useLayoutEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import ConfigContext from '../_util/ConfigProvider'
 
 import './style.less'
 
-const cs = clsx
-
-const defaultProps = {
-  rows: 1,
-  expandable: true,
-  defaultExpanded: false
+interface TextEllipsisProps extends PropsWithChildren {
+  rows?: number
 }
 
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator?.userAgent ?? '')
+export function TextEllipsis(props: TextEllipsisProps) {
+  const { rows, children } = props
+  const [open, setOpen] = useState(false)
+  const [isOverflow, setIsOverflow] = useState(false)
 
-export const TextEllipsis = baseProps => {
-  const props = { ...defaultProps, ...baseProps }
-  const { className, style, rows, disabled, children, expandable, expandRender, onEllipsis } = props
+  const { prefixCls } = use(ConfigContext)
 
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLSpanElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
-  const mirrorContentRef = useRef<HTMLDivElement>(null)
-  const mirrorTextRef = useRef<HTMLDivElement>(null)
-  const [expanded, setExpanded] = useState(false)
-  const [overflow, setOverflow] = useState(false)
+  const [lineHeight, setLineHeight] = useState(21)
 
-  const single = useMemo(() => {
-    if (typeof expandable === 'object') {
-      return !expandable.single && rows === 1
+  useLayoutEffect(() => {
+    const { fontSize, lineHeight } = getComputedStyle(contentRef.current)
+
+    if (lineHeight === 'normal') {
+      setLineHeight(parseFloat(fontSize) * 1.2)
+    } else {
+      setLineHeight(parseFloat(lineHeight))
     }
-    return rows === 1
-  }, [rows, expandable])
 
-  console.log(single)
-
-  useEffect(() => {
-    if (textRef.current) {
-      const content = textRef.current.textContent
-    }
-  }, [children, textRef])
-
-  const prefix = 'ellipsis'
-
-  const renderActionContent = () => {
-    if (expandRender) {
-      return expandRender(expanded)
-    }
-    return <span className={`${prefix}-action-text`}>{expanded ? 'fold' : 'unfold'}</span>
-  }
-
-  const renderAction = () => {
-    if (1 && overflow) {
-      return (
-        <div
-          className={cs(`${prefix}-action`, {
-            [`${prefix}-action-collapsed`]: !expanded
-          })}
-          onClick={ev => {
-            if (expanded) {
-              setExpanded(false)
-            } else {
-              setExpanded(true)
-            }
-          }}
-        >
-          {renderActionContent()}
-        </div>
-      )
-    }
-    return null
-  }
-
-  useEffect(() => {
     onResize()
+    const ob = new ResizeObserver(() => {
+      onResize()
+    })
+    ob.observe(contentRef.current)
+
+    return () => {
+      ob.disconnect()
+    }
   }, [])
 
+  const domRef = useRef<HTMLDivElement>(null)
+  const f = useRef(0)
+
   const onResize = () => {
-    if (mirrorTextRef.current && mirrorContentRef.current) {
-      const isOverflow = single
-        ? mirrorTextRef.current.offsetWidth > mirrorContentRef.current.offsetWidth
-        : mirrorTextRef.current.offsetHeight > mirrorContentRef.current.offsetHeight
-      if (isOverflow) {
-        if (overflow === false) {
-          setOverflow(true)
-          onEllipsis?.(true)
-        }
-      } else if (overflow === true) {
-        setOverflow(false)
-        onEllipsis?.(false)
-      }
-    }
+    setIsOverflow(contentRef.current.scrollHeight > contentRef.current.clientHeight)
   }
 
-  const renderMirror = () => {
-    if (disabled) {
+  const firstRenderRef = useRef(true)
+
+  useLayoutEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false
+      return
+    }
+
+    if (open) {
+      const l = domRef.current.offsetHeight
+
+      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], {
+        duration: 100,
+        easing: 'ease-in'
+      })
+    } else {
+      const l = domRef.current.offsetHeight
+
+      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], {
+        duration: 100,
+        easing: 'ease-in'
+        // fill: 'forwards'
+      })
+    }
+  }, [open])
+
+  const renderAction = () => {
+    if (!isOverflow) {
       return null
     }
 
-    return (
-      <div
-        className={
-          single
-            ? cs(`${prefix}-content-mirror`, `${prefix}-single`)
-            : cs(`${prefix}-content-mirror`, `${prefix}-multiple`, `${prefix}-collapsed`)
-        }
-        style={{
-          WebkitBoxOrient: 'vertical',
-          MozBoxOrient: 'vertical',
-          WebkitLineClamp: rows
-        }}
-        ref={mirrorContentRef}
-      >
-        <span ref={mirrorTextRef} className={`${prefix}-text`}>
-          {children}
-        </span>
-      </div>
-    )
-  }
-
-  const renderContent = () => {
-    if (single) {
-      return (
-        <div className={cs(`${prefix}-content`, `${prefix}-single`)}>
-          <span ref={textRef} className={`${prefix}-text`}>
-            {children}
-          </span>
-        </div>
-      )
-    }
-    if (isSafari) {
-      return (
-        <div className={cs(`${prefix}-content`, `${prefix}-multiple`)}>
-          {!expanded && renderAction()}
-          <span
-            ref={textRef}
-            className={cs(`${prefix}-text`, {
-              [`${prefix}-collapsed`]: !expanded
-            })}
-            style={{
-              WebkitBoxOrient: 'vertical',
-              MozBoxOrient: 'vertical',
-              WebkitLineClamp: rows
-            }}
-          >
-            {children}
-          </span>
-          {expanded && renderAction()}
-        </div>
-      )
-    }
-
-    return (
-      <div
-        className={cs(`${prefix}-content`, `${prefix}-multiple`, {
-          [`${prefix}-collapsed`]: !expanded
-        })}
-        style={{
-          WebkitBoxOrient: 'vertical',
-          MozBoxOrient: 'vertical',
-          WebkitLineClamp: rows
+    const epBtn = (
+      <span
+        className="action-btn"
+        onClick={() => {
+          const nv = !open
+          setOpen(nv)
+          f.current = domRef.current.offsetHeight
         }}
       >
-        {!expanded && renderAction()}
-        <span ref={textRef} className={`${prefix}-text`}>
-          {children}
-        </span>
-        {expanded && renderAction()}
-      </div>
+        {open ? '收起' : '展开'}
+      </span>
     )
-  }
 
-  const renderWrapper = () => {
-    if (disabled) {
-      return (
-        <div className={`${prefix}-content`}>
-          <span ref={textRef} className={`${prefix}-text`}>
-            {children}
-          </span>
-        </div>
-      )
-    }
-
-    return renderContent()
+    return epBtn
   }
 
   return (
-    <div ref={wrapperRef} className={cs(prefix, className)} style={style}>
-      {renderMirror()}
-      {renderWrapper()}
+    <div className={clsx(`${prefixCls}-text-ellipsis`)}>
+      <div className={`${prefixCls}-mirror multi-ell`} ref={contentRef} style={{ WebkitLineClamp: rows }}>
+        {children}
+      </div>
+
+      <div
+        className={clsx(!open && 'real-rendered multi-ell')}
+        style={{ WebkitLineClamp: rows, overflow: 'hidden' }}
+        ref={domRef}
+      >
+        {!open && <span className="plc" style={{ height: `calc(100% - ${lineHeight}px)` }}></span>}
+        {!open && renderAction()}
+        {children}
+        {open && renderAction()}
+      </div>
     </div>
   )
 }
