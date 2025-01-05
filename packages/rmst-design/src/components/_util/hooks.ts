@@ -101,27 +101,25 @@ export const useAnTransition = (config: Animate) => {
     setShouldMount(open)
   }
 
-  useLayoutEffect(() => {
-    if (firstMountRef.current) {
-      firstMountRef.current = false
-      if (appear) {
-        if (open) {
-          show()
-        } else {
-          close(() => {
-            setShouldMount(false)
-          })
-        }
-      }
-      return
-    }
-
+  const execTrans = () => {
     if (open) {
       show()
     } else {
       close(() => {
         setShouldMount(false)
       })
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (firstMountRef.current) {
+      firstMountRef.current = false
+
+      if (appear) {
+        execTrans()
+      }
+    } else {
+      execTrans()
     }
   }, [open])
 
