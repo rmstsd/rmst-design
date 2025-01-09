@@ -82,6 +82,8 @@ export function LdLayout() {
           }
         }
 
+        // 查找 相对 nodeItem 的位置 上下左右中
+
         setState({ ...state })
       }
     }
