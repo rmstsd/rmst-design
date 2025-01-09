@@ -63,7 +63,7 @@ export function Input(props: InputProps) {
         onFocus={() => onFocusChange(true)}
         onBlur={() => onFocusChange(false)}
         onKeyDown={onKeyDownHandler}
-        placeholder="asdas"
+        placeholder="placeholder"
       />
 
       {canInput && (
