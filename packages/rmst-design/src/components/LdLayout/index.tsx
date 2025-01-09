@@ -47,6 +47,72 @@ export function LdLayout() {
       const target = evt.target as HTMLElement
       dropTarget = target.closest(`[${nodeAttrName}]`)
 
+      // 查找 相对 nodeItem 的位置 上下左右中
+      const dropTarget2 = target.closest(`.node-item`)
+
+      if (dropTarget2) {
+        state.dropTarget = dropTarget2
+        const { clientX, clientY } = evt
+
+        const rect = dropTarget2.getBoundingClientRect()
+
+        if (
+          clientX > rect.left + rect.width / 3 &&
+          clientX < rect.left + (rect.width * 2) / 3 &&
+          clientY > rect.top + rect.height / 3 &&
+          clientY < rect.top + (rect.height * 2) / 3
+        ) {
+          console.log('center')
+
+          state.dropRect = {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height
+          }
+        } else if (clientX > rect.left && clientX < rect.left + rect.width / 3) {
+          console.log('left')
+
+          state.dropRect = {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width / 3,
+            height: rect.height
+          }
+        } else if (clientX > rect.left + (rect.width / 3) * 2 && clientX < rect.right) {
+          console.log('right')
+
+          state.dropRect = {
+            left: rect.left + (rect.width / 3) * 2,
+            top: rect.top,
+            width: rect.width / 3,
+            height: rect.height
+          }
+        } else if (clientY > rect.top && clientY < rect.top + rect.height / 3) {
+          console.log('top')
+
+          state.dropRect = {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height / 3
+          }
+        } else if (clientY > rect.top + (rect.height / 3) * 2 && clientY < rect.bottom) {
+          console.log('bottom')
+
+          state.dropRect = {
+            left: rect.left,
+            top: rect.top + (rect.height / 3) * 2,
+            width: rect.width,
+            height: rect.height / 3
+          }
+        }
+
+        setState({ ...state })
+      }
+
+      return
+
       if (dropTarget) {
         let comName = dropTarget.getAttribute(nodeAttrName)
         dropData = getComponentByName(comName)
@@ -81,8 +147,6 @@ export function LdLayout() {
             }
           }
         }
-
-        // 查找 相对 nodeItem 的位置 上下左右中
 
         setState({ ...state })
       }
