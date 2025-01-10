@@ -2,19 +2,24 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import './layout.less'
 import { componentsConfig, componentsRoute } from '../routes'
 import clsx from 'clsx'
+import { useLocalStorageState } from 'ahooks'
 
 function Layout() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const [open, setOpen] = useLocalStorageState('open', { defaultValue: true })
+
   const cc = location.pathname.replace(componentsRoute.path, '').slice(1)
 
   return (
     <div className="rt-layout">
-      <header></header>
+      <header>
+        <button onClick={() => setOpen(!open)}>{open ? '收起' : '展开'}</button>
+      </header>
 
       <div className="main">
-        <aside>
+        <aside style={{ marginLeft: open ? 0 : -180 }}>
           <div style={{ height: 40 }}></div>
 
           {componentsConfig.map(gItem => {

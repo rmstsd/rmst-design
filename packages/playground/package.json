@@ -8,6 +8,7 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "ahooks": "^3.8.4",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
