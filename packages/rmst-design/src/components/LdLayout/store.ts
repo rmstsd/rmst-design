@@ -290,6 +290,15 @@ class LdStore {
     document.addEventListener('pointermove', onPointerMove)
     document.addEventListener('pointerup', onPointerUp)
   }
+
+  deleteTab(childConfig: IConfig, index: number, parent: IConfig) {
+    this.removeItem(childConfig)
+    if (parent.children.length === 0) {
+      this.removeItem(parent)
+    }
+
+    console.log(toJS(this.pageConfig))
+  }
 }
 
 const ldStore = new LdStore()

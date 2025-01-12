@@ -1,17 +1,18 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 import { IConfig } from './config'
+import { observer } from 'mobx-react-lite'
+import ldStore from './store'
 
 interface ItemProps {
   config: IConfig
   parentConfig?: IConfig
 }
 
-export const Item = ({ config }: ItemProps) => {
+export const Item = observer(({ config }: ItemProps) => {
   if (config.type === 'row' || config.type === 'column') {
     return (
       <div className={clsx('node-item flex relative', config.type === 'column' && 'flex-column')} data-id={config.id}>
-        <b className="absolute">{config.id}</b>
         {(config.children ?? []).map((childConfig, index) => (
           <Item config={childConfig} key={index} />
         ))}
@@ -24,15 +25,18 @@ export const Item = ({ config }: ItemProps) => {
   }
 
   return null
+})
+
+interface TabsProps {
+  config: IConfig
 }
 
-const Tabs = ({ config }) => {
+const Tabs = observer(({ config }: TabsProps) => {
   const [componentName, setComponentName] = useState(config.children[0].component)
 
   return (
     <div className="node-item tabset" data-id={config.id}>
       <div className="tab-header relative">
-        <b className="absolute">{config.id}</b>
         {config.children?.map((childConfig, index) => (
           <div
             data-component-id={childConfig.component}
@@ -41,6 +45,13 @@ const Tabs = ({ config }) => {
             onClick={() => setComponentName(childConfig.component)}
           >
             {childConfig.component}
+
+            <button
+              onClick={() => ldStore.deleteTab(childConfig, index, config)}
+              onPointerDown={evt => evt.stopPropagation()}
+            >
+              x
+            </button>
           </div>
         ))}
       </div>
@@ -48,4 +59,4 @@ const Tabs = ({ config }) => {
       <div className="outlet">{componentName}</div>
     </div>
   )
-}
+})
