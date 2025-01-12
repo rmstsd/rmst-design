@@ -1,11 +1,16 @@
 export interface IConfig {
-  type: string
+  type: 'row' | 'column' | 'tabset' | 'tab'
   id: string
   component?: string
   children?: IConfig[]
 }
 
-export const getComponentByName = (name: string, config: IConfig): { config: IConfig; parent: IConfig } => {
+export interface IComponent {
+  config: IConfig
+  parent: IConfig
+}
+
+export const getComponentByName = (name: string, config: IConfig): IComponent => {
   return dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig | null) {
@@ -26,7 +31,7 @@ export const getComponentByName = (name: string, config: IConfig): { config: ICo
     return null
   }
 }
-export const getComponentById = (id: string, config: IConfig): { config: IConfig; parent: IConfig } => {
+export const getComponentById = (id: string, config: IConfig): IComponent => {
   return dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig | null) {
@@ -53,17 +58,13 @@ export function fixConfig(config: IConfig) {
 
   function dfs(config: IConfig, parent: IConfig) {
     if (parent) {
-      if (config.children && config.children.length === 0) {
-        parent.children.splice(parent.children.indexOf(config), 1)
-        return
-      }
-      if (config.type === 'row') {
+      if (config.type === 'row' || config.type === 'column') {
         if (config.children && config.children.length === 1) {
           const child = config.children[0]
 
           const index = parent.children.indexOf(config)
 
-          parent.children.splice(index, 1, ...child.children) 
+          parent.children.splice(index, 1, ...child.children)
         }
       }
     }
@@ -76,7 +77,9 @@ export function fixConfig(config: IConfig) {
   }
 }
 
-export const removeItem = (config: IConfig, parent: IConfig) => {
+export const removeItem = (config: IConfig, rootTree: IConfig) => {
+  const parent = findParentNode(config, rootTree)
+
   const index = parent.children.indexOf(config)
   if (index === -1) {
     console.error('removeItem error')
@@ -90,4 +93,21 @@ export const removeItem = (config: IConfig, parent: IConfig) => {
 
 export const genId = () => {
   return Math.random().toString()
+}
+
+export function findParentNode(item: IConfig, node: IConfig): IConfig {
+  return dfs(node)
+
+  function dfs(node: IConfig, parent = null) {
+    if (item === node) {
+      return parent
+    }
+
+    for (const item of node.children ?? []) {
+      const res = dfs(item, node)
+      if (res) {
+        return res
+      }
+    }
+  }
 }

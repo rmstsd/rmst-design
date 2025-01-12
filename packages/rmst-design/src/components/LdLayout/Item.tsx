@@ -5,15 +5,14 @@ import { IConfig } from './config'
 interface ItemProps {
   config: IConfig
   parentConfig?: IConfig
-  useColumn?: boolean
 }
 
-export const Item = ({ config, useColumn }: ItemProps) => {
-  if (config.type === 'row') {
+export const Item = ({ config }: ItemProps) => {
+  if (config.type === 'row' || config.type === 'column') {
     return (
-      <div className={clsx('node-item flex', useColumn && 'flex-column')} data-id={config.id}>
+      <div className={clsx('node-item flex', config.type === 'column' && 'flex-column')} data-id={config.id}>
         {(config.children ?? []).map((childConfig, index) => (
-          <Item config={childConfig} key={index} useColumn={!useColumn} />
+          <Item config={childConfig} key={index} />
         ))}
       </div>
     )

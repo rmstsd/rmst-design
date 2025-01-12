@@ -5,7 +5,7 @@ export const config: IConfig = {
   id: 'root-id',
   children: [
     {
-      type: 'row',
+      type: 'column',
       id: 'bbb',
       children: [
         {
@@ -15,7 +15,7 @@ export const config: IConfig = {
             {
               type: 'tab',
               id: 'ddd',
-              component: 'code'
+              component: '方法'
             }
           ]
         },
@@ -30,7 +30,7 @@ export const config: IConfig = {
                 {
                   type: 'tab',
                   id: 'jkl99',
-                  component: 'description'
+                  component: '刚刚'
                 }
               ]
             },
@@ -41,12 +41,12 @@ export const config: IConfig = {
                 {
                   type: 'tab',
                   id: 'asd',
-                  component: 'submissions'
+                  component: '看'
                 },
                 {
                   type: 'tab',
                   id: 'ghji',
-                  component: 'testcase'
+                  component: '几何'
                 }
               ]
             },
@@ -57,7 +57,7 @@ export const config: IConfig = {
                 {
                   type: 'tab',
                   id: 'rtu889',
-                  component: 'result'
+                  component: '具体'
                 }
               ]
             }
@@ -72,12 +72,12 @@ export const config: IConfig = {
         {
           type: 'tab',
           id: 'bn4465',
-          component: 'note'
+          component: '人员'
         },
         {
           type: 'tab',
           id: 'fgj9905',
-          component: 'solutions'
+          component: '吃饭'
         }
       ]
     }

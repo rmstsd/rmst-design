@@ -8,6 +8,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dayjs": "^1.11.13"
+    "dayjs": "^1.11.13",
+    "mobx": "^6.13.5",
+    "mobx-react-lite": "^4.1.0"
   }
 }
