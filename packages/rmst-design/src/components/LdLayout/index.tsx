@@ -1,5 +1,5 @@
 import './style.less'
-import { fixConfig, getComponentById, getComponentByName, IConfig } from './config'
+import { fixConfig, genId, getComponentById, getComponentByName, IConfig, removeItem } from './config'
 import { Item } from './Item'
 import { useEffect, useState } from 'react'
 import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
@@ -174,6 +174,7 @@ export function LdLayout() {
       setState({ ...state })
 
       console.log('-- drop')
+      console.log(dragData, dropData)
 
       console.log(dropType, dropPos)
 
@@ -213,19 +214,53 @@ export function LdLayout() {
 
         setPageConfig({ ...pageConfig })
       } else if (dropType === 'node-item') {
+        const idx = dragData.parent.children.indexOf(dragData.config)
+        if (idx === -1) {
+          console.error('idx is -1')
+          return
+        }
+        dragData.parent.children.splice(idx, 1)
+
         switch (dropPos) {
           case 'center': {
-            const idx = dragData.parent.children.indexOf(dragData.config)
-            if (idx === -1) {
-              console.error('idx is -1')
-              return
-            }
-            dragData.parent.children.splice(idx, 1)
-
             dropData.config.children.push(dragData.config)
             break
           }
-          case 'top': {
+          case 'top':
+          case 'bottom': {
+            const outer: IConfig = {
+              id: genId(),
+              type: 'row',
+              children:
+                dropPos === 'top'
+                  ? [{ type: 'tabset', id: genId(), children: [dragData.config] }, dropData.config]
+                  : [
+                      dropData.config,
+                      {
+                        type: 'tabset',
+                        id: genId(),
+                        children: [dragData.config]
+                      }
+                    ]
+            }
+
+            const index = removeItem(dropData.config, dropData.parent)
+            dropData.parent.children.splice(index, 0, outer)
+
+            break
+          }
+
+          case 'left':
+          case 'right': {
+            const index = dropData.parent.children.indexOf(dropData.config)
+            const outer: IConfig = {
+              type: 'tabset',
+              id: genId(),
+              children: [dragData.config]
+            }
+
+            dropData.parent.children.splice(dropPos === 'left' ? index : index + 1, 0, outer)
+
             break
           }
 
@@ -237,7 +272,6 @@ export function LdLayout() {
       }
 
       fixConfig(pageConfig)
-      console.log(dragData, dropData)
     }
 
     document.addEventListener('pointermove', onPointerMove)

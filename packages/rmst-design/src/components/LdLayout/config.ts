@@ -52,8 +52,20 @@ export function fixConfig(config: IConfig) {
   dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig) {
-    if (config.children && config.children.length === 0) {
-      parent.children.splice(parent.children.indexOf(config), 1)
+    if (parent) {
+      if (config.children && config.children.length === 0) {
+        parent.children.splice(parent.children.indexOf(config), 1)
+        return
+      }
+      if (config.type === 'row') {
+        if (config.children && config.children.length === 1) {
+          const child = config.children[0]
+
+          const index = parent.children.indexOf(config)
+
+          parent.children.splice(index, 1, ...child.children) 
+        }
+      }
     }
 
     if (config.children) {
@@ -62,4 +74,20 @@ export function fixConfig(config: IConfig) {
       }
     }
   }
+}
+
+export const removeItem = (config: IConfig, parent: IConfig) => {
+  const index = parent.children.indexOf(config)
+  if (index === -1) {
+    console.error('removeItem error')
+
+    return
+  }
+  parent.children.splice(index, 1)
+
+  return index
+}
+
+export const genId = () => {
+  return Math.random().toString()
 }
