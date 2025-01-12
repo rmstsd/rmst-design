@@ -1,3 +1,5 @@
+import { toJS } from 'mobx'
+
 export interface IConfig {
   type: 'row' | 'column' | 'tabset' | 'tab'
   id: string
@@ -9,6 +11,8 @@ export interface IComponent {
   config: IConfig
   parent: IConfig
 }
+
+window.toJS = toJS
 
 export const getComponentByName = (name: string, config: IConfig): IComponent => {
   return dfs(config, null)
@@ -57,6 +61,12 @@ export function fixConfig(config: IConfig) {
   dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig) {
+    if (config.type === 'row' || config.type === 'column') {
+      if ((config.children.length === 1 && config.children[0].type === 'column') || config.children[0].type === 'row') {
+        config.children = config.children[0].children
+      }
+    }
+
     if (parent) {
       if (config.type === 'row' || config.type === 'column') {
         if (config.children && config.children.length === 1) {
@@ -64,7 +74,7 @@ export function fixConfig(config: IConfig) {
 
           const index = parent.children.indexOf(config)
 
-          parent.children.splice(index, 1, ...child.children)
+          parent.children.splice(index, 1, child)
         }
       }
     }

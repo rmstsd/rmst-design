@@ -10,7 +10,8 @@ interface ItemProps {
 export const Item = ({ config }: ItemProps) => {
   if (config.type === 'row' || config.type === 'column') {
     return (
-      <div className={clsx('node-item flex', config.type === 'column' && 'flex-column')} data-id={config.id}>
+      <div className={clsx('node-item flex relative', config.type === 'column' && 'flex-column')} data-id={config.id}>
+        <b className="absolute">{config.id}</b>
         {(config.children ?? []).map((childConfig, index) => (
           <Item config={childConfig} key={index} />
         ))}
@@ -30,7 +31,8 @@ const Tabs = ({ config }) => {
 
   return (
     <div className="node-item tabset" data-id={config.id}>
-      <div className="tab-header">
+      <div className="tab-header relative">
+        <b className="absolute">{config.id}</b>
         {config.children?.map((childConfig, index) => (
           <div
             data-component-id={childConfig.component}

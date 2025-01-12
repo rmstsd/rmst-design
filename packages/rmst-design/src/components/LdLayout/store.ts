@@ -73,16 +73,17 @@ class LdStore {
       this.removeItem(dragTabSet)
     }
 
-    if (tabSetParent.children.length === 1) {
-      const p = this.findParent(tabSetParent)
-      // p.children.splice(p.children.indexOf(parent), 1, ...parent.children[0].children)
-    }
+    fixConfig(this.pageConfig)
 
     console.log(toJS(this.pageConfig))
   }
 
-  handleTabsetDrop() {
+  handleTabSetDrop() {
     const { dragData, dropData, dropPos } = this
+    if (!dragData || !dropData) {
+      return
+    }
+
     const idx = dragData.parent.children.indexOf(dragData.config)
     if (idx === -1) {
       console.error('idx is -1')
@@ -272,15 +273,18 @@ class LdStore {
         isDragging = false
       })
 
-      this.dragTarget = null
-      this.dropTarget = null
-      this.dropRect = { left: 0, top: 0, width: 0, height: 0 }
-
       if (this.dropType === 'tab-header') {
         this.handleHeaderDrop()
       } else if (this.dropType === 'node-item') {
         // this.handleTabsetDrop()
       }
+
+      this.dragTarget = null
+      this.dropTarget = null
+      this.dropRect = { left: 0, top: 0, width: 0, height: 0 }
+
+      this.dragData = null
+      this.dropData = null
     }
 
     document.addEventListener('pointermove', onPointerMove)
