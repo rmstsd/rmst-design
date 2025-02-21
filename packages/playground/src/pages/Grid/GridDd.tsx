@@ -1,3 +1,9 @@
+import './style.less'
+
 export default function GridDd() {
-  return <div>GridDd</div>
+  return (
+    <div className="gr-demo">
+      <div></div>
+    </div>
+  )
 }
