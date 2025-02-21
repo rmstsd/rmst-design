@@ -7,14 +7,10 @@ import ConfigContext from '../_util/ConfigProvider'
 import clsx from 'clsx'
 import { isFunction, isString } from 'es-toolkit'
 
-const defaultProps: GridItemProps = {
-  suffix: false,
-  offset: 0,
-  span: 1
-}
+const defaultProps: GridItemProps = { suffix: false, offset: 0, span: 1 }
 
 function GridItem(baseProps: GridItemProps, ref) {
-  const { prefixCls: gcl } = useContext(ConfigContext)
+  const { prefixCls } = useContext(ConfigContext)
   const props = { ...defaultProps, ...baseProps }
 
   const { children, className, style, offset: propOffset, span: propSpan, __index__: computedIndex } = props
@@ -27,22 +23,11 @@ function GridItem(baseProps: GridItemProps, ref) {
   const offset = useResponsiveState(propOffset, 0)
   const span = useResponsiveState(propSpan, 1)
 
-  const prefixCls = `${gcl}-grid-item`
-
   const visible = displayIndexList?.includes(computedIndex)
-
-  const mergeClassName = {
-    [`${prefixCls}`]: true
-  }
-
-  const classNames = clsx(mergeClassName, className)
+  const classNames = clsx(`${prefixCls}-grid-item`, className)
 
   const itemData = useMemo(() => {
-    return resolveItemData(gridContext.cols, {
-      suffix: !!props.suffix,
-      span,
-      offset
-    })
+    return resolveItemData(gridContext.cols, { suffix: !!props.suffix, span, offset })
   }, [gridContext.cols, props.suffix, span, offset])
 
   useEffect(() => {
@@ -73,31 +58,16 @@ function GridItem(baseProps: GridItemProps, ref) {
   }, [itemData, cols])
 
   const visibleStyle = !visible || span === 0 ? { display: 'none' } : {}
-
-  const gridItemStyle = {
-    gridColumn: `${columnStart} / span ${span}`,
-    ...offsetStyle,
-    ...visibleStyle
-  }
+  const gridItemStyle = { gridColumn: `${columnStart} / span ${span}`, ...offsetStyle, ...visibleStyle }
 
   return (
-    <div
-      ref={ref}
-      className={classNames}
-      style={{
-        ...gridItemStyle,
-        ...style
-      }}
-    >
+    <div ref={ref} className={classNames} style={{ ...gridItemStyle, ...style }}>
       {isFunction(children)
         ? children({ overflow })
         : React.Children.map(children, (child: ReactNode) => {
             if (child && gridContext.collapsed && React.isValidElement(child) && !isString(child.type)) {
               // 排除原生 dom 标签，避免 overflow 属性透传到 dom 标签上
-              return React.cloneElement(child, {
-                overflow,
-                ...child.props
-              })
+              return React.cloneElement(child, { overflow, ...child.props })
             }
             return child
           })}

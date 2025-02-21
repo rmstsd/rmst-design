@@ -7,18 +7,12 @@ import { setItemVisible } from './utils'
 import ConfigContext from '../_util/ConfigProvider'
 import { get } from 'es-toolkit/compat'
 
-const defaultProps: GridProps = {
-  collapsed: false,
-  collapsedRows: 1,
-  cols: 24,
-  colGap: 0,
-  rowGap: 0
-}
+const defaultProps: GridProps = { collapsed: false, collapsedRows: 1, cols: 24, colGap: 0, rowGap: 0 }
 
 function Grid(baseProps: GridProps, ref) {
   const [itemDataMap, setItemDataMap] = useState<Map<number, GridItemData>>(new Map())
 
-  const { prefixCls: gcl } = useContext(ConfigContext)
+  const { prefixCls } = useContext(ConfigContext)
   const props = { ...defaultProps, ...baseProps }
   const {
     children,
@@ -35,17 +29,8 @@ function Grid(baseProps: GridProps, ref) {
   const colGap = useResponsiveState(propColGap, 0)
   const rowGap = useResponsiveState(propRowGap, 0)
 
-  const gridStyle = {
-    gap: `${rowGap}px ${colGap}px`,
-    gridTemplateColumns: `repeat(${cols}, minmax(0px, 1fr))`
-  }
-
-  const prefixCls = `${gcl}-grid`
-  const mergeClassName = {
-    [`${prefixCls}`]: true
-  }
-
-  const classNames = cs(mergeClassName, className)
+  const gridStyle = { gap: `${rowGap}px ${colGap}px`, gridTemplateColumns: `repeat(${cols}, minmax(0px, 1fr))` }
+  const classNames = cs(`${prefixCls}-grid`, className)
 
   const getItemDataList = () => {
     const list: GridItemData[] = []
@@ -55,22 +40,10 @@ function Grid(baseProps: GridProps, ref) {
     return list
   }
   const itemDataList = getItemDataList()
+  const displayInfo = setItemVisible({ cols, collapsed, collapsedRows, itemDataList })
 
-  const displayInfo = setItemVisible({
-    cols,
-    collapsed,
-    collapsedRows,
-    itemDataList
-  })
   return (
-    <div
-      ref={ref}
-      className={classNames}
-      style={{
-        ...gridStyle,
-        ...style
-      }}
-    >
+    <div ref={ref} className={classNames} style={{ ...gridStyle, ...style }}>
       <GridDataCollectorContext.Provider
         value={{
           collectItemData(index, itemData) {
@@ -94,11 +67,7 @@ function Grid(baseProps: GridProps, ref) {
         >
           {React.Children.map(children, (child: ReactElement, index) => {
             if (child) {
-              const childProps = {
-                __index__: index,
-                ...child.props
-              }
-
+              const childProps = { __index__: index, ...child.props }
               return React.cloneElement(child, childProps)
             }
             return null
