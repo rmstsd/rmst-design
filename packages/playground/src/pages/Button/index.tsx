@@ -1,4 +1,6 @@
-import { Button, TextEllipsis } from 'rmst-design'
+import { Button } from 'rmst-design'
+
+import './style.less'
 
 export default function ButtonDd() {
   return (

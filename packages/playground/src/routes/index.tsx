@@ -13,6 +13,7 @@ import ModalDd from '../pages/Modal'
 import TextEllipsisDd from '../pages/TextEllipsis'
 import DrawerDd from '../pages/Drawer/DrawerDd'
 import CollapseDd from '../pages/Collapse/CollapseDd'
+import GridDd from '../pages/Grid/GridDd'
 
 interface componentsConfig {
   group: string
@@ -30,6 +31,15 @@ export const componentsConfig: componentsConfig[] = [
       {
         path: 'TextEllipsis',
         element: <TextEllipsisDd />
+      }
+    ]
+  },
+  {
+    group: '布局',
+    components: [
+      {
+        path: 'Grid',
+        element: <GridDd />
       }
     ]
   },

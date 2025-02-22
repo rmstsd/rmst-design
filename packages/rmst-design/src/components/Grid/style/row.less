@@ -1,0 +1,45 @@
+@import '../../../style/var.less';
+@row-prefix-cls: ~'@{prefixCls}-row';
+
+.@{row-prefix-cls} {
+  display: flex;
+  flex-flow: row wrap;
+  container-type: inline-size;
+  container-name: ccc;
+
+  &-align-start {
+    align-items: flex-start;
+  }
+
+  &-align-center {
+    align-items: center;
+  }
+
+  &-align-end {
+    align-items: flex-end;
+  }
+
+  &-justify-start {
+    justify-content: flex-start;
+  }
+
+  &-justify-center {
+    justify-content: center;
+  }
+
+  &-justify-end {
+    justify-content: flex-end;
+  }
+
+  &-justify-space-around {
+    justify-content: space-around;
+  }
+
+  &-justify-space-between {
+    justify-content: space-between;
+  }
+
+  &-rtl {
+    direction: rtl;
+  }
+}
