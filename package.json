@@ -10,7 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "pnpm -F playground dev"
+    "dev": "pnpm -F playground dev",
+    "dev-nextjs": "pnpm -F playground-nextjs dev"
   },
   "dependencies": {
     "clsx": "^2.1.1",

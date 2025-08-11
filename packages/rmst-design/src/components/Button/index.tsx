@@ -1,3 +1,5 @@
+'use client'
+
 import { PropsWithChildren, RefObject, use } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 
