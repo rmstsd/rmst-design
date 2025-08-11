@@ -19,7 +19,7 @@ function Layout() {
       </header>
 
       <div className="main">
-        <aside style={{ marginLeft: open ? 0 : -180 }}>
+        <aside style={{ marginLeft: open ? 0 : -180, overflow: 'auto' }}>
           <div style={{ height: 40 }}></div>
 
           {componentsConfig.map(gItem => {
