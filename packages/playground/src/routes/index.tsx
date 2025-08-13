@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router'
 import Layout from '../layout/Layout'
 import { LdLayout } from 'rmst-design'
 
