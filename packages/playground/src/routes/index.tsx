@@ -1,6 +1,5 @@
 import { Navigate, RouteObject } from 'react-router'
 import Layout from '../layout/Layout'
-import { LdLayout } from 'rmst-design'
 
 import Button from '../pages/Button'
 import Select from '../pages/Select'
@@ -93,10 +92,10 @@ export const componentsConfig: componentsConfig[] = [
         path: 'Trigger',
         element: <Trigger />
       },
-      {
-        path: 'LdLayout',
-        element: <LdLayout />
-      },
+      // {
+      //   path: 'LdLayout',
+      //   element: <LdLayout />
+      // },
       {
         path: 'Mask',
         element: <MaskDd />

@@ -12,8 +12,6 @@ export interface IComponent {
   parent: IConfig
 }
 
-window.toJS = toJS
-
 export const getComponentByName = (name: string, config: IConfig): IComponent => {
   return dfs(config, null)
 

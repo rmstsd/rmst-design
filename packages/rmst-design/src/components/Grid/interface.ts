@@ -180,7 +180,7 @@ export interface GridItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'cla
    */
   suffix?: boolean
   __index__?: number
-  children?: ReactNode | ((info: { overflow: boolean }) => ReactNode)
+  children?: ReactNode
 }
 
 export interface GridItemData extends GridItemProps {

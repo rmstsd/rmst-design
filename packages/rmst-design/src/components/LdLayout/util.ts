@@ -1,4 +1,4 @@
-export function calcDistancePointToEdge(point: IPoint, rect: IRect) {
+export function calcDistancePointToEdge(point, rect) {
   // const distanceTop = Math.abs(point.y - rect.y)
   // const distanceBottom = Math.abs(point.y - (rect.y + rect.height))
   const distanceLeft = Math.abs(point.x - rect.x)
@@ -7,7 +7,7 @@ export function calcDistancePointToEdge(point: IPoint, rect: IRect) {
   // return Math.min(distanceTop, distanceBottom)
 }
 
-export function isPointInRect(point: IPoint, rect: IRect, sensitive = true) {
+export function isPointInRect(point, rect, sensitive = true) {
   const boundSensor = (value: number) => {
     if (!sensitive) return 0
     const sensor = value * 0.1
@@ -23,6 +23,6 @@ export function isPointInRect(point: IPoint, rect: IRect, sensitive = true) {
     point.y <= rect.y + rect.height - boundSensor(rect.height)
   )
 }
-export function isNearAfter(point: IPoint, rect: IRect) {
+export function isNearAfter(point, rect) {
   return Math.abs(point.x - rect.x) > Math.abs(point.x - (rect.x + rect.width))
 }

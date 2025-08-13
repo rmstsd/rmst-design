@@ -15,6 +15,6 @@ Grid.Col = Col
 Grid.Row = Row
 Grid.GridItem = GridItem
 
-export default Grid
+export { Grid }
 
 export type { RowProps, ColProps, GridProps, ResponsiveValue } from './interface'

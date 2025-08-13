@@ -96,7 +96,7 @@ function Row(baseProps: RowProps, ref) {
   return (
     <div
       ref={ref}
-      {...omit(rest, ['gutter'])}
+      {...rest}
       style={{
         ...style,
         ...marginStyle

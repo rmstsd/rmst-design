@@ -31,7 +31,7 @@ class LdStore {
   dragTarget: IComponent
   dragCoord = { x: 0, y: 0 }
 
-  dropTarget: null
+  dropTarget: Element
   dropRect = { left: 0, top: 0, width: 0, height: 0 }
 
   dragData: IComponent
