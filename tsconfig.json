@@ -12,5 +12,6 @@
       "rmst-design/*": ["src/*", "*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["packages/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }
