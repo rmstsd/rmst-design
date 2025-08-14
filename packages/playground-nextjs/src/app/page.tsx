@@ -1,9 +1,15 @@
+'use client'
+
+import { useState } from 'react'
 import { Button, Input, Modal, TextEllipsis } from 'rmst-design'
 
 export default function Home() {
+  const [isOpen, setIsOpen] = useState(true)
+
   return (
     <div className="p-4">
-      <Button>aaa</Button>
+      <Button onClick={() => setIsOpen(true)}>aaa</Button>
+
       <Input />
       <TextEllipsis rows={2}>
         阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖
@@ -11,7 +17,9 @@ export default function Home() {
         阿是时间过得覆盖 阿是时间过得覆盖 阿是时间过得覆盖
       </TextEllipsis>
 
-      <Modal open={true}>modal-content</Modal>
+      <Modal open={isOpen} onCancel={() => setIsOpen(false)}>
+        modal-content
+      </Modal>
     </div>
   )
 }

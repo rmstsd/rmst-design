@@ -1,11 +1,16 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useLayoutEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { isSsr } from '../_util/ssr'
 
 export function Portal(props: PropsWithChildren) {
   const { children } = props
 
-  if (isSsr) {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useLayoutEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
     return null
   }
 
