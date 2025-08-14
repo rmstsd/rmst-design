@@ -4,9 +4,7 @@ import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
 import { isFunction, isUndefined } from './is'
 
-export function useEventCallback<Args extends unknown[], Return>(
-  fn: (...args: Args) => Return
-): (...args: Args) => Return {
+export function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return): (...args: Args) => Return {
   const ref = useRef<typeof fn | undefined>(undefined)
   ref.current = fn
 
@@ -115,9 +113,10 @@ export const useAnTransition = (config: Animate) => {
     if (firstMountRef.current) {
       firstMountRef.current = false
 
-      if (appear) {
-        execTrans()
-      }
+      // appear 和 ssr 有冲突
+      // if (appear) {
+      execTrans()
+      // }
     } else {
       execTrans()
     }
@@ -128,6 +127,7 @@ export const useAnTransition = (config: Animate) => {
   }
 
   const show = () => {
+    console.log(domRef.current)
     if (!domRef.current) {
       return
     }
