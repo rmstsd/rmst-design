@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@use 'tailwindcss';
 
 * {
   box-sizing: border-box;
@@ -25,8 +25,8 @@ body {
     cursor: pointer;
     padding-left: 14px;
 
-    &:hover {
-      background-color: #f2f3ff;
+    &:hover:not(.active) {
+      background-color: #f3f3f3;
     }
   }
 

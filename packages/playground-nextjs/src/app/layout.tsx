@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-
 import { IsSSRProvider } from 'rmst-design'
-import Link from 'next/link'
+import Side from '@/components/Side'
 
 import '../globals.scss'
 
@@ -20,13 +19,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       <body>
         <IsSSRProvider>
           <div id="rmst-root" className="flex">
-            <aside className="aside h-screen border-r flex flex-col shrink-0 p-2" style={{ width: 160 }}>
-              <Link href="/">home</Link>
-              <Link href="/Button">Button</Link>
-              <Link href="/TextEllipsis">TextEllipsis</Link>
-              <Link href="/Modal">Modal</Link>
-              <Link href="/Drawer">Drawer</Link>
-            </aside>
+            <Side />
 
             <section className="p-2">{children}</section>
           </div>
