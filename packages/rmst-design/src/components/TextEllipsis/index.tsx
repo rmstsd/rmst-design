@@ -1,4 +1,4 @@
-import { PropsWithChildren, use, useLayoutEffect, useRef, useState } from 'react'
+import { PropsWithChildren, use, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx'
 import ConfigContext from '../_util/ConfigProvider'
 
@@ -57,18 +57,11 @@ export function TextEllipsis(props: TextEllipsisProps) {
     if (open) {
       const l = domRef.current.offsetHeight
 
-      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], {
-        duration: 100,
-        easing: 'ease-in'
-      })
+      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], { duration: 100, easing: 'ease-in' })
     } else {
       const l = domRef.current.offsetHeight
 
-      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], {
-        duration: 100,
-        easing: 'ease-in'
-        // fill: 'forwards'
-      })
+      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], { duration: 100, easing: 'ease-in' })
     }
   }, [open])
 

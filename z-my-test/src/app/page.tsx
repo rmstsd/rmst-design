@@ -5,47 +5,38 @@ import { createPortal } from 'react-dom'
 
 import { Button, Dialog, DialogTrigger, Heading, Input, Label, Modal, TextField } from 'react-aria-components'
 import { Overlay } from '@react-aria/overlays'
-
+import { Button as AntdButton } from 'antd'
+import { Flex, Slider, Switch, Typography } from 'antd'
 import Portal from '@rc-component/portal'
 
 const isServer = typeof window === 'undefined'
 
-const IsSSRContext = React.createContext(false)
-
-function getSnapshot() {
-  return false
-}
-
-function getServerSnapshot() {
-  return true
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function subscribe(onStoreChange: () => void): () => void {
-  // noop
-  return () => {}
-}
-
-export function useIsSSR(): boolean {
-  // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
-  if (typeof React['useSyncExternalStore'] === 'function') {
-    return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot)
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useContext(IsSSRContext)
-}
-
 export default function Home() {
-  let isSSR = useIsSSR()
+  const [rows, setRows] = useState(2)
+  const [expanded, setExpanded] = useState(false)
 
-  if (isSSR) {
-    return null
-  }
+  return (
+    <div>
+      <Flex gap={16} vertical>
+        <Flex gap={16} align="center">
+          <Switch checked={expanded} onChange={() => setExpanded(c => !c)} style={{ flex: 'none' }} />
+          <Slider min={1} max={20} value={rows} onChange={setRows} style={{ flex: 'auto' }} />
+        </Flex>
 
-  console.log(isSSR)
-
-  return createPortal(<div>asdasd</div>, document.body)
+        <Typography.Paragraph
+          ellipsis={{
+            rows,
+            expandable: 'collapsible',
+            expanded,
+            onExpand: (_, info) => setExpanded(info.expanded)
+          }}
+          copyable
+        >
+          {'Ant Design, a design language for background applications, is refined by Ant UED Team.'.repeat(20)}
+        </Typography.Paragraph>
+      </Flex>
+    </div>
+  )
 
   return (
     <div className="bg-pink-200">

@@ -9,9 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.1.0",
     "@heroui/react": "^2.8.2",
     "@rc-component/portal": "^2.0.0",
     "@react-aria/overlays": "^3.28.0",
+    "antd": "^5.27.0",
     "framer-motion": "^12.23.12",
     "next": "15.4.6",
     "react": "19.1.0",

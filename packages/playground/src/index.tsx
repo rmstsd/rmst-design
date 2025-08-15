@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { BrowserRouter } from 'react-router'
+import { IsSSRProvider } from 'rmst-design'
 
 import './index.less'
 
@@ -10,7 +11,9 @@ if (rootEl) {
   const root = ReactDOM.createRoot(rootEl)
   root.render(
     <BrowserRouter>
-      <App />
+      <IsSSRProvider>
+        <App />
+      </IsSSRProvider>
     </BrowserRouter>
   )
 }

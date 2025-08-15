@@ -3,6 +3,7 @@ import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
 import { isFunction, isUndefined } from './is'
+import { useIsSSR } from './ssr'
 
 export function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return): (...args: Args) => Return {
   const ref = useRef<typeof fn | undefined>(undefined)
@@ -89,7 +90,8 @@ const options: KeyframeAnimationOptions = {
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear, open, keyframes } = config
+  const { appear = true, open, keyframes } = config
+  const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
   const firstMountRef = useRef(true)
@@ -99,35 +101,37 @@ export const useAnTransition = (config: Animate) => {
     setShouldMount(open)
   }
 
-  const execTrans = () => {
-    if (open) {
-      show()
-    } else {
-      close(() => {
-        setShouldMount(false)
-      })
-    }
-  }
-
   useLayoutEffect(() => {
+    if (isSSR) {
+      return
+    }
+
+    const execTrans = () => {
+      if (open) {
+        show()
+      } else {
+        close(() => {
+          setShouldMount(false)
+        })
+      }
+    }
+
     if (firstMountRef.current) {
       firstMountRef.current = false
 
-      // appear 和 ssr 有冲突
-      // if (appear) {
-      execTrans()
-      // }
+      if (appear) {
+        execTrans()
+      }
     } else {
       execTrans()
     }
-  }, [open])
+  }, [open, isSSR])
 
   const setDomRef = (el: HTMLElement) => {
     domRef.current = el
   }
 
   const show = () => {
-    console.log(domRef.current)
     if (!domRef.current) {
       return
     }

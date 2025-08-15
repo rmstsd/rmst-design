@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.aside {
+  flex-shrink: 0;
+  height: 100vh;
+  width: 180px;
+  margin-top: -40px;
+  border-right: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  transition: margin-left 0.2s;
+
+  a {
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    padding-left: 14px;
+
+    &:hover {
+      background-color: #f2f3ff;
+    }
+  }
+
+  .active {
+    background-color: #f2f3ff;
+    color: #0052d9;
+  }
+}
