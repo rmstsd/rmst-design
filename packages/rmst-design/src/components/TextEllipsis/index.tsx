@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import ConfigContext from '../_util/ConfigProvider'
 
 import './style.less'
+import { usePreviousRef } from '../_util/hooks'
 
 interface TextEllipsisProps extends PropsWithChildren {
   rows?: number
@@ -12,6 +13,7 @@ export function TextEllipsis(props: TextEllipsisProps) {
   const { rows, children } = props
   const [open, setOpen] = useState(false)
   const [isOverflow, setIsOverflow] = useState(false)
+  const isPrevOpenRef = usePreviousRef(open)
 
   const { prefixCls } = use(ConfigContext)
 
@@ -50,6 +52,11 @@ export function TextEllipsis(props: TextEllipsisProps) {
   useLayoutEffect(() => {
     if (firstRenderRef.current) {
       firstRenderRef.current = false
+      return
+    }
+
+    // 兼容 严格模式 防止执行多次
+    if (isPrevOpenRef.current === open) {
       return
     }
 

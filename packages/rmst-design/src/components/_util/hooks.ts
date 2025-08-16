@@ -66,9 +66,9 @@ export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
   return { ...defaultProps, ...componentProps }
 }
 
-export function usePrevious<T>(state: T): RefObject<T> {
-  const prevRef = useRef<T>(undefined)
-  const curRef = useRef<T>(undefined)
+export function usePreviousRef<T>(state: T): RefObject<T> {
+  const prevRef = useRef<T>(state)
+  const curRef = useRef<T>(state)
 
   if (!Object.is(curRef.current, state)) {
     prevRef.current = curRef.current
@@ -97,12 +97,19 @@ export const useAnTransition = (config: Animate) => {
   const firstMountRef = useRef(true)
   const [shouldMount, setShouldMount] = useState(open)
 
+  const prevOpenRef = usePreviousRef(open)
+
   if (open && open !== shouldMount) {
     setShouldMount(open)
   }
 
   useLayoutEffect(() => {
     if (isSSR) {
+      return
+    }
+
+    // 兼容 严格模式 防止执行多次
+    if (prevOpenRef.current === open) {
       return
     }
 

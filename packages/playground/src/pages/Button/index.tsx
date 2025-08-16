@@ -12,10 +12,6 @@ export default function ButtonDd() {
     console.log('eff')
 
     animate(scope.current, { translateX: 300 }, { duration: 1 })
-
-    setTimeout(() => {
-      animate(scope.current, { translateX: 100 }, { duration: 1 })
-    }, 500)
   }, [])
 
   return (
