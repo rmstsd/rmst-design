@@ -4,6 +4,87 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+const componentsConfig = [
+  {
+    group: '基础',
+    components: [
+      {
+        label: 'Button',
+        path: '/Button'
+      },
+      {
+        label: 'TextEllipsis',
+        path: '/TextEllipsis'
+      }
+    ]
+  },
+  {
+    group: '布局',
+    components: [
+      {
+        label: 'Grid',
+        path: '/Grid'
+      }
+    ]
+  },
+  {
+    group: '反馈',
+    components: [
+      {
+        label: 'Modal',
+        path: '/Modal'
+      },
+      {
+        label: 'Drawer',
+        path: '/Drawer'
+      }
+    ]
+  },
+  {
+    group: '数据输入',
+    components: [
+      {
+        label: 'Input',
+        path: '/Input'
+      },
+      {
+        label: 'Select',
+        path: '/Select'
+      },
+      {
+        label: 'DatePicker',
+        path: '/DatePicker'
+      }
+    ]
+  },
+  {
+    group: '数据展示',
+    components: [
+      {
+        label: 'Image',
+        path: '/Image'
+      },
+      {
+        label: 'Collapse',
+        path: '/Collapse'
+      }
+    ]
+  },
+  {
+    group: '其他',
+    components: [
+      {
+        label: 'Trigger',
+        path: '/Trigger'
+      },
+      {
+        label: 'Mask',
+        path: '/Mask'
+      }
+    ]
+  }
+]
+
 const SIDES = [
   {
     label: 'home',
@@ -35,11 +116,17 @@ export default function Side() {
   const pathname = usePathname()
 
   return (
-    <aside className="aside h-screen border-r flex flex-col shrink-0 p-2" style={{ width: 160 }}>
-      {SIDES.map(item => (
-        <Link key={item.href} href={item.href} className={clsx(pathname === item.href && 'active')}>
-          {item.label}
-        </Link>
+    <aside className="aside h-screen border-r shrink-0 p-2" style={{ width: 160 }}>
+      {componentsConfig.map(item => (
+        <div key={item.group}>
+          <div className="text-sm py-2 text-gray-500">{item.group}</div>
+
+          {item.components.map(cItem => (
+            <Link key={cItem.path} href={cItem.path} className={clsx('block', pathname === cItem.path && 'active')}>
+              {cItem.label}
+            </Link>
+          ))}
+        </div>
       ))}
     </aside>
   )

@@ -97,19 +97,18 @@ export const useAnTransition = (config: Animate) => {
   const firstMountRef = useRef(true)
   const [shouldMount, setShouldMount] = useState(open)
 
-  const prevOpenRef = usePreviousRef(open)
-
   if (open && open !== shouldMount) {
     setShouldMount(open)
   }
 
   useLayoutEffect(() => {
-    if (isSSR) {
-      return
+    return () => {
+      firstMountRef.current = true
     }
+  }, [])
 
-    // 兼容 严格模式 防止执行多次
-    if (prevOpenRef.current === open) {
+  useLayoutEffect(() => {
+    if (isSSR) {
       return
     }
 
@@ -142,17 +141,22 @@ export const useAnTransition = (config: Animate) => {
     if (!domRef.current) {
       return
     }
+
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    domRef.current.animate(_kf, { ...options, fill: 'none' })
+    const ani = domRef.current.animate(_kf, { ...options, fill: 'none' })
+    ani.onfinish = () => {}
   }
 
   const close = (onfinish?: () => void) => {
     if (!domRef.current) {
       return
     }
+
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
     const ani = domRef.current.animate(_kf.slice().reverse(), { ...options, fill: 'forwards' })
-    ani.onfinish = onfinish
+    ani.onfinish = () => {
+      onfinish?.()
+    }
   }
 
   return { shouldMount, setDomRef }

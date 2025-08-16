@@ -30,6 +30,10 @@ export function TextEllipsis(props: TextEllipsisProps) {
       setLineHeight(parseFloat(lineHeight))
     }
 
+    const onResize = () => {
+      setIsOverflow(contentRef.current.scrollHeight > contentRef.current.clientHeight)
+    }
+
     onResize()
     const ob = new ResizeObserver(() => {
       onResize()
@@ -44,31 +48,22 @@ export function TextEllipsis(props: TextEllipsisProps) {
   const domRef = useRef<HTMLDivElement>(null)
   const f = useRef(0)
 
-  const onResize = () => {
-    setIsOverflow(contentRef.current.scrollHeight > contentRef.current.clientHeight)
-  }
+  const firstRender = useRef(true)
 
-  const firstRenderRef = useRef(true)
   useLayoutEffect(() => {
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false
+    return () => {
+      firstRender.current = true
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
       return
     }
 
-    // 兼容 严格模式 防止执行多次
-    if (isPrevOpenRef.current === open) {
-      return
-    }
-
-    if (open) {
-      const l = domRef.current.offsetHeight
-
-      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], { duration: 100, easing: 'ease-in' })
-    } else {
-      const l = domRef.current.offsetHeight
-
-      domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], { duration: 100, easing: 'ease-in' })
-    }
+    const l = domRef.current.offsetHeight
+    domRef.current.animate([{ height: `${f.current}px` }, { height: `${l}px` }], { duration: 100, easing: 'ease-in' })
   }, [open])
 
   const renderAction = () => {

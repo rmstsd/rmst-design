@@ -52,7 +52,7 @@ export default {
       24: '24px',
       32: '32px'
     },
-    'extend': {}
+    extend: {}
   },
   plugins: [
     plugin(p => {
