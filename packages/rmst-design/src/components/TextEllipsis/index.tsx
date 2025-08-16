@@ -47,7 +47,6 @@ export function TextEllipsis(props: TextEllipsisProps) {
   }
 
   const firstRenderRef = useRef(true)
-
   useLayoutEffect(() => {
     if (firstRenderRef.current) {
       firstRenderRef.current = false

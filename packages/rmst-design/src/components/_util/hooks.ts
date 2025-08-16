@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
@@ -66,7 +66,7 @@ export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
   return { ...defaultProps, ...componentProps }
 }
 
-export function usePrevious<T>(state: T): T | undefined {
+export function usePrevious<T>(state: T): RefObject<T> {
   const prevRef = useRef<T>(undefined)
   const curRef = useRef<T>(undefined)
 
@@ -75,7 +75,7 @@ export function usePrevious<T>(state: T): T | undefined {
     curRef.current = state
   }
 
-  return prevRef.current
+  return prevRef
 }
 
 type Animate = {

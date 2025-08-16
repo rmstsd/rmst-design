@@ -24,6 +24,10 @@ const SIDES = [
   {
     label: 'Drawer',
     href: '/Drawer'
+  },
+  {
+    label: 'Collapse',
+    href: '/Collapse'
   }
 ]
 

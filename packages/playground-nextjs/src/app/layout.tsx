@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
           <div id="rmst-root" className="flex">
             <Side />
 
-            <section className="p-2">{children}</section>
+            <section className="p-2 flex-grow">{children}</section>
           </div>
         </IsSSRProvider>
       </body>
