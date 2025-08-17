@@ -39,6 +39,12 @@ const Test = () => {
   const [visible, setVisible] = useState(true)
 
   return (
+    <>
+      <button onClick={() => setVisible(!visible)}>aa</button>
+    </>
+  )
+
+  return (
     <div>
       <div style={{ backgroundColor: 'red', width: 100, height: 100 }}></div>
 

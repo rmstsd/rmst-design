@@ -13,7 +13,8 @@
     "dev": "pnpm -F playground dev",
     "dev-nextjs": "pnpm -F playground-nextjs dev",
     "dev-rmst-design": "pnpm -F rmst-design dev",
-    "build": "pnpm -F playground-nextjs build"
+    "build": "pnpm -F rmst-design build && pnpm -F playground-nextjs build",
+    "start": "pnpm -F playground-nextjs start"
   },
   "dependencies": {
     "clsx": "^2.1.1",
