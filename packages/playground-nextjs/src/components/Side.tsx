@@ -85,38 +85,11 @@ const componentsConfig = [
   }
 ]
 
-const SIDES = [
-  {
-    label: 'home',
-    href: '/'
-  },
-  {
-    label: 'Button',
-    href: '/Button'
-  },
-  {
-    label: 'TextEllipsis',
-    href: '/TextEllipsis'
-  },
-  {
-    label: 'Modal',
-    href: '/Modal'
-  },
-  {
-    label: 'Drawer',
-    href: '/Drawer'
-  },
-  {
-    label: 'Collapse',
-    href: '/Collapse'
-  }
-]
-
 export default function Side() {
   const pathname = usePathname()
 
   return (
-    <aside className="aside h-screen border-r shrink-0 p-2" style={{ width: 160 }}>
+    <aside className="aside h-screen border-r shrink-0 p-2 overflow-auto " style={{ width: 160 }}>
       {componentsConfig.map(item => (
         <div key={item.group}>
           <div className="text-sm py-2 text-gray-500">{item.group}</div>

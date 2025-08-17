@@ -10,16 +10,14 @@ export default function DrawerDd() {
     <div>
       <Button onClick={() => setVisible(true)}>open drawer</Button>
 
-      {visible && (
-        <Drawer
-          open={visible}
-          onCancel={() => {
-            setVisible(false)
-          }}
-        >
-          <div>content</div>
-        </Drawer>
-      )}
+      <Drawer
+        open={visible}
+        onCancel={() => {
+          setVisible(false)
+        }}
+      >
+        <div>content</div>
+      </Drawer>
     </div>
   )
 }

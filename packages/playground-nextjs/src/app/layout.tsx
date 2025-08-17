@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { IsSSRProvider } from 'rmst-design'
 import Side from '@/components/Side'
 
-import '../globals.scss'
+import '../css'
 
 export const metadata: Metadata = {
   title: 'rmst-nextjs',

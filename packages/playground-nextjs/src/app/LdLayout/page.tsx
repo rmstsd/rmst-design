@@ -1,9 +1,5 @@
-import { LdLayout } from 'rmst-design'
+// import { LdLayout } from 'rmst-design'
 
 export default function LdLayoutDd() {
-  return (
-    <div>
-      <LdLayout />
-    </div>
-  )
+  return <div>{/* <LdLayout /> */}</div>
 }

@@ -1,5 +1,4 @@
 import { Image } from 'rmst-design'
-import qwe from './qwe.jpg'
 
 export default function ImageDd() {
   return (
@@ -8,7 +7,7 @@ export default function ImageDd() {
 
       <hr />
 
-      <Image src={qwe} />
+      <Image src="/qwe.jpg" />
 
       <hr />
 

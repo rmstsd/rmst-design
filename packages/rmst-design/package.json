@@ -17,10 +17,12 @@
     "dist"
   ],
   "dependencies": {
+    "autoprefixer": "^10.4.21",
     "dayjs": "^1.11.13",
     "es-toolkit": "^1.32.0",
     "mobx": "^6.13.5",
-    "mobx-react-lite": "^4.1.0"
+    "mobx-react-lite": "^4.1.0",
+    "postcss": "^8.5.6"
   },
   "devDependencies": {
     "@rsbuild/plugin-less": "^1.4.0",
