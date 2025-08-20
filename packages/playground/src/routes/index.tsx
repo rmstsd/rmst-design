@@ -13,6 +13,7 @@ import TextEllipsisDd from '../pages/TextEllipsis'
 import DrawerDd from '../pages/Drawer/DrawerDd'
 import CollapseDd from '../pages/Collapse/CollapseDd'
 import GridDd from '../pages/Grid/GridDd'
+import AHome from '../pages/AHome/AHome'
 
 interface componentsConfig {
   group: string
@@ -20,6 +21,15 @@ interface componentsConfig {
 }
 
 export const componentsConfig: componentsConfig[] = [
+  {
+    group: '练习',
+    components: [
+      {
+        path: 'aHome',
+        element: <AHome />
+      }
+    ]
+  },
   {
     group: '基础',
     components: [

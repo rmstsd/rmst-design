@@ -6,6 +6,19 @@ import { usePathname } from 'next/navigation'
 
 const componentsConfig = [
   {
+    group: '练习',
+    components: [
+      {
+        label: '首页',
+        path: '/ahome'
+      },
+      {
+        label: 'blog',
+        path: '/blog'
+      }
+    ]
+  },
+  {
     group: '基础',
     components: [
       {
