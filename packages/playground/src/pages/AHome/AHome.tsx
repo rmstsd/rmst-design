@@ -1,44 +1,26 @@
 import axios from 'axios'
 import { Suspense, use, useState } from 'react'
-import { sleep } from '../../utils'
 
-const api = ({ delay = 500, name = 'mockData' } = {}): Promise<{ data: any }> => {
-  return axios.post(`http://localhost:1400/test`, { delay, name }).then(res => res.data)
+const api = ({ delay = 0 } = {}): Promise<{ data: any }> => {
+  return axios
+    .get(`https://jsonplaceholder.typicode.com/todos`, {
+      params: { _delay: delay }
+    })
+    .then(res => res.data.slice(0, 3))
 }
-
-const count = 3
-const url = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`
-
-const getUserList = async ({ delay = 500 } = {}): Promise<{ data: any }> => {
-  const abct = new AbortController()
-
-  await sleep(delay)
-
-  const p = axios.get(url, { signal: abct.signal }).then(res => res.data.results)
-
-  p.cancel = () => {
-    abct.abort()
-  }
-
-  return p
-}
-
-const oo = getUserList()
-
-console.log(oo)
 
 export default function AHome() {
   const [input, setInput] = useState('')
 
   let [p, setP] = useState(() => {
-    return [api()]
+    return [api(), api()]
   })
 
   return (
     <div>
       <button
         onClick={() => {
-          setP([api({ delay: 1000 }), api({ delay: 2000 })])
+          setP([api({ delay: 500 }), api({ delay: 800 })])
         }}
       >
         set P
@@ -55,8 +37,6 @@ export default function AHome() {
           // p.forEach(item => {
           //   item?.cancel()
           // })
-
-          setP([getUserList()])
         }}
       />
 
@@ -84,7 +64,7 @@ const Child = props => {
   return (
     <ul className="border bg-purple-50">
       {data.map(item => (
-        <li key={item.name}>{item.name}</li>
+        <li key={item.title}>{item.title}</li>
       ))}
     </ul>
   )
@@ -104,7 +84,7 @@ const Child3 = ({ p }) => {
   return (
     <ul className="border bg-purple-50">
       {data.map(item => (
-        <li key={item.name}>{item.name}</li>
+        <li key={item.title}>{item.title}</li>
       ))}
     </ul>
   )
