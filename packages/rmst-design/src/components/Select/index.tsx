@@ -62,15 +62,13 @@ export function Select(props: SelectProps) {
   )
 
   const popup = (
-    <div>
-      <div className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
-        {options.length === 0 && <Empty />}
-        {options.map(item => (
-          <div key={item.value} className={`${selectPrefixCls}-option-item`}>
-            {item.label}
-          </div>
-        ))}
-      </div>
+    <div className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
+      {options.length === 0 && <Empty />}
+      {options.map(item => (
+        <div key={item.value} className={`${selectPrefixCls}-option-item`}>
+          {item.label}
+        </div>
+      ))}
     </div>
   )
 
@@ -105,14 +103,7 @@ export function Select(props: SelectProps) {
           }
         }}
       >
-        <input
-          ref={inputRef}
-          disabled={disabled}
-          readOnly={readOnly}
-          placeholder={placeholder}
-          value=""
-          onChange={() => {}}
-        />
+        <input ref={inputRef} disabled={disabled} readOnly={readOnly} placeholder={placeholder} value="" onChange={() => {}} />
       </div>
     </Trigger>
   )

@@ -13,9 +13,9 @@ export default function SelectDd() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <Select size="small" options={options} placeholder="Select"></Select>
 
-      <Select size="default" options={options} readOnly></Select>
+      {/* <Select size="default" options={options} readOnly></Select> */}
 
-      <Select size="large" options={options2} disabled></Select>
+      {/* <Select size="large" options={options2} disabled></Select> */}
     </div>
   )
 }

@@ -8,6 +8,7 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.16",
     "ahooks": "^3.8.4",
     "motion": "^12.23.12",
     "react-router": "^7.8.0"

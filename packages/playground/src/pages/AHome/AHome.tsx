@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Suspense, use, useState } from 'react'
+import { Suspense, use, useCallback, useRef, useState } from 'react'
+import Demo from './Demo'
 
 const api = ({ delay = 0 } = {}): Promise<{ data: any }> => {
   return axios
@@ -15,6 +16,8 @@ export default function AHome() {
   let [p, setP] = useState(() => {
     return [api(), api()]
   })
+
+  return <Demo />
 
   return (
     <div>

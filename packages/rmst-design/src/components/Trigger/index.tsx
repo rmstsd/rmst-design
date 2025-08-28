@@ -1,10 +1,20 @@
-import React, { CSSProperties, isValidElement, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { isValidElement, ReactNode, useRef, useState } from 'react'
 import { mergeRefs } from 'react-merge-refs'
-import { getPlacement, getPopupPosition } from './utils'
 
 import './style.less'
 import { mergeProps, useAnTransition, useEventCallback, useMergeValue } from '../_util/hooks'
 import { Portal } from '../Portal'
+import {
+  autoUpdate,
+  flip,
+  FloatingPortal,
+  offset,
+  size,
+  useClick,
+  useDismiss,
+  useFloating,
+  useInteractions
+} from '@floating-ui/react'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -27,65 +37,49 @@ export function Trigger(props: TriggerProps) {
 
   const { visible, onChange, popup, children, autoAlignPopupWidth, trigger, disabled } = props
 
-  const [popupVisible, setPopupVisible] = useMergeValue(false, { propsValue: visible })
+  // const [popupVisible, setPopupVisible] = useMergeValue(false, { propsValue: visible })
+  const [popupVisible, setPopupVisible] = useState(false)
 
-  const [popupStyle, setPopupStyle] = useState<CSSProperties>({})
+  const { refs, floatingStyles, context } = useFloating({
+    open: popupVisible,
+    onOpenChange: setPopupVisible,
+    whileElementsMounted: autoUpdate,
+    transform: false,
+    middleware: [
+      offset(4),
+      flip({ padding: 10 }),
+      size({
+        apply: ({ rects, elements, availableHeight }) => {
+          Object.assign(elements.floating.style, { maxHeight: `${availableHeight}px`, minWidth: `${rects.reference.width}px` })
+        },
+        padding: 10
+      })
+    ]
+  })
 
-  const triggerRef = useRef<HTMLElement>(null)
-  const popupRef = useRef<HTMLDivElement>(null)
+  const click = useClick(context, { event: 'click' })
+  const dismiss = useDismiss(context, { referencePress: true, referencePressEvent: 'click', outsidePressEvent: 'click' })
+  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click])
 
   const triggerElement = getTriggerElement(children)
   const triggerProps = triggerElement.props
 
-  const triggerReactOneventName = `on${trigger.slice(0, 1).toUpperCase() + trigger.slice(1)}`
+  const referenceProps = getReferenceProps()
+  const referencePropsMerged = Object.keys(referenceProps).reduce((acc, k) => {
+    acc[k] = (...args) => {
+      const referenceFn = referenceProps[k] as Function
+      referenceFn(...args)
+
+      triggerProps[k]?.(...args)
+    }
+
+    return acc
+  }, {})
+
   const childElement = React.cloneElement(triggerElement, {
-    ref: mergeRefs([triggerProps.ref, triggerRef]),
-    [triggerReactOneventName]: evt => {
-      const newValue = trigger === 'focus' ? true : !popupVisible
-
-      if (!disabled) {
-        if (!Reflect.has(props, 'visible')) {
-          setPopupVisible(newValue)
-        }
-        triggerPropsChange(newValue)
-      }
-
-      triggerProps[triggerReactOneventName]?.(evt)
-    }
+    ref: mergeRefs([triggerProps.ref, refs.setReference]),
+    ...referencePropsMerged
   })
-
-  const docClick = useEventCallback((evt: MouseEvent) => {
-    const target = evt.target as HTMLElement
-
-    if (triggerRef.current.contains(target) || (popupRef.current && popupRef.current.contains(target))) {
-      return
-    }
-
-    const nv = false
-
-    if (!Reflect.has(props, 'visible')) {
-      setPopupVisible(nv)
-    }
-
-    triggerPropsChange(nv)
-  })
-
-  useEffect(() => {
-    document.addEventListener('click', docClick)
-
-    return () => {
-      document.removeEventListener('click', docClick)
-    }
-  }, [])
-
-  useLayoutEffect(() => {
-    if (popupVisible) {
-      const plc = getPlacement(triggerRef.current, popupRef.current)
-      const pos = getPopupPosition(triggerRef.current, popupRef.current, plc, false, autoAlignPopupWidth)
-
-      setPopupStyle(pos)
-    }
-  }, [popupVisible])
 
   const { shouldMount, setDomRef } = useAnTransition({
     open: popupVisible,
@@ -95,7 +89,7 @@ export function Trigger(props: TriggerProps) {
     ]
   })
 
-  const triggerPropsChange = (newValue: boolean) => {
+  function triggerPropsChange(newValue: boolean) {
     if (newValue !== popupVisible) {
       onChange?.(newValue)
     }
@@ -107,10 +101,13 @@ export function Trigger(props: TriggerProps) {
 
       {shouldMount && (
         <Portal>
-          <div className="rmst-popup-root">
-            <div className="rmst-popup-content" ref={mergeRefs([popupRef, setDomRef])} style={popupStyle}>
-              {popup}
-            </div>
+          <div
+            className="rmst-popup-content"
+            ref={mergeRefs([setDomRef, refs.setFloating])}
+            {...getFloatingProps()}
+            style={floatingStyles}
+          >
+            {popup}
           </div>
         </Portal>
       )}
