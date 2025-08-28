@@ -1,9 +1,8 @@
-import { PropsWithChildren, use, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { PropsWithChildren, use, useLayoutEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import ConfigContext from '../_util/ConfigProvider'
 
 import './style.less'
-import { usePreviousRef } from '../_util/hooks'
 
 interface TextEllipsisProps extends PropsWithChildren {
   rows?: number
@@ -13,7 +12,6 @@ export function TextEllipsis(props: TextEllipsisProps) {
   const { rows, children } = props
   const [open, setOpen] = useState(false)
   const [isOverflow, setIsOverflow] = useState(false)
-  const isPrevOpenRef = usePreviousRef(open)
 
   const { prefixCls } = use(ConfigContext)
 

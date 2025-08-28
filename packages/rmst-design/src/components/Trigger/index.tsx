@@ -1,8 +1,6 @@
 import React, { isValidElement, ReactNode, useRef, useState } from 'react'
 import { mergeRefs } from 'react-merge-refs'
-
-import './style.less'
-import { mergeProps, useAnTransition, useEventCallback, useMergeValue } from '../_util/hooks'
+import { mergeProps, useAnTransition, useControllableValue } from '../_util/hooks'
 import { Portal } from '../Portal'
 import {
   autoUpdate,
@@ -13,8 +11,12 @@ import {
   useClick,
   useDismiss,
   useFloating,
+  useFocus,
+  useHover,
   useInteractions
 } from '@floating-ui/react'
+
+import './style.less'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -22,7 +24,7 @@ type TriggerProps = {
   autoAlignPopupWidth?: boolean
   visible?: boolean
   onChange?: (visible: boolean) => void
-  trigger?: 'click' | 'focus'
+  trigger?: 'click' | 'focus' | 'hover'
   disabled?: boolean
 }
 
@@ -35,12 +37,12 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { visible, onChange, popup, children, autoAlignPopupWidth, trigger, disabled } = props
+  const { visible, popup, children, autoAlignPopupWidth, trigger, disabled } = props
 
-  // const [popupVisible, setPopupVisible] = useMergeValue(false, { propsValue: visible })
-  const [popupVisible, setPopupVisible] = useState(false)
+  const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: visible })
 
   const { refs, floatingStyles, context } = useFloating({
+    placement: 'bottom-start',
     open: popupVisible,
     onOpenChange: setPopupVisible,
     whileElementsMounted: autoUpdate,
@@ -50,16 +52,27 @@ export function Trigger(props: TriggerProps) {
       flip({ padding: 10 }),
       size({
         apply: ({ rects, elements, availableHeight }) => {
-          Object.assign(elements.floating.style, { maxHeight: `${availableHeight}px`, minWidth: `${rects.reference.width}px` })
+          Object.assign(
+            elements.floating.style,
+            { maxHeight: `${availableHeight}px` },
+            autoAlignPopupWidth && { minWidth: `${rects.reference.width}px` }
+          )
         },
         padding: 10
       })
     ]
   })
 
-  const click = useClick(context, { event: 'click' })
-  const dismiss = useDismiss(context, { referencePress: true, referencePressEvent: 'click', outsidePressEvent: 'click' })
-  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click])
+  const click = useClick(context, { enabled: trigger === 'click', event: 'click' })
+  const focus = useFocus(context, { enabled: trigger === 'focus' })
+  const hover = useHover(context, { enabled: trigger === 'hover' })
+
+  const dismiss = useDismiss(context, {
+    referencePress: trigger !== 'focus',
+    referencePressEvent: 'click',
+    outsidePressEvent: 'click'
+  })
+  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click, focus, hover])
 
   const triggerElement = getTriggerElement(children)
   const triggerProps = triggerElement.props
@@ -88,12 +101,6 @@ export function Trigger(props: TriggerProps) {
       { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
     ]
   })
-
-  function triggerPropsChange(newValue: boolean) {
-    if (newValue !== popupVisible) {
-      onChange?.(newValue)
-    }
-  }
 
   return (
     <>

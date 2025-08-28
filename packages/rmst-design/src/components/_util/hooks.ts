@@ -1,9 +1,22 @@
-import { RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { RefObject, useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { SetStateAction } from 'react'
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
 import { isFunction, isUndefined } from './is'
 import { useIsSSR } from './ssr'
+
+// 严格模式下有问题 无法解决
+export function useIsFirstRender() {
+  const renderRef = useRef(true)
+
+  if (renderRef.current === true) {
+    renderRef.current = false
+    return true
+  }
+
+  return renderRef.current
+}
 
 export function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return): (...args: Args) => Return {
   const ref = useRef<typeof fn | undefined>(undefined)
@@ -43,23 +56,6 @@ export const useInteract = (componentCls: string, props: InteractProps) => {
   })
 
   return { cls, isFocused, setIsFocused, domRef }
-}
-
-export const useMergeValue = <T>(defaultInnerValue: T, { propsValue }) => {
-  const [value, setValue] = useState(() => {
-    if (isUndefined(propsValue)) {
-      return defaultInnerValue
-    }
-
-    return propsValue
-  })
-
-  // undefined 认为是非受控
-  if (propsValue !== undefined && propsValue !== value) {
-    setValue(propsValue)
-  }
-
-  return [value, setValue]
 }
 
 export const mergeProps = <T>(defaultProps: T, componentProps: T) => {
@@ -160,4 +156,64 @@ export const useAnTransition = (config: Animate) => {
   }
 
   return { shouldMount, setDomRef }
+}
+
+export interface Options<T> {
+  defaultValue?: T
+  defaultValuePropName?: string
+  valuePropName?: string
+  trigger?: string
+}
+
+export type Props = Record<string, any>
+
+export interface StandardProps<T> {
+  value: T
+  defaultValue?: T
+  onChange: (val: T) => void
+}
+
+export function useControllableValue<T = any>(props: StandardProps<T>): [T, (v: SetStateAction<T>) => void]
+export function useControllableValue<T = any>(
+  props?: Props,
+  options?: Options<T>
+): [T, (v: SetStateAction<T>, ...args: any[]) => void]
+export function useControllableValue<T = any>(defaultProps: Props, options: Options<T> = {}) {
+  const props = defaultProps ?? {}
+
+  const { defaultValue, defaultValuePropName = 'defaultValue', valuePropName = 'value', trigger = 'onChange' } = options
+
+  const value = props[valuePropName] as T
+  const isControlled = Object.prototype.hasOwnProperty.call(props, valuePropName)
+
+  const initialValue = useMemo(() => {
+    if (isControlled) {
+      return value
+    }
+    if (Object.prototype.hasOwnProperty.call(props, defaultValuePropName)) {
+      return props[defaultValuePropName]
+    }
+    return defaultValue
+  }, [])
+
+  const stateRef = useRef(initialValue)
+  if (isControlled) {
+    stateRef.current = value
+  }
+
+  const [_, update] = useState([])
+
+  function setState(v: SetStateAction<T>, ...args: any[]) {
+    const r = isFunction(v) ? v(stateRef.current) : v
+
+    if (!isControlled) {
+      stateRef.current = r
+      update([])
+    }
+    if (props[trigger]) {
+      props[trigger](r, ...args)
+    }
+  }
+
+  return [stateRef.current, useEventCallback(setState)] as const
 }
