@@ -1,6 +1,7 @@
 import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { Portal } from '../../../../rmst-design/src/components/Portal'
+import Tooltip, { TooltipProvider } from './Tooltip/Tooltip'
 
 const useMyFloating = (isOpen, setIsOpen) => {
   const { refs, floatingStyles, context } = useFloating({
@@ -17,7 +18,7 @@ const useMyFloating = (isOpen, setIsOpen) => {
   return { refs, floatingStyles, getReferenceProps, getFloatingProps }
 }
 
-const options: KeyframeAnimationOptions = { duration: 300, fill: 'forwards', easing: 'ease' }
+const options: KeyframeAnimationOptions = { duration: 3000, fill: 'forwards', easing: 'ease' }
 
 export default function AHome() {
   const tip1 = useRef<HTMLDivElement>(null)
@@ -69,6 +70,51 @@ export default function AHome() {
       })
     }
   }, [isOpen2_Ans])
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          const aaTarget = document.querySelector('#aaTarget') as HTMLDivElement
+
+          aaTarget.animate([{ width: '30px', height: '30px' }], { duration: 1000, fill: 'forwards' })
+        }}
+      >
+        执行
+      </button>
+      <hr />
+
+      <div className="w-40 h-40 bg-gray-300" id="aaTarget">
+        好几个号好几个号好几个号好几个号好几个号好几个号
+      </div>
+
+      <div className="flex justify-evenly">
+        <TooltipProvider>
+          <Tooltip name="A" content={<div className="bg-white p-4 border ">content A</div>}>
+            <button>A</button>
+          </Tooltip>
+          <Tooltip
+            name="B"
+            content={
+              <div className="bg-pink-100 p-4 border ">
+                <div>content BBBBBBBBBBBBBBBBBB</div>
+                <div>content BBBBBBBBBBBBBBBBBB</div>
+                <div>content BBBBBBBBBBBBBBBBBB</div>
+              </div>
+            }
+          >
+            <button>B</button>
+          </Tooltip>
+          <Tooltip name="C" content={<div className="bg-white p-4 border">content C</div>}>
+            <button>C</button>
+          </Tooltip>
+          <Tooltip name="D" content={<div className="bg-white p-4 border">content D</div>}>
+            <button>D</button>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </div>
+  )
 
   return (
     <div>

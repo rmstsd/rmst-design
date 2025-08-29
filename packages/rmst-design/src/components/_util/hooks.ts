@@ -78,6 +78,7 @@ type Animate = {
   open: boolean
   appear?: boolean // 首次渲染时是否有动画
   keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
+  keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
 }
 
 const options: KeyframeAnimationOptions = {
@@ -86,7 +87,7 @@ const options: KeyframeAnimationOptions = {
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear = true, open, keyframes } = config
+  const { appear = true, open, keyframes, keyframesOut } = config
   const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
@@ -104,6 +105,7 @@ export const useAnTransition = (config: Animate) => {
   }, [])
 
   useLayoutEffect(() => {
+    return
     if (isSSR) {
       return
     }
@@ -148,8 +150,10 @@ export const useAnTransition = (config: Animate) => {
       return
     }
 
-    const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    const ani = domRef.current.animate(_kf.slice().reverse(), { ...options, fill: 'forwards' })
+    const outKfs = keyframesOut || keyframes
+    const kfs = isFunction(outKfs) ? outKfs(domRef.current) : outKfs
+    const _kfs = keyframesOut ? kfs : kfs.slice().reverse()
+    const ani = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
     ani.onfinish = () => {
       onfinish?.()
     }
