@@ -32,10 +32,10 @@ export default function Tooltip(props: Props) {
 
   const _setIsOpen = (val: boolean) => {
     if (val) {
-      if (active) {
-        active.close()
+      if (active && active !== activeRef.current) {
         let acDomRect = active.getFloatDom().getBoundingClientRect() as DOMRect
 
+        active.close()
         activeCoordRef.current = { left: acDomRect.left, top: acDomRect.top }
       }
 
@@ -48,6 +48,8 @@ export default function Tooltip(props: Props) {
         }
       }
       activeRef.current = active
+    } else {
+      active = null
     }
 
     setIsOpen(val)
