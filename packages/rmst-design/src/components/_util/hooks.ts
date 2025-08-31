@@ -94,6 +94,8 @@ export const useAnTransition = (config: Animate) => {
   const firstMountRef = useRef(true)
   const [shouldMount, setShouldMount] = useState(open)
 
+  const aniRef = useRef<Animation>(null)
+
   if (open && open !== shouldMount) {
     setShouldMount(open)
   }
@@ -105,19 +107,22 @@ export const useAnTransition = (config: Animate) => {
   }, [])
 
   useLayoutEffect(() => {
-    return
     if (isSSR) {
       return
     }
 
+    aniRef.current?.cancel()
+
     const execTrans = () => {
-      if (open) {
-        show()
-      } else {
-        close(() => {
-          setShouldMount(false)
-        })
-      }
+      requestAnimationFrame(() => {
+        if (open) {
+          show()
+        } else {
+          close(() => {
+            setShouldMount(false)
+          })
+        }
+      })
     }
 
     if (firstMountRef.current) {
@@ -141,8 +146,8 @@ export const useAnTransition = (config: Animate) => {
     }
 
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    const ani = domRef.current.animate(_kf, { ...options, fill: 'none' })
-    ani.onfinish = () => {}
+    aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
+    aniRef.current.onfinish = () => {}
   }
 
   const close = (onfinish?: () => void) => {
@@ -153,8 +158,8 @@ export const useAnTransition = (config: Animate) => {
     const outKfs = keyframesOut || keyframes
     const kfs = isFunction(outKfs) ? outKfs(domRef.current) : outKfs
     const _kfs = keyframesOut ? kfs : kfs.slice().reverse()
-    const ani = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
-    ani.onfinish = () => {
+    aniRef.current = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
+    aniRef.current.onfinish = () => {
       onfinish?.()
     }
   }

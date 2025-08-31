@@ -1,7 +1,8 @@
 import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react'
 import { useId, useLayoutEffect, useRef, useState } from 'react'
-import { Portal } from '../../../../rmst-design/src/components/Portal'
-import Tooltip, { TooltipProvider } from './Tooltip/Tooltip'
+import { Portal } from 'rmst-design'
+import Tooltip from './Tooltip/Tooltip'
+import { TooltipProvider } from './Tooltip/TooltipContext'
 
 const useMyFloating = (isOpen, setIsOpen) => {
   const { refs, floatingStyles, context } = useFloating({
@@ -77,7 +78,15 @@ export default function AHome() {
         onClick={() => {
           const aaTarget = document.querySelector('#aaTarget') as HTMLDivElement
 
-          aaTarget.animate([{ width: '30px', height: '30px' }], { duration: 1000, fill: 'forwards' })
+          const ani = aaTarget.animate([{ width: '30px', height: '30px' }], { duration: 1000, fill: 'forwards' })
+
+          setTimeout(() => {
+            ani.cancel()
+          }, 500)
+
+          ani.onfinish = () => {
+            console.log('ff')
+          }
         }}
       >
         执行
@@ -89,7 +98,7 @@ export default function AHome() {
       </div>
 
       <div className="flex justify-evenly">
-        <TooltipProvider>
+        <>
           <Tooltip name="A" content={<div className="bg-white p-4 border ">content A</div>}>
             <button>A</button>
           </Tooltip>
@@ -111,7 +120,7 @@ export default function AHome() {
           <Tooltip name="D" content={<div className="bg-white p-4 border">content D</div>}>
             <button>D</button>
           </Tooltip>
-        </TooltipProvider>
+        </>
       </div>
     </div>
   )
