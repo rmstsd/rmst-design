@@ -22,51 +22,95 @@ const toPx = (value: number) => {
 
 let active
 
+const setActive = value => {
+  active = value
+  window.active = value
+}
+
+const eleDom = {}
+
 export default function Tooltip(props: Props) {
   const { name, children, content } = props
 
   const [isOpen, setIsOpen] = useState(false)
+  const [hasAni, setHasAni] = useState(true)
 
-  const activeCoordRef = useRef<{ left: number; top: number }>(null)
+  const activeCoordRef = useRef<DOMRect>(null)
   const activeRef = useRef(null)
 
-  const _setIsOpen = (val: boolean) => {
-    if (val) {
+  const _setIsOpen = (bool: boolean) => {
+    setHasAni(true)
+    setIsOpen(bool)
+    activeCoordRef.current = null
+
+    if (bool) {
+      // 当 B 打开的时候, 关闭上一个
       if (active && active !== activeRef.current) {
         let acDomRect = active.getFloatDom().getBoundingClientRect() as DOMRect
 
         active.close()
-        activeCoordRef.current = { left: acDomRect.left, top: acDomRect.top }
+        activeCoordRef.current = acDomRect.toJSON()
       }
 
-      active = {
+      // active 赋值成 B
+      const newActive = {
         close: () => {
-          _setIsOpen(false)
+          setIsOpen(false)
         },
         getFloatDom: () => {
           return floatDomRef.current
-        }
+        },
+        from: '',
+        to: name
       }
-      activeRef.current = active
+
+      newActive.from = active?.to
+      newActive.to = name
+
+      setActive(newActive)
+      activeRef.current = newActive
     } else {
       active = null
     }
-
-    setIsOpen(val)
   }
 
   const { shouldMount, setDomRef } = useAnTransition({
     open: isOpen,
-    keyframes: activeCoordRef.current
-      ? dom => {
-          const domRect = dom.getBoundingClientRect()
+    keyframes:
+      active?.from && active?.to
+        ? dom => {
+            const domRect = dom.getBoundingClientRect()
 
-          return [
-            { left: toPx(activeCoordRef.current.left), top: toPx(activeCoordRef.current.top) },
-            { left: toPx(domRect.left), top: toPx(domRect.top) }
-          ]
-        }
-      : openKfs
+            console.log(active)
+            console.log(eleDom[active.from], eleDom[active.to])
+            const fromRect = eleDom[active.from].getBoundingClientRect()
+            const toRect = eleDom[active.to].getBoundingClientRect()
+
+            console.log(fromRect, toRect)
+
+            const acRect = activeCoordRef.current
+
+            let to = active.from === name ? fromRect : toRect
+            let from = active.from === name ? toRect : fromRect
+
+            return [
+              {
+                left: toPx(fromRect.left),
+                top: toPx(fromRect.top),
+                width: toPx(fromRect.width),
+                height: toPx(fromRect.height),
+                opacity: 0
+              },
+              {
+                left: toPx(toRect.left),
+                top: toPx(toRect.top),
+                width: toPx(toRect.width),
+                height: toPx(toRect.height),
+                opacity: 1
+              }
+            ]
+          }
+        : openKfs
   })
 
   const { refs, floatingStyles, context } = useFloating({
@@ -92,9 +136,17 @@ export default function Tooltip(props: Props) {
       {shouldMount && (
         <Portal>
           <div
-            ref={mergeRefs([refs.setFloating, setDomRef, floatDomRef])}
+            data-name={name}
+            ref={mergeRefs([
+              refs.setFloating,
+              setDomRef,
+              floatDomRef,
+              el => {
+                eleDom[name] = el
+              }
+            ])}
             {...getFloatingProps()}
-            className="shadow-xl"
+            className="shadow-xl whitespace-nowrap overflow-hidden"
             style={{ ...floatingStyles, borderRadius: 8 }}
           >
             {content}

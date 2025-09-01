@@ -76,18 +76,19 @@ export function usePreviousRef<T>(state: T): RefObject<T> {
 
 type Animate = {
   open: boolean
+  hasAni?: boolean
   appear?: boolean // 首次渲染时是否有动画
   keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
   keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
 }
 
 const options: KeyframeAnimationOptions = {
-  duration: 200,
+  duration: 1000,
   easing: 'ease'
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear = true, open, keyframes, keyframesOut } = config
+  const { appear = true, open, hasAni, keyframes, keyframesOut } = config
   const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
@@ -145,9 +146,13 @@ export const useAnTransition = (config: Animate) => {
       return
     }
 
+    domRef.current.style.overflow = 'hidden'
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
+    console.log(_kf)
     aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
-    aniRef.current.onfinish = () => {}
+    aniRef.current.onfinish = () => {
+      domRef.current.style.overflow = ''
+    }
   }
 
   const close = (onfinish?: () => void) => {
@@ -155,16 +160,19 @@ export const useAnTransition = (config: Animate) => {
       return
     }
 
+    domRef.current.style.overflow = 'hidden'
     const outKfs = keyframesOut || keyframes
     const kfs = isFunction(outKfs) ? outKfs(domRef.current) : outKfs
     const _kfs = keyframesOut ? kfs : kfs.slice().reverse()
     aniRef.current = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
     aniRef.current.onfinish = () => {
       onfinish?.()
+
+      domRef.current.style.overflow = ''
     }
   }
 
-  return { shouldMount, setDomRef }
+  return { shouldMount, setDomRef, aniRef }
 }
 
 export interface Options<T> {

@@ -4,6 +4,8 @@ import { Portal } from 'rmst-design'
 import Tooltip from './Tooltip/Tooltip'
 import { TooltipProvider } from './Tooltip/TooltipContext'
 
+import './style.less'
+
 const useMyFloating = (isOpen, setIsOpen) => {
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -74,6 +76,7 @@ export default function AHome() {
 
   return (
     <div>
+      <hr />
       <button
         onClick={() => {
           const aaTarget = document.querySelector('#aaTarget') as HTMLDivElement
