@@ -79,19 +79,20 @@ export default function Tooltip(props: Props) {
     keyframes:
       active?.from && active?.to
         ? dom => {
-            const domRect = dom.getBoundingClientRect()
-
-            console.log(active)
+            console.log(name)
             console.log(eleDom[active.from], eleDom[active.to])
-            const fromRect = eleDom[active.from].getBoundingClientRect()
-            const toRect = eleDom[active.to].getBoundingClientRect()
-
+            const fromRect = eleDom[active.from].getBoundingClientRect().toJSON()
+            const toRect = eleDom[active.to].getBoundingClientRect().toJSON()
             console.log(fromRect, toRect)
 
-            const acRect = activeCoordRef.current
+            console.log('--')
 
-            let to = active.from === name ? fromRect : toRect
-            let from = active.from === name ? toRect : fromRect
+            if (name === 'A') {
+              return [
+                { left: toPx(fromRect.left), opacity: 0 },
+                { left: toPx(toRect.left), opacity: 1 }
+              ]
+            }
 
             return [
               {

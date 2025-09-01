@@ -148,7 +148,6 @@ export const useAnTransition = (config: Animate) => {
 
     domRef.current.style.overflow = 'hidden'
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    console.log(_kf)
     aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
     aniRef.current.onfinish = () => {
       domRef.current.style.overflow = ''
