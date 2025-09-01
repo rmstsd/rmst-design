@@ -28,37 +28,28 @@ const setActive = value => {
 }
 
 const eleDom = {}
+let eleRect = {}
 
 export default function Tooltip(props: Props) {
   const { name, children, content } = props
 
   const [isOpen, setIsOpen] = useState(false)
-  const [hasAni, setHasAni] = useState(true)
 
-  const activeCoordRef = useRef<DOMRect>(null)
   const activeRef = useRef(null)
 
   const _setIsOpen = (bool: boolean) => {
-    setHasAni(true)
     setIsOpen(bool)
-    activeCoordRef.current = null
 
     if (bool) {
       // 当 B 打开的时候, 关闭上一个
       if (active && active !== activeRef.current) {
-        let acDomRect = active.getFloatDom().getBoundingClientRect() as DOMRect
-
         active.close()
-        activeCoordRef.current = acDomRect.toJSON()
       }
 
       // active 赋值成 B
       const newActive = {
         close: () => {
           setIsOpen(false)
-        },
-        getFloatDom: () => {
-          return floatDomRef.current
         },
         from: '',
         to: name
@@ -70,7 +61,8 @@ export default function Tooltip(props: Props) {
       setActive(newActive)
       activeRef.current = newActive
     } else {
-      active = null
+      // 动画执行结束后, 设为 null
+      // active = null
     }
   }
 
@@ -79,22 +71,26 @@ export default function Tooltip(props: Props) {
     keyframes:
       active?.from && active?.to
         ? dom => {
-            console.log(name)
-            console.log(eleDom[active.from], eleDom[active.to])
-            const fromRect = eleDom[active.from].getBoundingClientRect().toJSON()
-            const toRect = eleDom[active.to].getBoundingClientRect().toJSON()
-            console.log(fromRect, toRect)
+            console.log(`${active.from} -> ${active.to}`)
 
-            console.log('--')
-
-            if (name === 'A') {
-              return [
-                { left: toPx(fromRect.left), opacity: 0 },
-                { left: toPx(toRect.left), opacity: 1 }
-              ]
+            if (!eleRect[active.from]) {
+              eleRect[active.from] = eleDom[active.from].getBoundingClientRect().toJSON()
+            }
+            if (!eleRect[active.to]) {
+              eleRect[active.to] = eleDom[active.to].getBoundingClientRect().toJSON()
             }
 
-            return [
+            let fromRect = eleRect[active.from]
+            let toRect = eleRect[active.to]
+
+            if (active.from === name) {
+              let temp = fromRect
+
+              fromRect = toRect
+              toRect = temp
+            }
+
+            const kf = [
               {
                 left: toPx(fromRect.left),
                 top: toPx(fromRect.top),
@@ -110,8 +106,20 @@ export default function Tooltip(props: Props) {
                 opacity: 1
               }
             ]
+            console.log(name, cloneDeep(kf))
+            return kf
           }
-        : openKfs
+        : openKfs,
+
+    onFinish: () => {
+      if (!isOpen) {
+        if (active && active === activeRef.current) {
+          setActive(null)
+          activeRef.current = null
+        }
+      }
+      eleRect = {}
+    }
   })
 
   const { refs, floatingStyles, context } = useFloating({
@@ -124,7 +132,7 @@ export default function Tooltip(props: Props) {
   const floatDomRef = useRef<HTMLDivElement>(null)
 
   const click = useClick(context, { event: 'click' })
-  const dismiss = useDismiss(context, { outsidePress: false, outsidePressEvent: 'click' })
+  const dismiss = useDismiss(context, { outsidePress: true, outsidePressEvent: 'click' })
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss])
 
   const referenceProps = getReferenceProps()

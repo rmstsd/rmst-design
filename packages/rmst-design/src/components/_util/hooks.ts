@@ -76,19 +76,19 @@ export function usePreviousRef<T>(state: T): RefObject<T> {
 
 type Animate = {
   open: boolean
-  hasAni?: boolean
   appear?: boolean // 首次渲染时是否有动画
   keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
   keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
+  onFinish?: () => void
 }
 
 const options: KeyframeAnimationOptions = {
-  duration: 1000,
+  duration: 2000,
   easing: 'ease'
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear = true, open, hasAni, keyframes, keyframesOut } = config
+  const { appear = true, open, keyframes, keyframesOut, onFinish } = config
   const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
@@ -148,9 +148,11 @@ export const useAnTransition = (config: Animate) => {
 
     domRef.current.style.overflow = 'hidden'
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
+    // console.log(name, _kf)
     aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
     aniRef.current.onfinish = () => {
       domRef.current.style.overflow = ''
+      onFinish()
     }
   }
 
@@ -166,6 +168,7 @@ export const useAnTransition = (config: Animate) => {
     aniRef.current = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
     aniRef.current.onfinish = () => {
       onfinish?.()
+      onFinish()
 
       domRef.current.style.overflow = ''
     }
