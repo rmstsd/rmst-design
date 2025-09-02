@@ -3,7 +3,7 @@ import type { SetStateAction } from 'react'
 import { on } from './dom'
 import clsx from 'clsx'
 import { InteractProps } from './ConfigProvider'
-import { isFunction, isUndefined } from './is'
+import { isFunction } from './is'
 import { useIsSSR } from './ssr'
 
 // 严格模式下有问题 无法解决
@@ -79,16 +79,15 @@ type Animate = {
   appear?: boolean // 首次渲染时是否有动画
   keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
   keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
-  onFinish?: () => void
 }
 
 const options: KeyframeAnimationOptions = {
-  duration: 2000,
+  duration: 300,
   easing: 'ease'
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear = true, open, keyframes, keyframesOut, onFinish } = config
+  const { appear = true, open, keyframes, keyframesOut } = config
   const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
@@ -115,15 +114,13 @@ export const useAnTransition = (config: Animate) => {
     aniRef.current?.cancel()
 
     const execTrans = () => {
-      requestAnimationFrame(() => {
-        if (open) {
-          show()
-        } else {
-          close(() => {
-            setShouldMount(false)
-          })
-        }
-      })
+      if (open) {
+        show()
+      } else {
+        close(() => {
+          setShouldMount(false)
+        })
+      }
     }
 
     if (firstMountRef.current) {
@@ -146,14 +143,9 @@ export const useAnTransition = (config: Animate) => {
       return
     }
 
-    domRef.current.style.overflow = 'hidden'
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    // console.log(name, _kf)
     aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
-    aniRef.current.onfinish = () => {
-      domRef.current.style.overflow = ''
-      onFinish()
-    }
+    aniRef.current.onfinish = () => {}
   }
 
   const close = (onfinish?: () => void) => {
@@ -161,16 +153,12 @@ export const useAnTransition = (config: Animate) => {
       return
     }
 
-    domRef.current.style.overflow = 'hidden'
     const outKfs = keyframesOut || keyframes
     const kfs = isFunction(outKfs) ? outKfs(domRef.current) : outKfs
     const _kfs = keyframesOut ? kfs : kfs.slice().reverse()
     aniRef.current = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
     aniRef.current.onfinish = () => {
       onfinish?.()
-      onFinish()
-
-      domRef.current.style.overflow = ''
     }
   }
 

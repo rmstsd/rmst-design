@@ -1,12 +1,11 @@
-import { useClick, useDismiss, useFloating, useInteractions } from '@floating-ui/react'
+import { useClick, useDismiss, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { cloneElement, PropsWithChildren, ReactNode, use, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 import { Portal } from 'rmst-design'
-import { TtMapValue, TooltipContext } from './TooltipContext'
-import { useAnTransition } from '../../../../../rmst-design/src/components/_util/hooks'
 import { cloneDeep } from 'es-toolkit'
+import { useMemoizedFn } from 'ahooks'
 
-const openKfs = [
+const defaultOpenKfs = [
   { transform: 'translateY(100px)', opacity: 0 },
   { transform: 'translateY(0)', opacity: 1 }
 ]
@@ -20,107 +19,87 @@ const toPx = (value: number) => {
   return `${value}px`
 }
 
-let active
+const options: KeyframeAnimationOptions = { duration: 2000, fill: 'forwards' }
 
-const setActive = value => {
-  active = value
-  window.active = value
-}
-
-const eleDom = {}
-let eleRect = {}
+const mm = {}
 
 export default function Tooltip(props: Props) {
   const { name, children, content } = props
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const activeRef = useRef(null)
+  const nextTickOpen = useMemoizedFn(() => {
+    const otherNames = Object.keys(mm).filter(k => k !== name)
+    const hasOther = otherNames.length > 0
+
+    aniRef.current?.cancel()
+
+    if (hasOther) {
+      const [otName] = otherNames
+
+      const otherState = mm[otName].getState()
+
+      const otherDom = otherState.floatDomRef.current
+
+      const otherRect = otherDom.getBoundingClientRect()
+      const thisRect = floatDomRef.current.getBoundingClientRect()
+
+      const kfs: Keyframe[] = [
+        { left: toPx(otherRect.left), top: toPx(otherRect.top), width: toPx(otherRect.width), height: toPx(otherRect.height) },
+        { left: toPx(thisRect.left), top: toPx(thisRect.top), width: toPx(thisRect.width), height: toPx(thisRect.height) }
+      ]
+
+      const openKfs = cloneDeep(kfs)
+      openKfs[0].opacity = 0
+      openKfs[1].opacity = 1
+
+      const closeKfs = cloneDeep(kfs)
+      closeKfs[0].opacity = 1
+      closeKfs[1].opacity = 0
+
+      aniRef.current = floatDomRef.current.animate(openKfs, options)
+
+      // 关闭上一个
+      otherState.aniRef.current?.cancel()
+      otherState.aniRef.current = otherDom.animate(closeKfs, options)
+      otherState.aniRef.current.onfinish = () => {
+        otherState.setShouldMount(false)
+        Reflect.deleteProperty(mm, otName)
+      }
+    } else {
+      aniRef.current = floatDomRef.current.animate(defaultOpenKfs, options)
+    }
+  })
+
+  const nextTickClose = useMemoizedFn(() => {
+    const otherNames = Object.keys(mm).filter(k => k !== name)
+    const hasOther = otherNames.length > 0
+    if (hasOther) {
+      return
+    }
+
+    aniRef.current = floatDomRef.current.animate(defaultOpenKfs[0], options)
+    aniRef.current.onfinish = () => {
+      setShouldMount(false)
+      Reflect.deleteProperty(mm, name)
+    }
+  })
+
+  const aniRef = useRef<Animation>(null)
+
+  const getState = useMemoizedFn(() => {
+    return { shouldMount, floatDomRef, setShouldMount, aniRef }
+  })
 
   const _setIsOpen = (bool: boolean) => {
     setIsOpen(bool)
 
     if (bool) {
-      // 当 B 打开的时候, 关闭上一个
-      if (active && active !== activeRef.current) {
-        active.close()
-      }
-
-      // active 赋值成 B
-      const newActive = {
-        close: () => {
-          setIsOpen(false)
-        },
-        from: '',
-        to: name
-      }
-
-      newActive.from = active?.to
-      newActive.to = name
-
-      setActive(newActive)
-      activeRef.current = newActive
+      mm[name] = { nextTick: nextTickOpen, getState }
     } else {
-      // 动画执行结束后, 设为 null
-      // active = null
+      mm[name] = { nextTick: nextTickClose, getState }
     }
   }
-
-  const { shouldMount, setDomRef } = useAnTransition({
-    open: isOpen,
-    keyframes:
-      active?.from && active?.to
-        ? dom => {
-            console.log(`${active.from} -> ${active.to}`)
-
-            if (!eleRect[active.from]) {
-              eleRect[active.from] = eleDom[active.from].getBoundingClientRect().toJSON()
-            }
-            if (!eleRect[active.to]) {
-              eleRect[active.to] = eleDom[active.to].getBoundingClientRect().toJSON()
-            }
-
-            let fromRect = eleRect[active.from]
-            let toRect = eleRect[active.to]
-
-            if (active.from === name) {
-              let temp = fromRect
-
-              fromRect = toRect
-              toRect = temp
-            }
-
-            const kf = [
-              {
-                left: toPx(fromRect.left),
-                top: toPx(fromRect.top),
-                width: toPx(fromRect.width),
-                height: toPx(fromRect.height),
-                opacity: 0
-              },
-              {
-                left: toPx(toRect.left),
-                top: toPx(toRect.top),
-                width: toPx(toRect.width),
-                height: toPx(toRect.height),
-                opacity: 1
-              }
-            ]
-            console.log(name, cloneDeep(kf))
-            return kf
-          }
-        : openKfs,
-
-    onFinish: () => {
-      if (!isOpen) {
-        if (active && active === activeRef.current) {
-          setActive(null)
-          activeRef.current = null
-        }
-      }
-      eleRect = {}
-    }
-  })
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -130,10 +109,27 @@ export default function Tooltip(props: Props) {
   })
 
   const floatDomRef = useRef<HTMLDivElement>(null)
+  const [shouldMount, setShouldMount] = useState(isOpen)
 
-  const click = useClick(context, { event: 'click' })
+  if (isOpen && isOpen !== shouldMount) {
+    setShouldMount(true)
+  }
+
+  useLayoutEffect(() => {
+    if (!floatDomRef.current) {
+      return
+    }
+
+    // 等 useFloating 把位置计算完
+    requestAnimationFrame(() => {
+      mm[name].nextTick()
+    })
+  }, [isOpen])
+
+  const click = useClick(context, { enabled: false, event: 'click' })
+  const hover = useHover(context)
   const dismiss = useDismiss(context, { outsidePress: true, outsidePressEvent: 'click' })
-  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss])
+  const { getReferenceProps, getFloatingProps } = useInteractions([click, hover, dismiss])
 
   const referenceProps = getReferenceProps()
   const childElement = cloneElement(children as any, { ref: mergeRefs([refs.setReference]), ...referenceProps })
@@ -146,14 +142,7 @@ export default function Tooltip(props: Props) {
         <Portal>
           <div
             data-name={name}
-            ref={mergeRefs([
-              refs.setFloating,
-              setDomRef,
-              floatDomRef,
-              el => {
-                eleDom[name] = el
-              }
-            ])}
+            ref={mergeRefs([refs.setFloating, floatDomRef])}
             {...getFloatingProps()}
             className="shadow-xl whitespace-nowrap overflow-hidden"
             style={{ ...floatingStyles, borderRadius: 8 }}

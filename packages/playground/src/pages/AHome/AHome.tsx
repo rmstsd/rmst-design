@@ -2,7 +2,6 @@ import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from
 import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { Portal } from 'rmst-design'
 import Tooltip from './Tooltip/Tooltip'
-import { TooltipProvider } from './Tooltip/TooltipContext'
 
 import './style.less'
 
@@ -96,9 +95,7 @@ export default function AHome() {
       </button>
       <hr />
 
-      <div className="w-40 h-40 bg-gray-300" id="aaTarget">
-        好几个号好几个号好几个号好几个号好几个号好几个号
-      </div>
+      <div className="w-40 h-40 bg-gray-300" id="aaTarget"></div>
 
       <div className="flex justify-evenly">
         <>
@@ -108,7 +105,7 @@ export default function AHome() {
           <Tooltip
             name="B"
             content={
-              <div className="bg-pink-100 p-4 border ">
+              <div className="bg-pink-100 h-full p-4 border ">
                 <div>content BBBBBBBBBBBBBBBBBB</div>
                 <div>content BBBBBBBBBBBBBBBBBB</div>
                 <div>content BBBBBBBBBBBBBBBBBB</div>
@@ -117,10 +114,29 @@ export default function AHome() {
           >
             <button>B</button>
           </Tooltip>
-          <Tooltip name="C" content={<div className="bg-white p-4 border">content C</div>}>
+          <Tooltip
+            name="C"
+            content={
+              <div className="bg-white p-4 border">
+                <div>content CCC</div>
+                <div>content CCCCCC</div>
+                <div>content CCC</div>
+                <div>content CCC</div>
+                <div>content CCC</div>
+              </div>
+            }
+          >
             <button>C</button>
           </Tooltip>
-          <Tooltip name="D" content={<div className="bg-white p-4 border">content D</div>}>
+          <Tooltip
+            name="D"
+            content={
+              <div className="bg-white p-4 border">
+                <div>content DD</div>
+                <div>content DDD</div>
+              </div>
+            }
+          >
             <button>D</button>
           </Tooltip>
         </>
