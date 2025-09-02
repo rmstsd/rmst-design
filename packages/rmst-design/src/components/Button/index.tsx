@@ -27,7 +27,10 @@ export function Button(props: ButtonProps) {
     btnPrefixCls,
     `${btnPrefixCls}-size-${size}`,
     `${btnPrefixCls}-${type}`,
-    { [`${btnPrefixCls}-disabled`]: disabled },
+    {
+      [`${btnPrefixCls}-disabled`]: disabled,
+      [`${btnPrefixCls}-loading`]: loading
+    },
     className
   )
 
@@ -36,16 +39,18 @@ export function Button(props: ButtonProps) {
     keyframes: dom => {
       return [
         { width: '0px', opacity: 0 },
-        { width: '20px', opacity: 1 }
+        { width: `${dom?.offsetWidth}px`, opacity: 1 }
       ]
     }
   })
 
   return (
-    <button {...restProps} className={rootCls} disabled={disabled}>
+    <button {...restProps} className={rootCls} disabled={disabled || loading}>
       {shouldMount && (
         <span className={`${btnPrefixCls}-loading-wrapper`} ref={setDomRef}>
-          <LoaderCircle color="#ddd" size={20} />
+          <span className="loading-icon-wrapper">
+            <LoaderCircle color="#ddd" className="loading-icon rotate-continuously" />
+          </span>
         </span>
       )}
 

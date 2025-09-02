@@ -22,7 +22,7 @@ export default function ButtonDd() {
         >
           small primary
         </Button>
-        <Button size="default" type="outline">
+        <Button size="default" type="outline" loading={isLoading}>
           default outline
         </Button>
         <Button size="large" type="text">

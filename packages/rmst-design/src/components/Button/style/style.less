@@ -6,8 +6,6 @@
 .@{btn-prefix-cls} {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
   padding: 0 12px;
   cursor: pointer;
   border: 1px solid transparent;
@@ -15,7 +13,13 @@
   .propertyTransition(background-color, color, border-color);
 
   &-loading-wrapper {
+    display: inline-flex;
     overflow: hidden;
+
+    .loading-icon-wrapper {
+      display: inline-flex;
+      margin-right: 2px;
+    }
   }
 }
 
@@ -25,6 +29,15 @@
     // 
     height: @current[height];
     font-size: @current[font-size];
+
+    .rmst-btn-loading-wrapper {
+      height: @current[height] - 12px;
+
+      .loading-icon-wrapper,
+      .loading-icon {
+        height: 100%;
+      }
+    }
   }
 }
 
@@ -36,7 +49,7 @@
     color: @current[color];
     border-color: @current[border-color];
 
-    &:hover {
+    &:hover:not(.@{btn-prefix-cls}-loading) {
       @current: @typeMap[@@type][@hover];
       // 
       background-color: @current[background-color];
@@ -61,6 +74,15 @@
     border-color: @current[border-color];
     cursor: not-allowed;
   }
+
+  .@{btn-prefix-cls}-@{type}.@{btn-prefix-cls}-loading {
+    @current: @typeMap[@@type][@disabled];
+    // 
+    background-color: @current[background-color];
+    color: @current[color];
+    border-color: @current[border-color];
+    cursor: default;
+  }
 }
 
 .btn-size(small);
@@ -70,3 +92,19 @@
 .btn-type(primary);
 .btn-type(outline);
 .btn-type(text);
+
+/* 基础旋转样式 */
+.rotate-continuously {
+  animation: rotate 1s linear infinite;
+}
+
+/* 定义旋转动画关键帧 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
