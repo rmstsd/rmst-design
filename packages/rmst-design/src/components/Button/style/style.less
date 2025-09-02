@@ -7,11 +7,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   padding: 0 12px;
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 4px;
-  .propertyTransition(background-color, color, border-color)
+  .propertyTransition(background-color, color, border-color);
+
+  &-loading-wrapper {
+    overflow: hidden;
+  }
 }
 
 .btn-size(@size) {
