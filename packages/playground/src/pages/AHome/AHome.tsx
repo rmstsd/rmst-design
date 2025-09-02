@@ -80,10 +80,12 @@ export default function AHome() {
         onClick={() => {
           const aaTarget = document.querySelector('#aaTarget') as HTMLDivElement
 
-          const ani = aaTarget.animate([{ width: '30px', height: '30px' }], { duration: 1000, fill: 'forwards' })
+          const ani = aaTarget.animate({ width: '10px', height: '10px' }, { duration: 1000, fill: 'forwards' })
 
           setTimeout(() => {
-            ani.cancel()
+            ani.pause()
+
+            aaTarget.animate({ width: '50px', height: '50px' }, { duration: 1000, fill: 'forwards' })
           }, 500)
 
           ani.onfinish = () => {

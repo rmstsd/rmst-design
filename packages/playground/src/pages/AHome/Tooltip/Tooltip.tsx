@@ -32,7 +32,7 @@ export default function Tooltip(props: Props) {
     const otherNames = Object.keys(mm).filter(k => k !== name)
     const hasOther = otherNames.length > 0
 
-    aniRef.current?.cancel()
+    aniRef.current?.pause()
 
     if (hasOther) {
       const [otName] = otherNames
@@ -64,10 +64,15 @@ export default function Tooltip(props: Props) {
       otherState.aniRef.current = otherDom.animate(closeKfs, options)
       otherState.aniRef.current.onfinish = () => {
         otherState.setShouldMount(false)
+        aniRef.current = null
         Reflect.deleteProperty(mm, otName)
       }
     } else {
-      aniRef.current = floatDomRef.current.animate(defaultOpenKfs, options)
+      if (aniRef.current?.playState === 'paused') {
+        aniRef.current = floatDomRef.current.animate(defaultOpenKfs[1], options)
+      } else {
+        aniRef.current = floatDomRef.current.animate(defaultOpenKfs, options)
+      }
     }
   })
 
@@ -81,6 +86,7 @@ export default function Tooltip(props: Props) {
     aniRef.current = floatDomRef.current.animate(defaultOpenKfs[0], options)
     aniRef.current.onfinish = () => {
       setShouldMount(false)
+      aniRef.current = null
       Reflect.deleteProperty(mm, name)
     }
   })
