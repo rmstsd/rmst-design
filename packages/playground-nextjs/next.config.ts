@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
       'rmst-design': path.resolve(__dirname, './../rmst-design/dist/index.js')
     }
 
-    console.log(config.resolve.alias)
     return config
   }
 }
