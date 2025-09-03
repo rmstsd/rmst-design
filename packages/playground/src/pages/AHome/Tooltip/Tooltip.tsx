@@ -9,6 +9,7 @@ const defaultOpenKfs = [
   { transform: 'translateY(100px)', opacity: 0 },
   { transform: 'translateY(0)', opacity: 1 }
 ]
+const options: KeyframeAnimationOptions = { duration: 2000, fill: 'forwards' }
 
 interface Props extends PropsWithChildren {
   name?: string
@@ -19,9 +20,9 @@ const toPx = (value: number) => {
   return `${value}px`
 }
 
-const options: KeyframeAnimationOptions = { duration: 2000, fill: 'forwards' }
-
 const mm = {}
+
+let prevClosedName
 
 export default function Tooltip(props: Props) {
   const { name, children, content } = props
@@ -35,59 +36,79 @@ export default function Tooltip(props: Props) {
     aniRef.current?.pause()
 
     if (hasOther) {
-      const [otName] = otherNames
+      const thisRect = endDomRectRef.current
+      const endKf = {
+        left: toPx(thisRect.left),
+        top: toPx(thisRect.top),
+        width: toPx(thisRect.width),
+        height: toPx(thisRect.height)
+      }
 
-      const otherState = mm[otName].getState()
+      for (const otName of otherNames) {
+        const otherState = mm[otName].getState()
 
-      const otherDom = otherState.floatDomRef.current
+        const otherDom = otherState.floatDomRef.current
+        const otherRect = otherDom.getBoundingClientRect()
 
-      const otherRect = otherDom.getBoundingClientRect()
-      const thisRect = floatDomRef.current.getBoundingClientRect()
+        const kfs: Keyframe[] = [
+          { left: toPx(otherRect.left), top: toPx(otherRect.top), width: toPx(otherRect.width), height: toPx(otherRect.height) },
+          endKf
+        ]
 
-      const kfs: Keyframe[] = [
-        { left: toPx(otherRect.left), top: toPx(otherRect.top), width: toPx(otherRect.width), height: toPx(otherRect.height) },
-        { left: toPx(thisRect.left), top: toPx(thisRect.top), width: toPx(thisRect.width), height: toPx(thisRect.height) }
-      ]
+        const openKfs = cloneDeep(kfs)
+        openKfs[0].opacity = 0
+        openKfs[1].opacity = 1
 
-      const openKfs = cloneDeep(kfs)
-      openKfs[0].opacity = 0
-      openKfs[1].opacity = 1
+        const closeKfs = cloneDeep(kfs)
+        closeKfs[0].opacity = 1
+        closeKfs[1].opacity = 0
 
-      const closeKfs = cloneDeep(kfs)
-      closeKfs[0].opacity = 1
-      closeKfs[1].opacity = 0
+        console.log(openKfs)
 
-      aniRef.current = floatDomRef.current.animate(openKfs, options)
+        aniRef.current = floatDomRef.current.animate(openKfs, options)
+        aniRef.current.onfinish = () => {
+          aniRef.current = null
+        }
 
-      // 关闭上一个
-      otherState.aniRef.current?.cancel()
-      otherState.aniRef.current = otherDom.animate(closeKfs, options)
-      otherState.aniRef.current.onfinish = () => {
-        otherState.setShouldMount(false)
-        aniRef.current = null
-        Reflect.deleteProperty(mm, otName)
+        // 关闭上一个
+        otherState.aniRef.current?.cancel()
+        otherState.aniRef.current = otherDom.animate(closeKfs, options)
+        otherState.aniRef.current.onfinish = () => {
+          otherState.setShouldMount(false)
+          otherState.aniRef.current = null
+          Reflect.deleteProperty(mm, otName)
+        }
       }
     } else {
-      if (aniRef.current?.playState === 'paused') {
+      // 如果已经在运动中, 则有起点, 只需更新终点
+      if (aniRef.current) {
         aniRef.current = floatDomRef.current.animate(defaultOpenKfs[1], options)
+        aniRef.current.onfinish = () => {
+          aniRef.current = null
+        }
       } else {
         aniRef.current = floatDomRef.current.animate(defaultOpenKfs, options)
+        aniRef.current.onfinish = () => {
+          aniRef.current = null
+        }
       }
     }
   })
 
   const nextTickClose = useMemoizedFn(() => {
-    const otherNames = Object.keys(mm).filter(k => k !== name)
-    const hasOther = otherNames.length > 0
-    if (hasOther) {
-      return
-    }
+    for (const key in mm) {
+      const item = mm[key]
 
-    aniRef.current = floatDomRef.current.animate(defaultOpenKfs[0], options)
-    aniRef.current.onfinish = () => {
-      setShouldMount(false)
-      aniRef.current = null
-      Reflect.deleteProperty(mm, name)
+      const state = item.getState()
+
+      state.aniRef.current?.pause()
+
+      state.aniRef.current = state.floatDomRef.current.animate(defaultOpenKfs[0], options)
+      state.aniRef.current.onfinish = () => {
+        state.setShouldMount(false)
+        state.aniRef.current = null
+        Reflect.deleteProperty(mm, key)
+      }
     }
   })
 
@@ -104,10 +125,12 @@ export default function Tooltip(props: Props) {
       mm[name] = { nextTick: nextTickOpen, getState }
     } else {
       mm[name] = { nextTick: nextTickClose, getState }
+
+      prevClosedName = name
     }
   }
 
-  const { refs, floatingStyles, context } = useFloating({
+  const { refs, floatingStyles, context, isPositioned } = useFloating({
     open: isOpen,
     onOpenChange: _setIsOpen,
     placement: 'bottom-start',
@@ -120,6 +143,14 @@ export default function Tooltip(props: Props) {
   if (isOpen && isOpen !== shouldMount) {
     setShouldMount(true)
   }
+
+  const endDomRectRef = useRef<DOMRect>(null)
+
+  useLayoutEffect(() => {
+    if (shouldMount && isPositioned) {
+      endDomRectRef.current = floatDomRef.current.getBoundingClientRect()
+    }
+  }, [shouldMount, isPositioned])
 
   useLayoutEffect(() => {
     if (!floatDomRef.current) {

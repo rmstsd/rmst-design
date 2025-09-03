@@ -10,14 +10,15 @@
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 4px;
+  flex-shrink: 0;
   .propertyTransition(background-color, color, border-color);
 
   &-loading-wrapper {
     display: inline-flex;
     overflow: hidden;
 
-    .loading-icon-wrapper {
-      display: inline-flex;
+    .loading-icon {
+      height: 100%;
       margin-right: 2px;
     }
   }
@@ -31,12 +32,7 @@
     font-size: @current[font-size];
 
     .rmst-btn-loading-wrapper {
-      height: @current[height] - 12px;
-
-      .loading-icon-wrapper,
-      .loading-icon {
-        height: 100%;
-      }
+      height: @current[height] - 14px;
     }
   }
 }
@@ -49,7 +45,7 @@
     color: @current[color];
     border-color: @current[border-color];
 
-    &:hover:not(.@{btn-prefix-cls}-loading) {
+    &:not(.@{btn-prefix-cls}-loading):hover {
       @current: @typeMap[@@type][@hover];
       // 
       background-color: @current[background-color];
@@ -57,7 +53,7 @@
       border-color: @current[border-color];
     }
 
-    &:active {
+    &:not(.@{btn-prefix-cls}-loading):active {
       @current: @typeMap[@@type][@active];
       // 
       background-color: @current[background-color];

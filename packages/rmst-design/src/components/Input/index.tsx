@@ -6,6 +6,7 @@ import { IconWrapper } from '../IconWrapper'
 
 import './style.less'
 import CloseIcon from '../../icons/close'
+import { X } from 'lucide-react'
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, InteractProps {}
 
@@ -67,8 +68,8 @@ export function Input(props: InputProps) {
       />
 
       {canInput && (
-        <IconWrapper onClick={() => {}}>
-          <CloseIcon />
+        <IconWrapper onClick={() => {}} onPointerDown={evt => evt.preventDefault()} style={{ fontSize: 12 }}>
+          <X />
         </IconWrapper>
       )}
     </span>

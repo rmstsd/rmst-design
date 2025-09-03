@@ -48,9 +48,7 @@ export function Button(props: ButtonProps) {
     <button {...restProps} className={rootCls} disabled={disabled || loading}>
       {shouldMount && (
         <span className={`${btnPrefixCls}-loading-wrapper`} ref={setDomRef}>
-          <span className="loading-icon-wrapper">
-            <LoaderCircle color="#ddd" className="loading-icon rotate-continuously" />
-          </span>
+          <LoaderCircle color="currentColor" className="loading-icon rotate-continuously" />
         </span>
       )}
 
