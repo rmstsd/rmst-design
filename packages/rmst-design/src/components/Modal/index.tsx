@@ -3,6 +3,9 @@ import { Mask } from '../Mask'
 import { Portal } from '../Portal'
 import { useAnTransition } from '../_util/hooks'
 
+import { Button } from '../Button'
+import { X } from 'lucide-react'
+
 import './style.less'
 
 interface ModalProps {
@@ -31,6 +34,7 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
       <Portal>
         <div className="rmst-modal-wrapper">
           <Mask open={open}></Mask>
+
           <div
             className="rmst-modal"
             onPointerDown={evt => {
@@ -44,7 +48,13 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
             }}
           >
             <div className="rmst-modal-content" ref={setDomRef}>
-              {children}
+              <div className="rmst-modal-header">
+                <div>标题</div>
+
+                <Button className="close" type="text" icon={<X />} onClick={onCancel} />
+              </div>
+
+              <div className="rmst-modal-body">{children}</div>
             </div>
           </div>
         </div>

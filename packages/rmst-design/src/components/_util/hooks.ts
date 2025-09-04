@@ -18,14 +18,14 @@ export function useIsFirstRender() {
   return renderRef.current
 }
 
-export function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return): (...args: Args) => Return {
+function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return): (...args: Args) => Return {
   const ref = useRef<typeof fn | undefined>(undefined)
   ref.current = fn
 
   return useCallback((...args: Args) => ref.current.apply(void 0, args), [])
 }
 
-export const useClickOutside = (cb: () => void, domRef: React.RefObject<HTMLElement>) => {
+const useClickOutside = (cb: () => void, domRef: React.RefObject<HTMLElement>) => {
   const ecb = useEventCallback(cb)
 
   useEffect(() => {
@@ -82,7 +82,7 @@ type Animate = {
 }
 
 const options: KeyframeAnimationOptions = {
-  duration: 300,
+  duration: 200,
   easing: 'ease'
 }
 

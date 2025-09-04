@@ -11,6 +11,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement>, PropsWith
   ref?: RefObject<HTMLButtonElement>
   type?: 'primary' | 'outline' | 'text'
   loading?: boolean
+  icon?: React.ReactNode
 }
 
 const defaultProps: Partial<ButtonProps> = {
@@ -19,9 +20,11 @@ const defaultProps: Partial<ButtonProps> = {
 }
 
 export function Button(props: ButtonProps) {
-  const { className, children, size = 'primary', disabled, loading, type, ...restProps } = { ...defaultProps, ...props }
+  const { className, children, size = 'primary', disabled, loading, type, icon, ...restProps } = { ...defaultProps, ...props }
   const { prefixCls } = use(ConfigContext)
   const btnPrefixCls = `${prefixCls}-btn`
+
+  const iconOnly = !children
 
   const rootCls = clsx(
     btnPrefixCls,
@@ -29,7 +32,8 @@ export function Button(props: ButtonProps) {
     `${btnPrefixCls}-${type}`,
     {
       [`${btnPrefixCls}-disabled`]: disabled,
-      [`${btnPrefixCls}-loading`]: loading
+      [`${btnPrefixCls}-loading`]: loading,
+      [`${btnPrefixCls}-icon-only`]: iconOnly
     },
     className
   )
@@ -44,13 +48,25 @@ export function Button(props: ButtonProps) {
     }
   })
 
-  return (
-    <button {...restProps} className={rootCls} disabled={disabled || loading}>
-      {shouldMount && (
-        <span className={`${btnPrefixCls}-loading-wrapper`} ref={setDomRef}>
+  const renderIcon = () => {
+    if (shouldMount) {
+      return (
+        <span className={`icon-wrapper ${btnPrefixCls}-loading-wrapper`} ref={setDomRef}>
           <LoaderCircle color="currentColor" className="loading-icon rotate-continuously" />
         </span>
-      )}
+      )
+    }
+
+    if (icon) {
+      return <span className="icon-wrapper">{icon}</span>
+    }
+
+    return null
+  }
+
+  return (
+    <button {...restProps} className={rootCls} disabled={disabled || loading}>
+      {renderIcon()}
 
       {children}
     </button>

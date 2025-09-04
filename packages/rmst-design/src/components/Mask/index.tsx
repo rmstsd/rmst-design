@@ -1,7 +1,8 @@
 import React from 'react'
-import './style.less'
 import { useAnTransition } from '../_util/hooks'
 import { Portal } from '../Portal'
+
+import './style.less'
 
 interface MaskProps extends React.HTMLAttributes<HTMLDivElement> {
   open: boolean

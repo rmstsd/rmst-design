@@ -1,4 +1,5 @@
 import { HTMLAttributes, PropsWithChildren } from 'react'
+import clsx from 'clsx'
 
 import './style.less'
 
@@ -7,7 +8,7 @@ export function IconWrapper(props: PropsWithChildren<IconHoverProps>) {
   const { children, className, ...rest } = props
 
   return (
-    <span {...rest} className="icon-wrapper">
+    <span {...rest} className={clsx('icon-wrapper', className)}>
       {children}
     </span>
   )

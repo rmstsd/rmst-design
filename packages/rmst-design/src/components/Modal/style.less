@@ -13,7 +13,7 @@
 
   &-content {
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 520px;
     max-width: 90%;
     height: 300px;
@@ -21,6 +21,23 @@
     vertical-align: middle;
     text-align: left;
     white-space: normal;
+    border-radius: 4px;
+
+    .rmst-modal-header {
+      display: flex;
+      height: 48px;
+      border-bottom: 1px solid #E7E7E7;
+      align-items: center;
+      padding: 0 16px;
+
+      .close {
+        margin-left: auto;
+      }
+    }
+
+    .rmst-modal-body {
+      padding: 16px;
+    }
   }
 
   &::after {
