@@ -1,8 +1,10 @@
+'use client'
+
 import { Modal } from 'rmst-design'
 import Client from './Client'
 
 export default function Blog() {
-  console.log('test render')
+  console.log('Blog render')
 
   // const p = fetch('http://localhost:1400/test', {
   //   method: 'POST',

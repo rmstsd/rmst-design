@@ -1,22 +1,29 @@
 'use client'
 
 import { OnlyClient } from '@/components/Client'
+import { useRouter } from 'next/navigation'
 import { Suspense, use, useEffect, useState, useSyncExternalStore } from 'react'
 import { Button, Input, Modal, TextEllipsis, useIsSSR } from 'rmst-design'
 
-let syb = () => {
-  return () => {}
-}
-
-function client() {
-  return 2
-}
-
-function server() {
-  return 1
-}
+console.log('ahome mod')
 
 export default function Home() {
+  console.log('home')
+
+  const router = useRouter()
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          router.push('/blog')
+        }}
+      >
+        to blog
+      </button>
+    </div>
+  )
+
   return (
     <OnlyClient>
       <HomeIn />
@@ -26,8 +33,6 @@ export default function Home() {
 
 const HomeIn = () => {
   const [isOpen, setIsOpen] = useState(true)
-
-  const value = useSyncExternalStore(syb, client, server)
 
   const p = new Promise<number>(resolve => {
     setTimeout(() => {
