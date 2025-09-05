@@ -30,24 +30,21 @@ export default function AHome() {
         onClick={() => {
           const aaTarget = document.querySelector('#aaTarget') as HTMLDivElement
 
-          const ani = aaTarget.animate({ width: '10px', height: '10px' }, { duration: 1000, fill: 'forwards' })
+          const ani = aaTarget.animate({ left: '50px' }, { duration: 1000, fill: 'forwards' })
 
           setTimeout(() => {
             ani.pause()
 
-            aaTarget.animate({ width: '50px', height: '50px' }, { duration: 1000, fill: 'forwards' })
+            aaTarget.animate({ left: '100px' }, { duration: 1000, fill: 'forwards' })
           }, 500)
-
-          ani.onfinish = () => {
-            console.log('ff')
-          }
         }}
       >
         执行
       </button>
       <hr />
 
-      <div className="w-40 h-40 bg-gray-300" id="aaTarget"></div>
+      <div className="w-40 h-40 bg-gray-300 absolute bottom-10 left-10" id="aaTarget"></div>
+      <div className="w-40 h-40 bg-gray-500 absolute bottom-40 " style={{ left: 100 }} id="aaTarget"></div>
 
       <div className="flex justify-evenly">
         <>
