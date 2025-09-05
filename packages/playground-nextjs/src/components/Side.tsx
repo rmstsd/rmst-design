@@ -3,6 +3,7 @@
 import clsx from 'clsx'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Scrollbar } from 'rmst-design'
 
 const componentsConfig = [
   {
@@ -93,6 +94,10 @@ const componentsConfig = [
       {
         label: 'Mask',
         path: '/Mask'
+      },
+      {
+        label: 'Scrollbar',
+        path: '/Scrollbar'
       }
     ]
   }
@@ -102,7 +107,7 @@ export default function Side() {
   const pathname = usePathname()
 
   return (
-    <aside className="aside h-screen border-r shrink-0 p-2 overflow-auto " style={{ width: 160 }}>
+    <Scrollbar className="aside h-screen border-r shrink-0" style={{ width: 160 }}>
       {componentsConfig.map(item => (
         <div key={item.group}>
           <div className="text-sm py-2 text-gray-500">{item.group}</div>
@@ -114,6 +119,6 @@ export default function Side() {
           ))}
         </div>
       ))}
-    </aside>
+    </Scrollbar>
   )
 }

@@ -3,7 +3,7 @@ import path from 'path'
 
 const nextConfig: NextConfig = {
   // output: 'export', // Outputs a Single-Page Application (SPA)
-  reactStrictMode: true,
+  reactStrictMode: false,
   turbopack: {
     resolveAlias: {
       'rmst-design': './../rmst-design/dist/index.js'

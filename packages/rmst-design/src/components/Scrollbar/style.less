@@ -1,0 +1,37 @@
+@import '../../style/var.less';
+
+.rmst-scrollbar {
+  position: relative;
+
+  .rmst-scrollbar-view {
+    overflow: auto;
+    height: 100%;
+    scrollbar-width: none;
+
+    .content {
+      display: flow-root;
+    }
+  }
+
+  .track {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    overflow: clip;
+
+    .thumb {
+      width: 100%;
+      touch-action: none;
+      background-color: #ddd;
+      cursor: pointer;
+      .propertyTransition(background-color);
+      border-radius: 99px;
+
+      &:hover {
+        background-color: #ccc;
+      }
+    }
+  }
+}
