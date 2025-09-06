@@ -3,8 +3,8 @@ import clsx from 'clsx'
 
 import { useAnTransition } from '../_util/hooks'
 import ConfigContext from '../_util/ConfigProvider'
-import RightSIcon from '../../icons/rightS'
 import { IconWrapper } from '../IconWrapper'
+import { ChevronRight } from 'lucide-react'
 
 export interface Item {
   onlyKey: string | number
@@ -42,8 +42,8 @@ export default function CollapseItem(props: CollapseItemProps) {
         className={clsx(`${prefixCls}-collapse-item-header`, shouldMount && `${prefixCls}-collapse-item-header-active`)}
         onClick={() => updateKey(onlyKey)}
       >
-        <IconWrapper style={{ transition: 'all 0.2s ease-in-out', transform: `rotate(${expanded ? 90 : 0}deg)` }}>
-          <RightSIcon />
+        <IconWrapper style={{ transform: `rotate(${expanded ? 90 : 0}deg)` }}>
+          <ChevronRight />
         </IconWrapper>
         {title}
       </div>

@@ -1,17 +1,19 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import './style.less'
 import { Mask } from '../Mask'
 import { getPosition } from './util'
 import { on } from '../_util/dom'
 import { Portal } from '../Portal'
 
-interface ImageProps {
-  src: string
-}
+import './style.less'
+import { Button } from '../Button'
+import { X } from 'lucide-react'
+import { useAnTransition } from '../_util/hooks'
+
+interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
 export function Image(props: ImageProps) {
-  const { src } = props
+  const { src, ...restProps } = props
 
   const imageRef = useRef<HTMLImageElement>(null)
   const previewImageRef = useRef<HTMLImageElement>(null)
@@ -58,23 +60,14 @@ export function Image(props: ImageProps) {
     const startRect = imageRef.current.getBoundingClientRect()
     const endRect = previewImage.getBoundingClientRect()
 
-    previewImage.animate(
-      [
-        {
-          left: `${startRect.left}px`,
-          top: `${startRect.top}px`,
-          width: `${startRect.width}px`,
-          height: `${startRect.height}px`
-        },
-        {
-          left: `${endRect.left}px`,
-          top: `${endRect.top}px`,
-          width: `${endRect.width}px`,
-          height: `${endRect.height}px`
-        }
-      ],
-      { duration: 300, easing: 'ease-in-out' }
-    )
+    const objectFit = getComputedStyle(imageRef.current).objectFit
+    previewImage.style.objectFit = objectFit
+
+    const kfs = [
+      { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
+      { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
+    ]
+    previewImage.animate(kfs, { duration: 300, easing: 'ease' })
   }
 
   const hide = () => {
@@ -87,23 +80,11 @@ export function Image(props: ImageProps) {
     const startRect = previewImage.getBoundingClientRect()
     const endRect = imageRef.current.getBoundingClientRect()
 
-    animationRef.current = previewImage.animate(
-      [
-        {
-          left: `${startRect.left}px`,
-          top: `${startRect.top}px`,
-          width: `${startRect.width}px`,
-          height: `${startRect.height}px`
-        },
-        {
-          left: `${endRect.left}px`,
-          top: `${endRect.top}px`,
-          width: `${endRect.width}px`,
-          height: `${endRect.height}px`
-        }
-      ],
-      { duration: 300, easing: 'ease-in-out', fill: 'forwards' }
-    )
+    const kfs = [
+      { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
+      { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
+    ]
+    animationRef.current = previewImage.animate(kfs, { duration: 300, easing: 'ease', fill: 'forwards' })
 
     animationRef.current.onfinish = () => {
       setPreviewImageStyle({})
@@ -112,14 +93,17 @@ export function Image(props: ImageProps) {
     }
   }
 
+  const { shouldMount, setDomRef } = useAnTransition({ open: display, keyframes: [{ opacity: 0 }, { opacity: 1 }] })
+
   return (
     <>
-      <img src={src} ref={imageRef} style={{ maxWidth: 400 }} onClick={handleOriginClick}></img>
+      <img {...restProps} src={src} ref={imageRef} onClick={handleOriginClick}></img>
 
       {preview && (
         <Portal>
           <div className="rmst-preview-image-container">
             <Mask onClick={hide} open={display} />
+
             <img
               className="preview-image"
               ref={previewImageRef}
@@ -127,6 +111,8 @@ export function Image(props: ImageProps) {
               style={previewImageStyle}
               onLoad={onPreviewImageLoad}
             />
+
+            {shouldMount && <Button ref={setDomRef} className="close" icon={<X />} onClick={hide} type="text"></Button>}
           </div>
         </Portal>
       )}

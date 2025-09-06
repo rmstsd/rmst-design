@@ -1,17 +1,19 @@
 import clsx from 'clsx'
 import { use, useRef } from 'react'
+import { X } from 'lucide-react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { useInteract } from '../_util/hooks'
 import { IconWrapper } from '../IconWrapper'
 
 import './style.less'
-import CloseIcon from '../../icons/close'
-import { X } from 'lucide-react'
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, InteractProps {}
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'>, InteractProps {
+  value?: string
+  onChange?: (value: string) => void
+}
 
 export function Input(props: InputProps) {
-  const { className, size, readOnly, disabled, ...rest } = props
+  const { className, size, readOnly, disabled, value, onChange, placeholder, ...rest } = props
 
   const { prefixCls, size: ctxSize } = use(ConfigContext)
 
@@ -39,7 +41,7 @@ export function Input(props: InputProps) {
 
   const onKeyDownHandler = (evt: React.KeyboardEvent<HTMLInputElement>) => {
     if (evt.key === 'Tab') {
-      interact.setIsFocused(false)
+      // interact.setIsFocused(false)
     }
   }
 
@@ -50,6 +52,10 @@ export function Input(props: InputProps) {
       className={wrapperCls}
       ref={interact.domRef}
       onClick={() => {
+        if (disabled) {
+          return
+        }
+
         interact.setIsFocused(true)
         inputRef.current?.focus()
       }}
@@ -58,17 +64,19 @@ export function Input(props: InputProps) {
         {...rest}
         ref={inputRef}
         type="text"
+        value={value}
         readOnly={readOnly}
         disabled={disabled}
         className={inputCls}
         onFocus={() => onFocusChange(true)}
         onBlur={() => onFocusChange(false)}
         onKeyDown={onKeyDownHandler}
-        placeholder="placeholder"
+        onChange={evt => onChange?.(evt.target.value)}
+        placeholder={placeholder}
       />
 
       {canInput && (
-        <IconWrapper onClick={() => {}} onPointerDown={evt => evt.preventDefault()} style={{ fontSize: 12 }}>
+        <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
           <X />
         </IconWrapper>
       )}

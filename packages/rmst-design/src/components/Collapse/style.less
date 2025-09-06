@@ -13,10 +13,18 @@
     &-header {
       padding: 10px 15px;
       cursor: pointer;
-      border-bottom: 1px solid transparent; // 关键
+      border-bottom: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
       &-active {
         border-color: #ddd;
+      }
+
+      .rmst-icon-wrapper {
+        .propertyTransition(transform);
+        flex-shrink: 0;
       }
     }
 

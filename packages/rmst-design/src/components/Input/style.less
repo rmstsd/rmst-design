@@ -6,9 +6,8 @@
 .@{input-wrapper-prefix-cls} {
   width: 100%;
   display: inline-flex;
-  padding: 0 10px;
+  padding: 0 8px;
   align-items: center;
-  .propertyTransition(border-color);
 
   .@{input-prefix-cls} {
     width: 100%;
@@ -18,7 +17,18 @@
     background-color: transparent;
 
     &::placeholder {
-      color: #bbbbbb;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .clear {
+    font-size: 12px;
+    display: none;
+  }
+
+  &:hover {
+    .clear {
+      display: block;
     }
   }
 
@@ -36,32 +46,3 @@
 .input-size(small);
 .input-size(default);
 .input-size(large);
-
-// 
-.interact() {
-  & {
-    border: 1px solid #bcbcbc;
-  }
-
-  &:hover:not(&-focus):not(&-disabled) {
-    border-color: @input-hover-border-color;
-  }
-
-  &-focus {
-    border-color: @input-focus-border-color;
-  }
-
-  &-readonly {
-    background-color: @input-readonly-background-color;
-  }
-
-  &-disabled {
-    background-color: @input-disabled-background-color;
-    cursor: not-allowed;
-
-    input {
-      cursor: not-allowed;
-      color: @input-disabled-color;
-    }
-  }
-}

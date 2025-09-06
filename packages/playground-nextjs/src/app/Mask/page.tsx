@@ -8,7 +8,7 @@ export default function MaskDd() {
 
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>显示遮罩层 {String(open)}</Button>
+      <Button onClick={() => setOpen(true)}>显示</Button>
 
       <Mask open={open} isRenderToBody onClick={() => setOpen(false)} style={{ zIndex: 100 }} />
     </div>

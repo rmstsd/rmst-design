@@ -1,4 +1,4 @@
-import { PropsWithChildren, RefObject, use } from 'react'
+import { PropsWithChildren, Ref, RefObject, use } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 
 import { LoaderCircle } from 'lucide-react'
@@ -8,7 +8,7 @@ import clsx from 'clsx'
 import { useAnTransition } from '../_util/hooks'
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement>, PropsWithChildren, InteractProps {
-  ref?: RefObject<HTMLButtonElement>
+  ref?: Ref<HTMLButtonElement>
   type?: 'primary' | 'outline' | 'text'
   loading?: boolean
   icon?: React.ReactNode

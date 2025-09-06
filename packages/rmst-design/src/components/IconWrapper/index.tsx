@@ -8,7 +8,7 @@ export function IconWrapper(props: PropsWithChildren<IconHoverProps>) {
   const { children, className, ...rest } = props
 
   return (
-    <span {...rest} className={clsx('icon-wrapper', className)}>
+    <span {...rest} className={clsx('rmst-icon-wrapper', className)}>
       {children}
     </span>
   )

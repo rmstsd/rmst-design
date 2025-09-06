@@ -1,8 +1,22 @@
 .rmst-preview-image-container {
   position: fixed;
-  z-index: 1000
-}
+  inset: 0;
+  z-index: 1000;
 
-.preview-image {
-  position: fixed;
+  .preview-image {
+    position: absolute;
+  }
+
+  .rmst-btn.close {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: white;
+    border-radius: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  }
 }

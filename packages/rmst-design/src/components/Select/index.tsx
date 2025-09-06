@@ -7,7 +7,7 @@ import { Empty } from '../Empty'
 import { keyboardKey } from '../_util/keycode'
 import getHotkeyHandler from '../_util/getHotkeyHandler'
 
-import './style/style.less'
+import './style.less'
 
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {

@@ -68,6 +68,10 @@ const componentsConfig = [
       {
         label: 'DatePicker',
         path: '/DatePicker'
+      },
+      {
+        label: 'Switch',
+        path: '/Switch'
       }
     ]
   },

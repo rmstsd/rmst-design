@@ -1,0 +1,84 @@
+@import '../../style/var.less';
+
+.rmst-switch {
+  display: inline-block;
+  box-sizing: border-box;
+  background-color: #C9CDD4;
+  border-radius: 99px;
+  border: none;
+  padding: 2px;
+  position: relative;
+  cursor: pointer;
+  .propertyTransition(background-color);
+
+  .switch-dot {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: #FFFFFF;
+    border-radius: 99px;
+    .propertyTransition(left);
+  }
+
+  .switch-text {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    color: #FFFFFF;
+    .propertyTransition(padding-left, padding-right);
+    user-select: none;
+  }
+
+  &:hover {
+    background-color: #B7B7B7;
+  }
+
+  &.checked {
+    background-color: #175CFF;
+
+    &:hover {
+      background-color: #4080FF;
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid #91CAFF;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    background-color: #E5E6EB;
+
+    &.checked {
+      background-color: #94BFFF;
+    }
+  }
+
+  &.size-m {
+    min-width: 32px;
+    height: 20px;
+    font-size: 12px;
+
+    .switch-dot {
+      height: 16px;
+      width: 16px;
+    }
+
+    .switch-text {
+      padding-left: (16px) + 2;
+      padding-right: 2px;
+    }
+
+    &.checked {
+      .switch-dot {
+        left: unset;
+        right: 0;
+      }
+
+      .switch-text {
+        padding-left: 2px;
+      }
+    }
+  }
+}

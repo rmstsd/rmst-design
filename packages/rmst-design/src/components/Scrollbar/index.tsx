@@ -23,14 +23,17 @@ export function Scrollbar(props: ScrollbarProps) {
   useLayoutEffect(() => {
     const viewportDom = viewportDomRef.current
 
-    const ob = new ResizeObserver(() => {
+    const onResize = () => {
       const ratio = viewportDom.offsetHeight / contentDomRef.current.offsetHeight
       const isVisible = contentDomRef.current.offsetHeight > 0 && ratio < 1
       setRatio(ratio)
 
       setVisible(isVisible)
-    })
+    }
 
+    onResize()
+
+    const ob = new ResizeObserver(onResize)
     ob.observe(rootDomRef.current)
     ob.observe(contentDomRef.current)
 
@@ -41,7 +44,6 @@ export function Scrollbar(props: ScrollbarProps) {
 
   useLayoutEffect(() => {
     if (visible) {
-      console.log(ratio)
       const h = ratio * trackDomRef.current.offsetHeight
       setThumbHeight(h)
     }
