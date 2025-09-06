@@ -8,8 +8,18 @@ export default function SwitchDd() {
   const [height, setHeight] = useState(100)
 
   return (
-    <div>
-      <Switch />
+    <div className="">
+      <div className="flex items-end gap-2">
+        <Switch size="small" />
+        <Switch size="default" />
+        <Switch size="large" disabled />
+      </div>
+
+      <div className="flex items-end gap-2 mt-3">
+        <Switch size="default" checkedText="开" unCheckedText="关" />
+        <Switch size="default" checkedText="ON" unCheckedText="OFF-OFF-OFF-OFF-OFF-OFF" />
+        <Switch size="default" checkedText="1" unCheckedText="0" />
+      </div>
     </div>
   )
 }

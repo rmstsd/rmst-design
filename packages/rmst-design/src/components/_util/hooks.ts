@@ -81,7 +81,7 @@ type Animate = {
   keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
 }
 
-const options: KeyframeAnimationOptions = {
+export const kfOptions: KeyframeAnimationOptions = {
   duration: 200,
   easing: 'ease'
 }
@@ -144,7 +144,7 @@ export const useAnTransition = (config: Animate) => {
     }
 
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
-    aniRef.current = domRef.current.animate(_kf, { ...options, fill: 'none' })
+    aniRef.current = domRef.current.animate(_kf, { ...kfOptions, fill: 'none' })
     aniRef.current.onfinish = () => {}
   }
 
@@ -156,7 +156,7 @@ export const useAnTransition = (config: Animate) => {
     const outKfs = keyframesOut || keyframes
     const kfs = isFunction(outKfs) ? outKfs(domRef.current) : outKfs
     const _kfs = keyframesOut ? kfs : kfs.slice().reverse()
-    aniRef.current = domRef.current.animate(_kfs, { ...options, fill: 'forwards' })
+    aniRef.current = domRef.current.animate(_kfs, { ...kfOptions, fill: 'forwards' })
     aniRef.current.onfinish = () => {
       onfinish?.()
     }
