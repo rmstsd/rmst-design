@@ -75,11 +75,11 @@ export function Input(props: InputProps) {
         placeholder={placeholder}
       />
 
-      {canInput && (
+      {value && canInput ? (
         <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
           <X />
         </IconWrapper>
-      )}
+      ) : null}
     </span>
   )
 }

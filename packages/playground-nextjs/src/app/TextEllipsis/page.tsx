@@ -22,7 +22,7 @@ export default function TextEllipsisDd() {
 
   return (
     <div>
-      <Input value={value} onChange={evt => setValue(evt.target.value)}></Input>
+      <Input value={value} onChange={setValue}></Input>
       <TextEllipsis rows={1}>{value}</TextEllipsis>
       <hr />
       <TextEllipsis rows={2}>{value}</TextEllipsis>
