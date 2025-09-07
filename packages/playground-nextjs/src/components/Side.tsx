@@ -7,19 +7,6 @@ import { Scrollbar } from 'rmst-design'
 
 const componentsConfig = [
   {
-    group: '练习',
-    components: [
-      {
-        label: '首页',
-        path: '/ahome'
-      },
-      {
-        label: 'blog',
-        path: '/blog'
-      }
-    ]
-  },
-  {
     group: '基础',
     components: [
       {
@@ -116,11 +103,15 @@ export default function Side() {
         <div key={item.group}>
           <div className="text-sm py-2 text-gray-500">{item.group}</div>
 
-          {item.components.map(cItem => (
-            <Link key={cItem.path} href={cItem.path} className={clsx('block', pathname === cItem.path && 'active')}>
-              {cItem.label}
-            </Link>
-          ))}
+          {item.components.map(cItem => {
+            const href = `/components${cItem.path}`
+
+            return (
+              <Link key={cItem.path} href={href} className={clsx('block', pathname === href && 'active')}>
+                {cItem.label}
+              </Link>
+            )
+          })}
         </div>
       ))}
     </Scrollbar>

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { IsSSRProvider } from 'rmst-design'
-import Side from '@/components/Side'
 
 import '../css'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'rmst-nextjs',
@@ -13,15 +13,27 @@ type RootLayoutProps = {
   children: React.ReactNode
 }
 
+const headerHeight = 48
+
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html>
       <body>
         <IsSSRProvider>
-          <div id="rmst-root" className="flex">
-            <Side />
+          <div id="rmst-root">
+            <header
+              className="border-b flex items-center px-2 fixed top-0 bg-white w-full z-10 gap-2"
+              style={{ height: headerHeight }}
+            >
+              <Link href="/">首页</Link>
 
-            <section className="p-2 flex-grow">{children}</section>
+              <Link href="/components/Button">组件</Link>
+
+              <Link href="/ahome">ahome</Link>
+              <Link href="/blog">blog</Link>
+            </header>
+
+            <div style={{ paddingTop: headerHeight }}>{children}</div>
           </div>
         </IsSSRProvider>
       </body>

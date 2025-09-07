@@ -3,18 +3,19 @@
 }
 
 html,
-body {
+body,
+#rmst-root {
   height: 100%;
   margin: 0;
+  font-size: 14px;
 }
 
 .aside {
   flex-shrink: 0;
   height: 100vh;
-  width: 180px;
   border-right: 1px solid #ccc;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  left: 0;
   transition: margin-left 0.2s;
 
   .rmst-scrollbar-view {
@@ -29,7 +30,7 @@ body {
     padding-left: 14px;
 
     &:hover:not(.active) {
-      background-color: #f3f3f3;
+      background-color: #f6f6f6;
     }
   }
 
