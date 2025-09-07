@@ -13,6 +13,7 @@ export default function SwitchDd() {
         <Switch size="small" />
         <Switch size="default" />
         <Switch size="large" disabled />
+        <Switch size="large" disabled value />
       </div>
 
       <div className="flex items-end gap-2 mt-3">

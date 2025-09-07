@@ -1,14 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { X } from 'lucide-react'
+import { fitAndPosition } from 'object-fit-math'
 
 import { Mask } from '../Mask'
-import { getPosition } from './util'
 import { on } from '../_util/dom'
 import { Portal } from '../Portal'
 
 import './style.less'
 import { Button } from '../Button'
-import { X } from 'lucide-react'
-import { useAnTransition } from '../_util/hooks'
+import { kfOptions, useAnTransition } from '../_util/hooks'
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
@@ -19,8 +19,8 @@ export function Image(props: ImageProps) {
   const previewImageRef = useRef<HTMLImageElement>(null)
   const [previewImageStyle, setPreviewImageStyle] = useState({})
 
-  const [display, setDisplay] = useState(false)
   const [preview, setPreview] = useState(false)
+  const [display, setDisplay] = useState(false)
 
   const animationRef = useRef<Animation>(null)
 
@@ -28,13 +28,11 @@ export function Image(props: ImageProps) {
     setPreview(true)
   }
 
-  const onPreviewImageLoad = () => {
-    const previewImage = previewImageRef.current
-    const { x, y, width, height } = getPosition(previewImage.naturalWidth, previewImage.naturalHeight)
-
-    setDisplay(true)
-    setPreviewImageStyle({ left: `${x}px`, top: `${y}px`, width: `${width}px`, height: `${height}px` })
-  }
+  useLayoutEffect(() => {
+    if (preview) {
+      previewImageRef.current.style.opacity = '0'
+    }
+  }, [preview])
 
   useLayoutEffect(() => {
     if (display) {
@@ -48,15 +46,39 @@ export function Image(props: ImageProps) {
       if (!previewImage) {
         return
       }
-      const { x, y, width, height } = getPosition(previewImage.naturalWidth, previewImage.naturalHeight)
+
+      const { x, y, width, height } = getPosition()
       setPreviewImageStyle({ left: `${x}px`, top: `${y}px`, width: `${width}px`, height: `${height}px` })
     })
 
     return abort
   }, [])
 
+  const getPosition = () => {
+    const previewImage = previewImageRef.current
+
+    const rect = fitAndPosition(
+      { width: window.innerWidth, height: window.innerHeight },
+      { width: previewImage.naturalWidth, height: previewImage.naturalHeight },
+      'contain'
+    )
+
+    return rect
+  }
+
+  const onPreviewImageLoad = () => {
+    const previewImage = previewImageRef.current
+
+    setDisplay(true)
+
+    const { x, y, width, height } = getPosition()
+    setPreviewImageStyle({ left: `${x}px`, top: `${y}px`, width: `${width}px`, height: `${height}px` })
+  }
+
   const show = () => {
     const previewImage = previewImageRef.current
+    previewImage.style.removeProperty('opacity')
+
     const startRect = imageRef.current.getBoundingClientRect()
     const endRect = previewImage.getBoundingClientRect()
 
@@ -67,7 +89,7 @@ export function Image(props: ImageProps) {
       { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
       { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
     ]
-    previewImage.animate(kfs, { duration: 300, easing: 'ease' })
+    previewImage.animate(kfs, kfOptions)
   }
 
   const hide = () => {
@@ -84,7 +106,7 @@ export function Image(props: ImageProps) {
       { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
       { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
     ]
-    animationRef.current = previewImage.animate(kfs, { duration: 300, easing: 'ease', fill: 'forwards' })
+    animationRef.current = previewImage.animate(kfs, { ...kfOptions, fill: 'forwards' })
 
     animationRef.current.onfinish = () => {
       setPreviewImageStyle({})
@@ -108,7 +130,7 @@ export function Image(props: ImageProps) {
               className="preview-image"
               ref={previewImageRef}
               src={src}
-              style={previewImageStyle}
+              style={{ ...previewImageStyle }}
               onLoad={onPreviewImageLoad}
             />
 
