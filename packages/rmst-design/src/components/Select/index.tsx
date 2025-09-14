@@ -1,4 +1,4 @@
-import { RefObject, use, useRef, useState } from 'react'
+import { use, useRef, useState } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 
 import { mergeProps, useInteract } from '../_util/hooks'
@@ -22,6 +22,7 @@ const defaultProps: SelectProps = {
 export function Select(props: SelectProps) {
   props = mergeProps(defaultProps, props)
   const { size, readOnly, disabled, options, placeholder } = props
+
   const { prefixCls, size: ctxSize } = use(ConfigContext)
 
   const merSize = size ?? ctxSize
@@ -77,9 +78,13 @@ export function Select(props: SelectProps) {
       popup={popup}
       autoAlignPopupWidth
       trigger="focus"
-      visible={visible}
-      disabled={readOnly}
+      value={visible}
+      disabled={interact.isDisabledOrReadonly}
       onChange={visible => {
+        if (interact.isDisabledOrReadonly) {
+          return
+        }
+
         setVisible(visible)
         if (visible === false) {
           interact.setIsFocused(false)
@@ -89,8 +94,9 @@ export function Select(props: SelectProps) {
       <div
         className={interact.cls}
         onPointerDown={evt => {
-          evt.preventDefault()
-          inputRef.current.focus()
+          requestAnimationFrame(() => {
+            inputRef.current.focus()
+          })
         }}
         tabIndex={disabled ? undefined : -1}
         onKeyDown={onKeyDown}
@@ -98,9 +104,7 @@ export function Select(props: SelectProps) {
           interact.setIsFocused(true)
         }}
         onBlur={() => {
-          if (readOnly) {
-            interact.setIsFocused(false)
-          }
+          interact.setIsFocused(false)
         }}
       >
         <input ref={inputRef} disabled={disabled} readOnly={readOnly} placeholder={placeholder} value="" onChange={() => {}} />

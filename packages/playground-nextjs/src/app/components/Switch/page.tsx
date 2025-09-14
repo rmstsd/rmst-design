@@ -4,14 +4,12 @@ import { useState } from 'react'
 import { Button, Scrollbar, Switch } from 'rmst-design'
 
 export default function SwitchDd() {
-  const [list, setList] = useState(() => Array.from({ length: 10 }, (_, i) => i))
-  const [height, setHeight] = useState(100)
-
   return (
     <div className="">
       <div className="flex items-end gap-2">
         <Switch size="small" />
-        <Switch size="default" />
+        <Switch size="default" readOnly value />
+        <Switch size="default" readOnly />
         <Switch size="large" disabled />
         <Switch size="large" disabled value />
       </div>

@@ -22,7 +22,7 @@ type TriggerProps = {
   popup?: ReactNode
   children?: ReactNode
   autoAlignPopupWidth?: boolean
-  visible?: boolean
+  value?: boolean
   onChange?: (visible: boolean) => void
   trigger?: 'click' | 'focus' | 'hover'
   disabled?: boolean
@@ -37,9 +37,9 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { visible, popup, children, autoAlignPopupWidth, trigger, disabled } = props
+  const { value, popup, children, autoAlignPopupWidth, trigger, disabled } = props
 
-  const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: visible })
+  const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: value })
 
   const { refs, floatingStyles, context } = useFloating({
     placement: 'bottom-start',
@@ -48,7 +48,7 @@ export function Trigger(props: TriggerProps) {
     whileElementsMounted: autoUpdate,
     transform: false,
     middleware: [
-      offset(4),
+      offset(6),
       flip({ padding: 10 }),
       size({
         apply: ({ rects, elements, availableHeight }) => {

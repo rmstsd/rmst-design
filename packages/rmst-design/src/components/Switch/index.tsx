@@ -1,8 +1,9 @@
 import clsx from 'clsx'
-import './style.less'
 import { InteractProps } from '../_util/ConfigProvider'
-import { kfOptions, useControllableValue } from '../_util/hooks'
+import { kfOptions, useControllableValue, useInteract } from '../_util/hooks'
 import { ReactNode, useLayoutEffect, useRef } from 'react'
+
+import './style.less'
 
 export interface SwitchProps extends InteractProps {
   value?: boolean
@@ -13,16 +14,10 @@ export interface SwitchProps extends InteractProps {
 
 export function Switch(props: SwitchProps) {
   const mergeProps = { ...props }
-  const { value, disabled, readOnly, onChange, checkedText, unCheckedText } = mergeProps
-  const size = mergeProps.size || 'default'
+  const { disabled, readOnly, checkedText, unCheckedText } = mergeProps
 
   const [mergedValue, setMergedValue] = useControllableValue(props)
-
-  const innerDisabled = disabled || readOnly
-
-  function onClick() {
-    setMergedValue?.(!mergedValue)
-  }
+  const interact = useInteract('rmst-switch', { size: mergeProps.size || 'default', readOnly, disabled })
 
   const switchRef = useRef<HTMLButtonElement>(null)
   const prevRectRef = useRef<DOMRect>(null)
@@ -49,13 +44,15 @@ export function Switch(props: SwitchProps) {
     prevRectRef.current = l
   }, [mergedValue])
 
+  function onClick() {
+    if (interact.isDisabledOrReadonly) {
+      return
+    }
+    setMergedValue?.(!mergedValue)
+  }
+
   return (
-    <button
-      disabled={innerDisabled}
-      ref={switchRef}
-      className={clsx('rmst-switch', `rmst-switch-size-${size}`, { disabled, readOnly, checked: mergedValue })}
-      onClick={onClick}
-    >
+    <button disabled={disabled} ref={switchRef} className={clsx(interact.cls, { checked: mergedValue })} onClick={onClick}>
       <span className={clsx('switch-text')}>{mergedValue ? checkedText ?? 'Y' : unCheckedText ?? 'N'}</span>
       <div className={clsx('switch-dot')}></div>
     </button>

@@ -29,9 +29,14 @@ export function DatePicker(props: DatePickerProps) {
     <Trigger
       popup={content}
       trigger="focus"
-      visible={visible}
-      disabled={readOnly}
+      value={visible}
+      autoAlignPopupWidth
+      disabled={interact.isDisabledOrReadonly}
       onChange={visible => {
+        if (interact.isDisabledOrReadonly) {
+          return
+        }
+
         setVisible(visible)
         if (visible === false) {
           interact.setIsFocused(false)
@@ -41,17 +46,16 @@ export function DatePicker(props: DatePickerProps) {
       <div
         className={clsx(interact.cls)}
         onPointerDown={evt => {
-          evt.preventDefault()
-          inputRef.current.focus()
+          requestAnimationFrame(() => {
+            inputRef.current.focus()
+          })
         }}
         tabIndex={disabled ? undefined : -1}
         onFocus={() => {
           interact.setIsFocused(true)
         }}
         onBlur={() => {
-          if (readOnly) {
-            interact.setIsFocused(false)
-          }
+          interact.setIsFocused(false)
         }}
       >
         <input ref={inputRef} readOnly={readOnly} placeholder={placeholder} disabled={disabled} />

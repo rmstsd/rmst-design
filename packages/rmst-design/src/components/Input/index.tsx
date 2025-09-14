@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { ReactNode, use, useRef } from 'react'
 import { X } from 'lucide-react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
@@ -25,7 +24,7 @@ export function Input(props: InputProps) {
 
   const inputPrefixCls = `${prefixCls}-input`
 
-  const interact = useInteract(inputPrefixCls, {})
+  const interact = useInteract(inputPrefixCls, { size: merSize, readOnly, disabled })
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onFocusChange = (isFocus: boolean) => {
@@ -36,32 +35,24 @@ export function Input(props: InputProps) {
     }
   }
 
-  const wrapperCls = clsx(`${prefixCls}-input-wrapper`, {
-    [`${prefixCls}-input-wrapper-focus`]: interact.isFocused,
-    [`${prefixCls}-input-wrapper-readonly`]: readOnly,
-    [`${prefixCls}-input-wrapper-disabled`]: disabled
-  })
-  const inputCls = clsx(inputPrefixCls, `${inputPrefixCls}-size-${merSize}`)
-
   const onKeyDownHandler = (evt: React.KeyboardEvent<HTMLInputElement>) => {
     if (evt.key === 'Tab') {
       // interact.setIsFocused(false)
     }
   }
 
-  const canInput = !(readOnly || disabled)
-
   return (
     <span
-      className={wrapperCls}
+      className={interact.cls}
       ref={interact.domRef}
-      onClick={() => {
-        if (disabled) {
+      onPointerDown={() => {
+        if (interact.isDisabledOrReadonly) {
           return
         }
 
-        interact.setIsFocused(true)
-        inputRef.current?.focus()
+        requestAnimationFrame(() => {
+          inputRef.current?.focus()
+        })
       }}
     >
       <span className="input-content">
@@ -72,7 +63,7 @@ export function Input(props: InputProps) {
           value={value ?? ''}
           readOnly={readOnly}
           disabled={disabled}
-          className={inputCls}
+          className="rmst-native-input"
           onFocus={() => onFocusChange(true)}
           onBlur={() => onFocusChange(false)}
           onKeyDown={onKeyDownHandler}
@@ -80,7 +71,7 @@ export function Input(props: InputProps) {
           placeholder={placeholder}
         />
 
-        {value && canInput ? (
+        {value && !interact.isDisabledOrReadonly ? (
           <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
             <X />
           </IconWrapper>

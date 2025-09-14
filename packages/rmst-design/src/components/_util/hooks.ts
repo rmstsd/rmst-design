@@ -55,7 +55,7 @@ export const useInteract = (componentCls: string, props: InteractProps) => {
     [`${componentCls}-disabled`]: disabled
   })
 
-  return { cls, isFocused, setIsFocused, domRef }
+  return { cls, isFocused, setIsFocused, domRef, isDisabledOrReadonly: readOnly || disabled }
 }
 
 export const mergeProps = <T>(defaultProps: T, componentProps: T) => {

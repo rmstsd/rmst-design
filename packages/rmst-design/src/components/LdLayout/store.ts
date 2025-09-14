@@ -4,6 +4,7 @@ import { config } from './constant'
 
 import { fixConfig, genId, getComponentById, getComponentByName, removeItem } from './config'
 import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
+import { isBrowser } from '../_util/is'
 
 configure({ enforceActions: 'never' })
 
@@ -11,16 +12,17 @@ const tabItem = 'data-component-id'
 
 let isDragging = false
 
-document.addEventListener(
-  'click',
-  evt => {
-    if (isDragging) {
-      evt.stopPropagation()
-    }
-  },
-  { capture: true }
-)
-
+if (isBrowser) {
+  document.addEventListener(
+    'click',
+    evt => {
+      if (isDragging) {
+        evt.stopPropagation()
+      }
+    },
+    { capture: true }
+  )
+}
 class LdStore {
   constructor() {
     makeAutoObservable(this)

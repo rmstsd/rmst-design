@@ -1,7 +1,7 @@
 @import '../../style/var.less';
 @switch-prefix-cls: ~'@{prefixCls}-switch';
 
-.rmst-switch {
+.@{switch-prefix-cls} {
   display: inline-block;
   box-sizing: border-box;
   background-color: #C9CDD4;
@@ -45,7 +45,16 @@
     outline: 1px solid #91CAFF;
   }
 
-  &.disabled {
+  &-readonly {
+    cursor: default;
+    background-color: #dedee3;
+
+    &.checked {
+      background-color: #86b6ff;
+    }
+  }
+
+  &[disabled] {
     cursor: not-allowed;
     background-color: #E5E6EB;
 

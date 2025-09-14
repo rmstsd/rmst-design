@@ -31,7 +31,7 @@ export default function TriggerDd() {
         </div>
       </Trigger>
 
-      <Trigger visible={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
+      <Trigger value={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
         <Button style={{ marginTop: 400 }}>受控</Button>
       </Trigger>
 

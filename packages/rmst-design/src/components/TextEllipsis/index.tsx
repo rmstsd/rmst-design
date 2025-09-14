@@ -32,11 +32,13 @@ export function TextEllipsis(props: TextEllipsisProps) {
       setIsOverflow(contentRef.current.scrollHeight > contentRef.current.clientHeight)
     }
 
+    const ob = new MutationObserver(onResize)
+
     onResize()
-    const ob = new ResizeObserver(() => {
-      onResize()
-    })
-    ob.observe(contentRef.current)
+    // const ob = new ResizeObserver(() => {
+    //   onResize()
+    // })
+    ob.observe(contentRef.current, { childList: true, attributes: true, characterData: true, subtree: true })
 
     return () => {
       ob.disconnect()

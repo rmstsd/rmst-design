@@ -10,6 +10,10 @@ const componentsConfig = [
     group: '基础',
     components: [
       {
+        label: 'LdLayout',
+        path: '/LdLayout'
+      },
+      {
         label: 'Button',
         path: '/Button'
       },
