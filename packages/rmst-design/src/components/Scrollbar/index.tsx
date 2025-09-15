@@ -12,6 +12,7 @@ export function Scrollbar(props: ScrollbarProps) {
   const [thumbHeight, setThumbHeight] = useState(0)
   const [visible, setVisible] = useState(false)
   const [ratio, setRatio] = useState(0)
+  const [shadow, setShadow] = useState({ hasTop: false, hasBottom: false })
 
   const rootDomRef = useRef<HTMLDivElement>(null)
   const viewportDomRef = useRef<HTMLDivElement>(null)
@@ -86,16 +87,31 @@ export function Scrollbar(props: ScrollbarProps) {
   }
 
   const onScroll = () => {
-    let r = viewportDomRef.current.scrollTop / (viewportDomRef.current.scrollHeight - viewportDomRef.current.clientHeight) // 可滚动的高度
+    const viewportDom = viewportDomRef.current
+
+    let r = viewportDom.scrollTop / (viewportDom.scrollHeight - viewportDom.clientHeight) // 可滚动的高度
     r = clamp(r, 0, 1)
     const y = r * (trackDomRef.current.clientHeight - thumbDomRef.current.clientHeight)
 
     setDomThumbY(y)
+
+    setShadow({
+      hasTop: viewportDom.scrollTop > 0,
+      hasBottom: Math.round(viewportDom.scrollTop + viewportDom.clientHeight) < viewportDom.scrollHeight - 1
+    })
   }
 
   return (
     <div {...htmlAttr} ref={rootDomRef} className={clsx('rmst-scrollbar', htmlAttr.className)}>
-      <section className="rmst-scrollbar-view" ref={viewportDomRef} onScroll={onScroll}>
+      <section
+        className={clsx('rmst-scrollbar-view', {
+          top: shadow.hasTop,
+          bottom: shadow.hasBottom,
+          all: shadow.hasTop && shadow.hasBottom
+        })}
+        ref={viewportDomRef}
+        onScroll={onScroll}
+      >
         <div ref={contentDomRef} className="content">
           {children}
         </div>

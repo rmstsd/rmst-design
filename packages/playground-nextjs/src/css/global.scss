@@ -12,13 +12,12 @@ body,
 
 .aside {
   flex-shrink: 0;
-  height: 100vh;
   border-right: 1px solid #ccc;
   position: fixed;
   left: 0;
   transition: margin-left 0.2s;
 
-  .rmst-scrollbar-view {
+  .content {
     padding-left: 12px;
     padding-bottom: 16px;
   }

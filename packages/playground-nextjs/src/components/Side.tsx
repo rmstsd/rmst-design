@@ -102,7 +102,7 @@ export default function Side() {
   const pathname = usePathname()
 
   return (
-    <Scrollbar className="aside h-screen border-r shrink-0" style={{ width: 160 }}>
+    <Scrollbar className="aside border-r shrink-0" style={{ width: 160, height: 'calc(100vh - 48px)' }}>
       {componentsConfig.map(item => (
         <div key={item.group}>
           <div className="text-sm py-2 text-gray-500">{item.group}</div>
