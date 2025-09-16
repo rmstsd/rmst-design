@@ -10,8 +10,12 @@ body,
   font-size: 14px;
 }
 
-body {
+html {
   --header-bg: #fff;
+
+  &.dark {
+    --header-bg: #333;
+  }
 }
 
 .site-header {
