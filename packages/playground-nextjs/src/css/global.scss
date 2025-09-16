@@ -10,6 +10,14 @@ body,
   font-size: 14px;
 }
 
+body {
+  --header-bg: #fff;
+}
+
+.site-header {
+  background-color: var(--header-bg);
+}
+
 .aside {
   flex-shrink: 0;
   height: 100vh;
