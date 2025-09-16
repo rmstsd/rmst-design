@@ -15,14 +15,17 @@ type RootLayoutProps = {
 
 const headerHeight = 48
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+export default async function RootLayout(props: Readonly<RootLayoutProps>) {
+  console.log(Object.keys(props))
+  const { children } = props
+
   return (
-    <html>
+    <html lang="zh-CN">
       <body>
         <IsSSRProvider>
           <div id="rmst-root">
             <header
-              className="border-b flex items-center px-2 fixed top-0 bg-white w-full z-10 gap-2"
+              className="site-header border-b flex items-center px-2 fixed top-0 w-full z-10 gap-2"
               style={{ height: headerHeight }}
             >
               <Link href="/">首页</Link>
