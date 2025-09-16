@@ -11,15 +11,32 @@ body,
 }
 
 html {
-  --header-bg: #fff;
+  --body-bg: #fff;
+
+  &.light {
+    --body-bg: #fff;
+
+    .light-icon {
+      display: none;
+    }
+  }
 
   &.dark {
-    --header-bg: #333;
+    --body-bg: #2b2b2b;
+    color: #fff;
+
+    .dark-icon {
+      display: none;
+    }
   }
 }
 
+body {
+  background-color: var(--body-bg);
+}
+
 .site-header {
-  background-color: var(--header-bg);
+  background-color: var(--body-bg);
 }
 
 .aside {

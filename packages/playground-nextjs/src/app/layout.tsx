@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { IsSSRProvider } from 'rmst-design'
 
-import '../css'
 import Link from 'next/link'
 import { headers } from 'next/headers'
-import Theme from '@/components/Theme'
+import { SelectTheme, ThemeProvider } from '@/components/Theme'
+
+import '../css'
 
 export const metadata: Metadata = {
   title: 'rmst-nextjs',
@@ -25,7 +26,7 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
   return (
     <html lang={header['accept-language']} suppressHydrationWarning>
       <body>
-        <Theme>
+        <ThemeProvider>
           <IsSSRProvider>
             <div id="rmst-root">
               <header
@@ -38,12 +39,14 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
 
                 <Link href="/ahome">ahome</Link>
                 <Link href="/blog">blog</Link>
+
+                <SelectTheme />
               </header>
 
               <div style={{ paddingTop: headerHeight }}>{children}</div>
             </div>
           </IsSSRProvider>
-        </Theme>
+        </ThemeProvider>
       </body>
     </html>
   )
