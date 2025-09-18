@@ -1,6 +1,8 @@
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
 import lyy from '@/assets/lyy.jpg'
+import { getTranslations } from 'next-intl/server'
 
 export default async function Home() {
   // random user
@@ -8,9 +10,12 @@ export default async function Home() {
   const data = await res.json()
   const user = data.results[0]
 
+  // const t = await useTranslations('HomePage')
+  const t = await getTranslations('HomePage')
+
   return (
     <div className="p-4">
-      <center>Home</center>
+      <center>{t('title')}</center>
 
       <Image src={user.picture.large} width={100} height={100} alt="" />
 

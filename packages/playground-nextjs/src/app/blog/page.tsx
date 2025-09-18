@@ -2,6 +2,7 @@
 
 import { Modal } from 'rmst-design'
 import Client from './Client'
+import { useTranslations } from 'next-intl'
 
 export default function Blog() {
   console.log('Blog render')
@@ -12,9 +13,11 @@ export default function Blog() {
   //   body: JSON.stringify({ delay: 10, name: '接口' })
   // }).then(res => res.json())
 
+  const t = useTranslations('HomePage')
+
   return (
     <div className="">
-      <div>blog</div>
+      <div>{t('title')}</div>
 
       {/* <Client p={p} /> */}
 

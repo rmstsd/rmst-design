@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { IsSSRProvider } from 'rmst-design'
-
+import { NextIntlClientProvider } from 'next-intl'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { SelectTheme, ThemeProvider } from '@/components/Theme'
@@ -26,8 +25,8 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
   return (
     <html lang={header['accept-language']} suppressHydrationWarning>
       <body>
-        <ThemeProvider>
-          <IsSSRProvider>
+        <NextIntlClientProvider>
+          <ThemeProvider>
             <div id="rmst-root">
               <header
                 className="site-header border-b flex items-center px-2 fixed top-0 w-full z-10 gap-2"
@@ -45,8 +44,8 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
 
               <div style={{ paddingTop: headerHeight }}>{children}</div>
             </div>
-          </IsSSRProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

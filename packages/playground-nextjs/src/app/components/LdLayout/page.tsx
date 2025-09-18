@@ -1,9 +1,12 @@
+import { ClientOnly } from '@/components/ClientOnly'
 import { LdLayout } from 'rmst-design'
 
 export default function LdLayoutDd() {
   return (
-    <div>
-      <LdLayout />
-    </div>
+    <ClientOnly>
+      <div>
+        <LdLayout />
+      </div>
+    </ClientOnly>
   )
 }

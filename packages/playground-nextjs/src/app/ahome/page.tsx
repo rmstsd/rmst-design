@@ -1,6 +1,5 @@
 'use client'
 
-import { OnlyClient } from '@/components/Client'
 import { useRouter } from 'next/navigation'
 import { Suspense, use, useEffect, useState, useSyncExternalStore } from 'react'
 import { Button, Input, Modal, TextEllipsis, useIsSSR } from 'rmst-design'
@@ -22,12 +21,6 @@ export default function Home() {
         to blog
       </button>
     </div>
-  )
-
-  return (
-    <OnlyClient>
-      <HomeIn />
-    </OnlyClient>
   )
 }
 

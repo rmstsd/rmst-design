@@ -7,7 +7,7 @@ export default function ClientWrapper(props: PropsWithChildren) {
   return props.children
 }
 
-export const OnlyClient = (props: PropsWithChildren) => {
+export const ClientOnly = (props: PropsWithChildren) => {
   const isSSR = useIsSSR()
 
   if (isSSR) {
