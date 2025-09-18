@@ -10,8 +10,8 @@ export function Scrollbar(props: ScrollbarProps) {
   const { children, ...htmlAttr } = props
 
   const [thumbHeight, setThumbHeight] = useState(0)
-  const [visible, setVisible] = useState(false)
   const [ratio, setRatio] = useState(0)
+  const visible = ratio < 1
   const [shadow, setShadow] = useState({ hasTop: false, hasBottom: false })
 
   const rootDomRef = useRef<HTMLDivElement>(null)
@@ -25,11 +25,10 @@ export function Scrollbar(props: ScrollbarProps) {
     const viewportDom = viewportDomRef.current
 
     const onResize = () => {
-      const ratio = viewportDom.offsetHeight / contentDomRef.current.offsetHeight
-      const isVisible = contentDomRef.current.offsetHeight > 0 && ratio < 1
+      const ratio = viewportDom.clientHeight / viewportDomRef.current.scrollHeight
       setRatio(ratio)
 
-      setVisible(isVisible)
+      onScroll()
     }
 
     onResize()
@@ -45,7 +44,7 @@ export function Scrollbar(props: ScrollbarProps) {
 
   useLayoutEffect(() => {
     if (visible) {
-      const h = ratio * trackDomRef.current.offsetHeight
+      const h = ratio * trackDomRef.current.clientHeight
       setThumbHeight(h)
     }
   }, [visible, ratio])
@@ -64,7 +63,6 @@ export function Scrollbar(props: ScrollbarProps) {
 
     const thumbDomDownOffsetY = evt.clientY - thumbDomRef.current.getBoundingClientRect().top
     const viewportDomRect = viewportDomRef.current.getBoundingClientRect()
-    const contentDomRect = contentDomRef.current.getBoundingClientRect()
     const trackDomRect = trackDomRef.current.getBoundingClientRect()
     const thumbDomRect = thumbDomRef.current.getBoundingClientRect()
 
@@ -72,7 +70,8 @@ export function Scrollbar(props: ScrollbarProps) {
       let thumbY = evt.clientY - trackDomRect.top - thumbDomDownOffsetY
       thumbY = clamp(thumbY, 0, trackDomRect.height - thumbDomRect.height)
 
-      const scrollTop = (thumbY / (trackDomRect.height - thumbDomRect.height)) * (contentDomRect.height - viewportDomRect.height)
+      const scrollTop =
+        (thumbY / (trackDomRect.height - thumbDomRect.height)) * (viewportDomRef.current.scrollHeight - viewportDomRect.height)
 
       viewportDomRef.current.scrollTo(0, scrollTop)
     }
