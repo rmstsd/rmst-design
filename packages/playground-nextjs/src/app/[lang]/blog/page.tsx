@@ -13,11 +13,11 @@ export default function Blog() {
   //   body: JSON.stringify({ delay: 10, name: '接口' })
   // }).then(res => res.json())
 
-  const t = useTranslations('HomePage')
+  // const t = useTranslations('HomePage')
 
   return (
     <div className="">
-      <div>{t('title')}</div>
+      {/* <div>{t('title')}</div> */}
 
       {/* <Client p={p} /> */}
 

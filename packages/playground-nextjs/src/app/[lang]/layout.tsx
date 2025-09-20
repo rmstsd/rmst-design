@@ -3,8 +3,15 @@ import { NextIntlClientProvider } from 'next-intl'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { SelectTheme, ThemeProvider } from '@/components/Theme'
+import { Locale } from '@/i18n-config'
 
-import '../css'
+import '@/css'
+import { getDictionary } from '@/dictionaries'
+import { IntlContext } from '@/IntlContext'
+
+// export async function generateStaticParams() {
+//   return [{ lang: 'en' }, { lang: 'zh' }]
+// }
 
 export const metadata: Metadata = {
   title: 'rmst-nextjs',
@@ -13,19 +20,25 @@ export const metadata: Metadata = {
 
 type RootLayoutProps = {
   children: React.ReactNode
+  params: Promise<{ lang: Locale }>
 }
 
 const headerHeight = 48
 
 export default async function RootLayout(props: Readonly<RootLayoutProps>) {
-  const { children } = props
+  const { children, params } = props
 
   const header = Object.fromEntries((await headers()).entries())
 
+  const { lang } = await params
+
+  const dict = await getDictionary(lang)
+  console.log(dict)
+
   return (
-    <html lang={header['accept-language']} suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider>
+        <IntlContext lang={lang} dict={dict}>
           <ThemeProvider>
             <div id="rmst-root">
               <header
@@ -45,7 +58,7 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
               <div style={{ paddingTop: headerHeight }}>{children}</div>
             </div>
           </ThemeProvider>
-        </NextIntlClientProvider>
+        </IntlContext>
       </body>
     </html>
   )

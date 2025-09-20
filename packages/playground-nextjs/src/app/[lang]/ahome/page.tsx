@@ -3,16 +3,22 @@
 import { useRouter } from 'next/navigation'
 import { Suspense, use, useEffect, useState, useSyncExternalStore } from 'react'
 import { Button, Input, Modal, TextEllipsis, useIsSSR } from 'rmst-design'
+import { getDictionary } from '../../../dictionaries'
+import { useIntl } from '@/IntlContext'
 
-console.log('ahome mod')
+export default function Home({ params }) {
+  const { lang } = useIntl()
 
-export default function Home() {
-  console.log('home')
+  // console.log('Home lang', lang)
+
+  // const { lang } = params
 
   const router = useRouter()
 
   return (
     <div>
+      {/* <center>{dict.title}</center> */}
+
       <button
         onClick={() => {
           router.push('/blog')
