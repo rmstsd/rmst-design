@@ -21,9 +21,9 @@ export default function Blog() {
 
       {/* <Client p={p} /> */}
 
-      <Modal>
+      {/* <Modal>
         <div>Modal content</div>
-      </Modal>
+      </Modal> */}
     </div>
   )
 }
