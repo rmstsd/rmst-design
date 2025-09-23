@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' next dev --turbopack -p 4999",
+    "dev": "next dev --turbopack -p 4999",
+    "dev-debug": "cross-env NODE_OPTIONS='--inspect' next dev --turbopack -p 4999",
     "build": "next build --turbopack",
     "start": "next start -p 5000"
   },

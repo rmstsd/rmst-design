@@ -32,9 +32,9 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
 
   const header = Object.fromEntries((await headers()).entries())
 
-  const { locale, lang } = await params
+  const { locale } = await params
 
-  console.log('RootLayout locale', lang)
+  console.log('RootLayout locale', locale)
 
   setRequestLocale(locale)
 
