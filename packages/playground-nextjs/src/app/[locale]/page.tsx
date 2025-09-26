@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import lyy from '@/assets/lyy.jpg'
 
-import Counter from '@/components/Counter'
+import { Locale } from 'next-intl'
 
 export default function Home({ params }: { params: Promise<{ lang: Locale }> }) {
   return (

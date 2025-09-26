@@ -5,7 +5,7 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
-  // output: 'export', // Outputs a Single-Page Application (SPA)
+  output: 'standalone', // Outputs a Single-Page Application (SPA)
   reactStrictMode: false,
   turbopack: {
     resolveAlias: {

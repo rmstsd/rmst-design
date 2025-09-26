@@ -10,6 +10,8 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   }
 }
 
+import Image from 'next/image'
+
 export default async function Home({ params }) {
   const { locale } = await params
   const t = await getTranslations()
