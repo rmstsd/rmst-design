@@ -2,4 +2,6 @@ packages:
   - packages/*
 
 onlyBuiltDependencies:
+  - '@parcel/watcher'
   - core-js
+  - sharp
