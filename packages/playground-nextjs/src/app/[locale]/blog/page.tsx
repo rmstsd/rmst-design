@@ -1,8 +1,9 @@
 'use client'
 
-import { Modal } from 'rmst-design'
+import { Button, Modal } from 'rmst-design'
 import Client from './Client'
 import { useTranslations } from 'next-intl'
+import { useEffectEvent, useState } from 'react'
 
 export default function Blog() {
   console.log('Blog render')
@@ -15,8 +16,18 @@ export default function Blog() {
 
   // const t = useTranslations('HomePage')
 
+  const [count, setCount] = useState(0)
+
+  console.log('--', useEffectEvent)
+
+  // useEffectEvent(() => {
+  //   console.log('Blog useEffectEvent')
+  // })
+
   return (
     <div className="">
+      <Button onClick={() => setCount(count + 1)}>{count}</Button>
+
       {/* <div>{t('title')}</div> */}
 
       {/* <Client p={p} /> */}

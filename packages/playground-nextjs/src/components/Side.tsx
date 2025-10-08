@@ -1,8 +1,7 @@
 'use client'
 
+import { Link, usePathname } from '@/i18n/navigation'
 import clsx from 'clsx'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { Scrollbar } from 'rmst-design'
 
 const componentsConfig = [

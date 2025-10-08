@@ -1,6 +1,6 @@
 import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react'
-import { useId, useLayoutEffect, useRef, useState } from 'react'
-import { Portal } from 'rmst-design'
+import { useEffect, useEffectEvent, useId, useLayoutEffect, useRef, useState } from 'react'
+import { Button, Portal } from 'rmst-design'
 import Tooltip from './Tooltip/Tooltip'
 
 import './style.less'
@@ -22,7 +22,7 @@ const useMyFloating = (isOpen, setIsOpen) => {
 
 const options: KeyframeAnimationOptions = { duration: 3000, fill: 'forwards', easing: 'ease' }
 
-export default function AHome() {
+function AHome() {
   return (
     <div>
       <hr />
@@ -96,4 +96,28 @@ export default function AHome() {
 
 const toPx = (value: number) => {
   return `${value}px`
+}
+
+export default function AHomePage() {
+  const [count, setCount] = useState(0)
+
+  const handleClick = useEffectEvent(() => {
+    console.log(count)
+  })
+
+  useEffect(() => {
+    console.log('handleClick 变化了')
+  }, [handleClick])
+
+  useEffect(() => {
+    setInterval(() => {
+      handleClick()
+    }, 1000)
+  }, [])
+
+  return (
+    <div>
+      <Button onClick={() => setCount(count + 1)}>count: {count}</Button>
+    </div>
+  )
 }

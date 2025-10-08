@@ -25,7 +25,7 @@ function subscribe(onStoreChange: () => void): () => void {
 
 export function useIsSSR(): boolean {
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  // return snapshot
+  return snapshot
 
   return useContext(IsSSRContext)
 }
