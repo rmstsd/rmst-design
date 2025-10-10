@@ -1,9 +1,10 @@
 import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react'
-import { useEffect, useEffectEvent, useId, useLayoutEffect, useRef, useState } from 'react'
+import { Activity, useEffect, useEffectEvent, useId, useLayoutEffect, useRef, useState } from 'react'
 import { Button, Portal } from 'rmst-design'
 import Tooltip from './Tooltip/Tooltip'
 
 import './style.less'
+import { createPortal } from 'react-dom'
 
 const useMyFloating = (isOpen, setIsOpen) => {
   const { refs, floatingStyles, context } = useFloating({
@@ -99,25 +100,41 @@ const toPx = (value: number) => {
 }
 
 export default function AHomePage() {
-  const [count, setCount] = useState(0)
-
-  const handleClick = useEffectEvent(() => {
-    console.log(count)
-  })
-
-  useEffect(() => {
-    console.log('handleClick 变化了')
-  }, [handleClick])
-
-  useEffect(() => {
-    setInterval(() => {
-      handleClick()
-    }, 1000)
-  }, [])
+  const [show, setShow] = useState(true)
+  const [parentCount, setParentCount] = useState(0)
 
   return (
     <div>
-      <Button onClick={() => setCount(count + 1)}>count: {count}</Button>
+      <Button onClick={() => setShow(!show)}>{String(show)}</Button>
+      <Button onClick={() => setParentCount(parentCount + 1)}>{parentCount}</Button>
+
+      <hr />
+
+      <Activity mode={show ? 'visible' : 'hidden'}>
+        <Child parentCount={parentCount} />
+      </Activity>
     </div>
+  )
+}
+
+const Child = ({ parentCount }) => {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    console.log('child mounted')
+
+    return () => {
+      console.log('child unmounted')
+    }
+  }, [])
+
+  return (
+    <>
+      <Button onClick={() => setCount(count + 1)}>{count}</Button>
+      <span style={{ display: 'grid' }}>count: {count}</span>
+
+      <span>parentCount: {parentCount}</span>
+      <input type="text" />
+    </>
   )
 }
