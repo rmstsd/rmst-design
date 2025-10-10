@@ -1,5 +1,5 @@
 import { useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react'
-import { Activity, useEffect, useEffectEvent, useId, useLayoutEffect, useRef, useState } from 'react'
+import { Activity, useEffect, useEffectEvent, useId, useLayoutEffect, useRef, useState, version } from 'react'
 import { Button, Portal } from 'rmst-design'
 import Tooltip from './Tooltip/Tooltip'
 
@@ -102,6 +102,8 @@ const toPx = (value: number) => {
 export default function AHomePage() {
   const [show, setShow] = useState(true)
   const [parentCount, setParentCount] = useState(0)
+
+  console.log('version', version)
 
   return (
     <div>

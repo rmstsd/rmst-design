@@ -3,7 +3,7 @@
 import { Button, Modal } from 'rmst-design'
 import Client from './Client'
 import { useTranslations } from 'next-intl'
-import { useEffectEvent, useState } from 'react'
+import { useEffectEvent, useState, version } from 'react'
 
 export default function Blog() {
   console.log('Blog render')
@@ -18,7 +18,7 @@ export default function Blog() {
 
   const [count, setCount] = useState(0)
 
-  // console.log('--', useEffectEvent)
+  console.log('--', useEffectEvent, version)
 
   // useEffectEvent(() => {
   //   console.log('Blog useEffectEvent')
