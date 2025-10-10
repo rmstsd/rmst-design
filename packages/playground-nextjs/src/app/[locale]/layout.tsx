@@ -10,11 +10,10 @@ import Header, { headerHeight } from '@/components/Header'
 import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 
-// export async function generateStaticParams() {
-//   return [{ lang: 'en' }, { lang: 'zh' }]
-// }
 export function generateStaticParams() {
-  return routing.locales.map(locale => ({ locale }))
+  const staticParams = routing.locales.map(locale => ({ locale }))
+
+  return staticParams
 }
 
 export const metadata: Metadata = {
@@ -30,7 +29,8 @@ type RootLayoutProps = {
 export default async function RootLayout(props: Readonly<RootLayoutProps>) {
   const { children, params } = props
 
-  const header = Object.fromEntries((await headers()).entries())
+  // 调用 headers 会使 static render 失效
+  // const header = Object.fromEntries((await headers()).entries())
 
   const { locale } = await params
 

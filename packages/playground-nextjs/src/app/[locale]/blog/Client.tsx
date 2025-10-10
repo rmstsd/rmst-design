@@ -29,8 +29,6 @@ export default function Client({ p }) {
 }
 
 function Child({ p }) {
-  console.log(p)
-
   let data = use(p)
 
   return (

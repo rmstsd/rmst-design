@@ -18,7 +18,7 @@ export default function Blog() {
 
   const [count, setCount] = useState(0)
 
-  console.log('--', useEffectEvent)
+  // console.log('--', useEffectEvent)
 
   // useEffectEvent(() => {
   //   console.log('Blog useEffectEvent')

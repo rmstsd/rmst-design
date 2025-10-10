@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from 'rmst-design'
 
 export default function ButtonDd() {
+  console.log('button page')
   const [loading, setLoading] = useState(false)
 
   return (

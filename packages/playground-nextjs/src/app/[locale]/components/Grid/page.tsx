@@ -1,7 +1,5 @@
 import { Grid } from 'rmst-design'
 
-console.log(Grid.GridItem)
-
 const { GridItem } = Grid
 
 export default function GridDd() {
