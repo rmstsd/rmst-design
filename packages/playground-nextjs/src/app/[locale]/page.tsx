@@ -7,7 +7,9 @@ import DockLayout, { LayoutData, LayoutBase, TabBase, TabData, DropDirection } f
 import 'rc-dock/dist/rc-dock.css'
 
 import { Locale } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Button } from 'rmst-design'
+import { createPortal } from 'react-dom'
 
 function Child() {
   const [count, setCount] = useState(0)
@@ -33,15 +35,72 @@ const defaultLayout: LayoutData = {
       },
       {
         tabs: [{ id: 'tab2', title: 'tab2', content: <Child /> }]
+      },
+      {
+        tabs: [
+          {
+            id: 'tab3',
+            title: 'tab3',
+            content: (
+              <div>
+                <iframe src="https://www.baidu.com" style={{ height: '100%', width: '100%' }} />
+              </div>
+            )
+          }
+        ]
       }
     ]
   }
 }
 
+let div = document.createElement('div')
+div.className = 'cached'
+
+const ChildC = () => {
+  const [count, setCount] = useState(0)
+
+  return <main onClick={() => setCount(count + 1)}>child {count}</main>
+}
+
+let portal = createPortal(<ChildC />, div)
+
 export default function Home({ params }: { params: Promise<{ lang: Locale }> }) {
+  const [bool, setBool] = useState(true)
+
+  const ref_s = useRef<HTMLDivElement>(null)
+  const ref_t = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    if (bool) {
+      ref_s.current.appendChild(div)
+    } else {
+      ref_t.current.appendChild(div)
+    }
+
+    return () => {
+      div.remove()
+    }
+  }, [bool])
+
   return (
     <div className="p-4 relative" style={{ height: 400 }}>
-      <DockLayout
+      <Button
+        onClick={() => {
+          div.remove()
+          setBool(!bool)
+        }}
+      >
+        {String(bool)}
+      </Button>
+
+      <div>
+        <div className="a" ref={ref_t}></div>
+        <div className="b" ref={ref_s}></div>
+      </div>
+
+      {portal}
+
+      {/* <DockLayout
         dropMode="edge"
         defaultLayout={defaultLayout}
         style={{
@@ -51,7 +110,7 @@ export default function Home({ params }: { params: Promise<{ lang: Locale }> }) 
           right: 10,
           bottom: 10
         }}
-      />
+      /> */}
 
       {/* <center>{dict.title}</center> */}
       {/* <Counter dict={dict} /> */}
