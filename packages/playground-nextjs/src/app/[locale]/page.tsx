@@ -8,7 +8,7 @@ import 'rc-dock/dist/rc-dock.css'
 
 import { Locale } from 'next-intl'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Button } from 'rmst-design'
+import { Button, isClient } from 'rmst-design'
 import { createPortal } from 'react-dom'
 
 function Child() {
@@ -53,8 +53,12 @@ const defaultLayout: LayoutData = {
   }
 }
 
-let div = document.createElement('div')
-div.className = 'cached'
+let div: HTMLDivElement
+if (isClient) {
+  div = document.createElement('div')
+
+  div.className = 'cached'
+}
 
 const ChildC = () => {
   const [count, setCount] = useState(0)
@@ -62,7 +66,11 @@ const ChildC = () => {
   return <main onClick={() => setCount(count + 1)}>child {count}</main>
 }
 
-let portal = createPortal(<ChildC />, div)
+let portal
+
+if (isClient) {
+  portal = createPortal(<ChildC />, div)
+}
 
 export default function Home({ params }: { params: Promise<{ lang: Locale }> }) {
   const [bool, setBool] = useState(true)

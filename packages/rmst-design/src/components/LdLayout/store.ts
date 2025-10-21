@@ -1,14 +1,14 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
 import { findParentNode, IComponent, IConfig } from './config'
 
-import { fixConfig, genId, getComponentById, getComponentByName, removeItem } from './config'
+import { genId, getComponentById, getComponentByName, removeItem } from './config'
 import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
-import { isBrowser } from '../_util/is'
+import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
 
 configure({ enforceActions: 'never' })
 
-if (isBrowser) {
+if (isClient) {
   ;(window as any).__jf = () => ({ isObservable, toJS })
 }
 

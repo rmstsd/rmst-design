@@ -13,7 +13,7 @@ export const Item = observer(({ config }: ItemProps) => {
   const { mode, children = [] } = config
 
   if (mode === 'tabs') {
-    return <Tabs config={config} />
+    return <Tabs config={config as any} />
   }
 
   return (

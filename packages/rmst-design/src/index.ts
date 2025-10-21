@@ -19,3 +19,5 @@ export * from './components/Grid'
 export * from './components/Portal'
 export * from './components/Scrollbar'
 export * from './components/Switch'
+
+export * from './components/_util'

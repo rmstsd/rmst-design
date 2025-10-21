@@ -15,7 +15,7 @@ export const getComponentByName = (name: string, config: IConfig): IComponent =>
   return dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig | null) {
-    if (config.component === name) {
+    if (config.id === name) {
       return { config, parent }
     } else {
       if (config.children) {
