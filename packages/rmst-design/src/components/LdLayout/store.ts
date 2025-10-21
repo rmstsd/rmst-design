@@ -1,5 +1,5 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import { findParentNode, IComponent, IConfig } from './config'
+import { findParentNode, fixLayout, IComponent, IConfig } from './config'
 
 import { genId, getComponentById, getComponentByName, removeItem } from './config'
 import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
@@ -75,6 +75,12 @@ class LdStore {
     }
 
     console.log('source', source)
+    console.log('target', target)
+
+    if (target.children.length === 1 && target.children.some(item => item.id === source.id)) {
+      console.log('不能 ld 了')
+      return
+    }
 
     const sourceParent = findParentNode(source.id, this.layout)
     sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
@@ -84,11 +90,12 @@ class LdStore {
     }
 
     const targetParent = findParentNode(target.id, this.layout)
+    console.log('targetParent', targetParent)
 
     const index = targetParent.children.findIndex(item => item.id === target.id)
 
     if (index === -1) {
-      console.log('意外等于 -1 了')
+      console.log('意外等于 -1 了; 理论上不会出现')
       return
     }
 
@@ -98,8 +105,7 @@ class LdStore {
       (overIndicator === 'bottom' && targetParent.mode === 'column') ||
       (overIndicator === 'top' && targetParent.mode === 'column')
 
-    console.log('target', target)
-    console.log('targetParent', targetParent)
+    // 放置的方向 和 target 的 flex 布局方向 相同
     if (isSameDirection) {
       const config: IConfig = { id: genId(), mode: 'tabs', children: [source] }
 
@@ -129,6 +135,8 @@ class LdStore {
         config.children.splice(index, 0, tabConfig)
       }
     }
+
+    fixLayout(this.layout)
 
     this.layout = cloneDeep(this.layout)
 

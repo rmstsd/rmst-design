@@ -89,3 +89,27 @@ export function findParentNode(id: string, node: IConfig): IConfig {
     }
   }
 }
+
+export function fixLayout(layout: IConfig) {
+  dfs(layout)
+
+  function dfs(node: IConfig) {
+    if (node.mode === 'column' || node.mode === 'row') {
+      if (node.children.length === 1) {
+        const parent = findParentNode(node.id, layout)
+        const index = parent.children.findIndex(p => p.id === node.id)
+
+        if (index === -1) {
+          console.error('fixLayout error')
+          return
+        }
+
+        parent.children.splice(index, 1, node.children[0])
+      }
+
+      for (const item of node.children ?? []) {
+        dfs(item)
+      }
+    }
+  }
+}
