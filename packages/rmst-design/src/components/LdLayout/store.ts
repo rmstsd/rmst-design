@@ -5,6 +5,7 @@ import { genId, getComponentById, getComponentByName, removeItem } from './confi
 import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
+import { DragEvent } from 'react'
 
 configure({ enforceActions: 'never' })
 
@@ -60,14 +61,21 @@ class LdStore {
     ]
   }
 
-  source
+  source // 一个 tab 项
+  sourcePosition = { x: 0, y: 0 }
 
   constructor() {
     makeAutoObservable(this)
   }
 
+  onDrag(evt: DragEvent) {
+    console.log(3)
+    this.sourcePosition = { x: evt.clientX, y: evt.clientY }
+  }
+
   onDrop(overIndicator, target) {
     let { source } = this
+
     source = toJS(source)
 
     if (!source) {
@@ -141,6 +149,40 @@ class LdStore {
     this.layout = cloneDeep(this.layout)
 
     console.log('layout', toJS(this.layout))
+
+    this.source = null
+  }
+
+  onTabItemDrop(targetConfig, index) {
+    let { source } = this
+    source = toJS(source)
+
+    if (!source) {
+      return
+    }
+
+    console.log('source', source)
+    console.log('target', targetConfig)
+
+    const sourceParent = findParentNode(source.id, this.layout)
+
+    const originIndex = sourceParent.children.findIndex(item => item.id === source.id)
+
+    sourceParent.children.splice(originIndex, 1)
+    if (sourceParent.children.length === 0) {
+      removeItem(sourceParent, this.layout)
+    }
+
+    // 在同一个数组内移动, 索引需要调整
+    if (sourceParent.id === targetConfig.id) {
+      if (index > originIndex) {
+        index = index - 1
+      }
+    }
+
+    targetConfig.children.splice(index, 0, this.source)
+
+    this.source = null
   }
 }
 

@@ -22,6 +22,16 @@ export default async function Home({ params }) {
 
   return (
     <div>
+      <div className="flex p-7 relative">
+        <span className="absolute bottom-0 top-0" style={{ width: 20, backgroundColor: 'red' }}></span>
+        <span draggable>12345</span>
+        <span style={{ width: 20, backgroundColor: 'red' }}></span>
+      </div>
+    </div>
+  )
+
+  return (
+    <div>
       <p>{t('title')}</p>
 
       <p>lang: {locale}</p>

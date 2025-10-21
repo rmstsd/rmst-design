@@ -8,6 +8,12 @@ export const LdLayout = observer(function LdLayout() {
   return (
     <div className="rt-ld-layout">
       <Item config={ldStore.layout} />
+
+      {ldStore.source && (
+        <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
+          {ldStore.source.title}
+        </div>
+      )}
     </div>
   )
 })

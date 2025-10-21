@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { IConfig, ITabs } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
@@ -34,6 +34,7 @@ const Tabs = observer(({ config }: TabsProps) => {
   const [selected, setSelected] = useState(tabs[0].id)
 
   const [overIndicator, setOverIndicator] = useState('')
+  const [overTabIndex, setOverTabIndex] = useState(-1)
 
   const onDrop = overIndicator => {
     console.log(overIndicator)
@@ -54,20 +55,61 @@ const Tabs = observer(({ config }: TabsProps) => {
 
   return (
     <div className="tabs" data-id={config.id}>
-      <div className="tab-header relative" draggable>
+      <div className="tab-header relative">
         {config.children?.map((tab, index) => (
-          <div
-            data-component-id={tab}
-            className={clsx('tab-item', { selected: tab.id === selected })}
-            key={index}
-            onClick={() => setSelected(tab.id)}
-            draggable
-            onDragStart={() => {
-              ldStore.source = tab
-            }}
-          >
-            {tab.title}
-          </div>
+          <Fragment key={tab.id}>
+            <div className={clsx('tab-item')} onClick={() => setSelected(tab.id)}>
+              {index === 0 && (
+                <div
+                  className={clsx('tab-item-indicator left', { over: overTabIndex === index })}
+                  onDragOver={evt => evt.preventDefault()}
+                  onDragEnter={() => {
+                    setOverTabIndex(index)
+                  }}
+                  onDragLeave={() => {
+                    setOverTabIndex(-1)
+                  }}
+                  onDrop={() => {
+                    ldStore.onTabItemDrop(config, index)
+                    setOverTabIndex(-1)
+                  }}
+                />
+              )}
+              <div
+                className={clsx('tab-item-content', { selected: tab.id === selected })}
+                draggable
+                onDrag={evt => ldStore.onDrag(evt)}
+                onDragEnd={() => (ldStore.source = null)}
+                onDragExit={() => (ldStore.source = null)}
+                onDragStart={evt => {
+                  ldStore.source = tab
+
+                  evt.dataTransfer.effectAllowed = 'all'
+
+                  const img = new Image()
+                  img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' %3E%3Cpath /%3E%3C/svg%3E"
+                  evt.dataTransfer.setDragImage(img, 0, 0)
+                }}
+              >
+                {tab.title}
+              </div>
+
+              <div
+                className={clsx('tab-item-indicator', { over: overTabIndex === index + 1 })}
+                onDragOver={evt => evt.preventDefault()}
+                onDragEnter={() => {
+                  setOverTabIndex(index + 1)
+                }}
+                onDragLeave={() => {
+                  setOverTabIndex(-1)
+                }}
+                onDrop={() => {
+                  ldStore.onTabItemDrop(config, index + 1)
+                  setOverTabIndex(-1)
+                }}
+              />
+            </div>
+          </Fragment>
         ))}
       </div>
 
