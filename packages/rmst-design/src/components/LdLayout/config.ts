@@ -1,9 +1,19 @@
-export type ITabs = { id: string; children: { id: string; title: string }[] }
+export type ITabs = {
+  id: string
+  children: { id: string; title: string }[]
+  style?: {
+    flexGrow?: number
+  }
+}
 
 export interface IConfig {
   mode?: 'row' | 'column' | 'tabs'
   id: string
   children?: (IConfig | ITabs)[]
+
+  style?: {
+    flexGrow?: number
+  }
 }
 
 export interface IComponent {

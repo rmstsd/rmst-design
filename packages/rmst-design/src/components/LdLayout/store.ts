@@ -69,7 +69,6 @@ class LdStore {
   }
 
   onDrag(evt: DragEvent) {
-    console.log(3)
     this.sourcePosition = { x: evt.clientX, y: evt.clientY }
   }
 
@@ -136,11 +135,16 @@ class LdStore {
       const tabConfig: IConfig = { id: genId(), mode: 'tabs', children: [source] }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
-        config.children.splice(index + 1, 0, tabConfig)
+        config.children.splice(1, 0, tabConfig)
       }
 
       if (overIndicator === 'left' || overIndicator === 'top') {
-        config.children.splice(index, 0, tabConfig)
+        console.log(1)
+        console.log(cloneDeep(config.children))
+        console.log('index', index)
+        config.children.splice(0, 0, tabConfig)
+
+        console.log(cloneDeep(config.children))
       }
     }
 

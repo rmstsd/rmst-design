@@ -1,8 +1,9 @@
 import clsx from 'clsx'
-import { Fragment, useState } from 'react'
+import { Fragment, PointerEvent, useLayoutEffect, useRef, useState } from 'react'
 import { IConfig, ITabs } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
+import { startDrag } from '../_util/drag'
 
 interface ItemProps {
   config: IConfig
@@ -12,14 +13,67 @@ interface ItemProps {
 export const Item = observer(({ config }: ItemProps) => {
   const { mode, children = [] } = config
 
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    config.children.forEach(item => {
+      item.style = { flexGrow: 1 / config.children.length }
+    })
+  }, [])
+
   if (mode === 'tabs') {
     return <Tabs config={config as any} />
   }
 
+  const onPointerDown = (downEvt: PointerEvent, childConfig: IConfig, index: number) => {
+    const container = containerRef.current
+    const containerRect = container.getBoundingClientRect()
+
+    startDrag(downEvt, {
+      onDragStart: () => {},
+      onDragMove: moveEvt => {
+        let distance = 0
+        let size = 0
+
+        if (mode === 'row') {
+          distance = moveEvt.clientX - downEvt.clientX
+          size = containerRect.width
+        } else if (mode === 'column') {
+          distance = moveEvt.clientY - downEvt.clientY
+          size = containerRect.height
+        }
+
+        const delta = distance / size
+
+        const prev = children[index - 1]
+        const next = children[index]
+
+        if (distance < 0) {
+          prev.style.flexGrow += delta
+          next.style.flexGrow -= delta
+        } else {
+          prev.style.flexGrow -= delta
+          next.style.flexGrow += delta
+        }
+
+        console.log(prev.style.flexGrow)
+      },
+      onDragEnd: () => {}
+    })
+  }
+
   return (
-    <div className={clsx('node-item ')} data-id={config.id} style={{ flexDirection: mode }}>
+    <div
+      className={clsx('node-item ')}
+      data-id={config.id}
+      style={{ flexDirection: mode, flexGrow: config.style?.flexGrow || 1 }}
+      ref={containerRef}
+    >
       {children.map((childConfig, index) => (
-        <Item config={childConfig} key={index} />
+        <Fragment key={index}>
+          {index !== 0 && <div className="node-item-divider" onPointerDown={evt => onPointerDown(evt, childConfig, index)} />}
+          <Item config={childConfig} />
+        </Fragment>
       ))}
     </div>
   )
@@ -54,7 +108,7 @@ const Tabs = observer(({ config }: TabsProps) => {
   }
 
   return (
-    <div className="tabs" data-id={config.id}>
+    <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow || 1 }}>
       <div className="tab-header relative">
         {config.children?.map((tab, index) => (
           <Fragment key={tab.id}>
