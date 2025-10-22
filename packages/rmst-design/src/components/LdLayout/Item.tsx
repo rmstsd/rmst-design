@@ -4,6 +4,7 @@ import { IConfig, ITabs } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
 import { startDrag } from '../_util/drag'
+import { clamp } from 'es-toolkit'
 
 interface ItemProps {
   config: IConfig
@@ -29,6 +30,14 @@ export const Item = observer(({ config }: ItemProps) => {
     const container = containerRef.current
     const containerRect = container.getBoundingClientRect()
 
+    const prev = children[index - 1]
+    const next = children[index]
+
+    let downSnap = {
+      prev: prev.style.flexGrow,
+      next: next.style.flexGrow
+    }
+
     startDrag(downEvt, {
       onDragStart: () => {},
       onDragMove: moveEvt => {
@@ -45,18 +54,11 @@ export const Item = observer(({ config }: ItemProps) => {
 
         const delta = distance / size
 
-        const prev = children[index - 1]
-        const next = children[index]
+        const min = 0.00000000001
+        const max = (1 / config.children.length) * 2 - min
 
-        if (distance < 0) {
-          prev.style.flexGrow += delta
-          next.style.flexGrow -= delta
-        } else {
-          prev.style.flexGrow -= delta
-          next.style.flexGrow += delta
-        }
-
-        console.log(prev.style.flexGrow)
+        prev.style.flexGrow = clamp(downSnap.prev + delta, min, max)
+        next.style.flexGrow = clamp(downSnap.next - delta, min, max)
       },
       onDragEnd: () => {}
     })
@@ -64,7 +66,7 @@ export const Item = observer(({ config }: ItemProps) => {
 
   return (
     <div
-      className={clsx('node-item ')}
+      className={clsx('node-item', `${mode}-size-0`)}
       data-id={config.id}
       style={{ flexDirection: mode, flexGrow: config.style?.flexGrow || 1 }}
       ref={containerRef}
