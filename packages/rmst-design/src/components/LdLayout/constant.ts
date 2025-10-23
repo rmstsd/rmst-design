@@ -1,1 +1,0 @@
-import { IConfig } from './config'
