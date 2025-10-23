@@ -1,8 +1,7 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
 import { findParentNode, fixLayout, IComponent, IConfig } from './config'
 
-import { genId, getComponentById, getComponentByName, removeItem } from './config'
-import { calcDistancePointToEdge, isNearAfter, isPointInRect } from './util'
+import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
 import { DragEvent } from 'react'
@@ -12,8 +11,6 @@ configure({ enforceActions: 'never' })
 if (isClient) {
   ;(window as any).__jf = () => ({ isObservable, toJS })
 }
-
-const tabItem = 'data-component-id'
 
 class LdStore {
   layout: IConfig = {
@@ -61,7 +58,7 @@ class LdStore {
     ]
   }
 
-  source // 一个 tab 项
+  source // 一个 tab 项 或 tabs
   sourcePosition = { x: 0, y: 0 }
 
   constructor() {
@@ -81,8 +78,8 @@ class LdStore {
       return
     }
 
-    console.log('source', source)
-    console.log('target', target)
+    console.log('source', cloneDeep(source))
+    console.log('target', cloneDeep(target))
 
     if (target.children.length === 1 && target.children.some(item => item.id === source.id)) {
       console.log('不能 ld 了')
@@ -91,13 +88,13 @@ class LdStore {
 
     const sourceParent = findParentNode(source.id, this.layout)
     sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
-
+    const p1 = findParentNode(sourceParent.id, this.layout)
+    const p2 = findParentNode(target.id, this.layout)
     if (sourceParent.children.length === 0) {
       removeItem(sourceParent, this.layout)
     }
 
     const targetParent = findParentNode(target.id, this.layout)
-    console.log('targetParent', targetParent)
 
     const index = targetParent.children.findIndex(item => item.id === target.id)
 
@@ -114,7 +111,14 @@ class LdStore {
 
     // 放置的方向 和 target 的 flex 布局方向 相同
     if (isSameDirection) {
-      const config: IConfig = { id: genId(), mode: 'tabs', children: [source] }
+      const config: IConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+
+      // 在一个容器内移动时, 不用处理 flexGrow
+      // if (p1.id !== p2.id) {
+      const average = target.style.flexGrow / 2
+      target.style.flexGrow = average
+      config.style.flexGrow = average
+      // }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
         targetParent.children.splice(index + 1, 0, config)
@@ -126,32 +130,31 @@ class LdStore {
     } else {
       // 需要再套一层
       const newMode = targetParent.mode === 'row' ? 'column' : 'row'
-      let config: IConfig = { id: genId(), mode: newMode, children: [target] }
+      let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
       targetParent.children.splice(index, 1, config)
 
       // 获取 mobx 的代理对象, 而不能直接用 config
       config = targetParent.children[index]
 
-      const tabConfig: IConfig = { id: genId(), mode: 'tabs', children: [source] }
+      const tabConfig: IConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+
+      {
+        // 需要再套一层的时候, 均分
+        target.style.flexGrow = 0.5
+        tabConfig.style.flexGrow = 0.5
+      }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
         config.children.splice(1, 0, tabConfig)
       }
 
       if (overIndicator === 'left' || overIndicator === 'top') {
-        console.log(1)
-        console.log(cloneDeep(config.children))
-        console.log('index', index)
         config.children.splice(0, 0, tabConfig)
-
-        console.log(cloneDeep(config.children))
       }
     }
 
     fixLayout(this.layout)
-
     this.layout = cloneDeep(this.layout)
-
     console.log('layout', toJS(this.layout))
 
     this.source = null
@@ -169,13 +172,7 @@ class LdStore {
     console.log('target', targetConfig)
 
     const sourceParent = findParentNode(source.id, this.layout)
-
     const originIndex = sourceParent.children.findIndex(item => item.id === source.id)
-
-    sourceParent.children.splice(originIndex, 1)
-    if (sourceParent.children.length === 0) {
-      removeItem(sourceParent, this.layout)
-    }
 
     // 在同一个数组内移动, 索引需要调整
     if (sourceParent.id === targetConfig.id) {
@@ -184,7 +181,25 @@ class LdStore {
       }
     }
 
-    targetConfig.children.splice(index, 0, this.source)
+    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
+
+    sourceParent.children.splice(originIndex, 1)
+
+    if (source.mode === 'tabs') {
+      const average = source.style.flexGrow / sourceParent.children.length
+      sourceParent.children.forEach(item => {
+        item.style.flexGrow += average
+      })
+    }
+
+    if (sourceParent.children.length === 0) {
+      removeItem(sourceParent, this.layout)
+    }
+
+    console.log('layout', toJS(this.layout))
+
+    fixLayout(this.layout)
+    this.layout = cloneDeep(this.layout)
 
     this.source = null
   }

@@ -16,17 +16,13 @@ export const Item = observer(({ config }: ItemProps) => {
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useLayoutEffect(() => {
-    config.children.forEach(item => {
-      item.style = { flexGrow: 1 / config.children.length }
-    })
-  }, [])
-
   if (mode === 'tabs') {
     return <Tabs config={config as any} />
   }
 
   const onPointerDown = (downEvt: PointerEvent, childConfig: IConfig, index: number) => {
+    downEvt.preventDefault()
+
     const container = containerRef.current
     const containerRect = container.getBoundingClientRect()
 
@@ -37,6 +33,9 @@ export const Item = observer(({ config }: ItemProps) => {
       prev: prev.style.flexGrow,
       next: next.style.flexGrow
     }
+
+    const min = 0.001
+    const max = downSnap.next + downSnap.prev
 
     startDrag(downEvt, {
       onDragStart: () => {},
@@ -54,9 +53,6 @@ export const Item = observer(({ config }: ItemProps) => {
 
         const delta = distance / size
 
-        const min = 0.00000000001
-        const max = (1 / config.children.length) * 2 - min
-
         prev.style.flexGrow = clamp(downSnap.prev + delta, min, max)
         next.style.flexGrow = clamp(downSnap.next - delta, min, max)
       },
@@ -68,7 +64,7 @@ export const Item = observer(({ config }: ItemProps) => {
     <div
       className={clsx('node-item', `${mode}-size-0`)}
       data-id={config.id}
-      style={{ flexDirection: mode, flexGrow: config.style?.flexGrow || 1 }}
+      style={{ flexDirection: mode, flexGrow: config.style?.flexGrow }}
       ref={containerRef}
     >
       {children.map((childConfig, index) => (
@@ -93,7 +89,6 @@ const Tabs = observer(({ config }: TabsProps) => {
   const [overTabIndex, setOverTabIndex] = useState(-1)
 
   const onDrop = overIndicator => {
-    console.log(overIndicator)
     setOverIndicator('')
 
     ldStore.onDrop(overIndicator, config)
@@ -107,6 +102,15 @@ const Tabs = observer(({ config }: TabsProps) => {
 
   if (!current) {
     return null
+  }
+
+  const onDragStart = (evt, source) => {
+    ldStore.source = source
+
+    evt.dataTransfer.effectAllowed = 'all'
+    const img = new Image()
+    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' %3E%3Cpath /%3E%3C/svg%3E"
+    evt.dataTransfer.setDragImage(img, 0, 0)
   }
 
   return (
@@ -137,15 +141,7 @@ const Tabs = observer(({ config }: TabsProps) => {
                 onDrag={evt => ldStore.onDrag(evt)}
                 onDragEnd={() => (ldStore.source = null)}
                 onDragExit={() => (ldStore.source = null)}
-                onDragStart={evt => {
-                  ldStore.source = tab
-
-                  evt.dataTransfer.effectAllowed = 'all'
-
-                  const img = new Image()
-                  img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' %3E%3Cpath /%3E%3C/svg%3E"
-                  evt.dataTransfer.setDragImage(img, 0, 0)
-                }}
+                onDragStart={evt => onDragStart(evt, tab)}
               >
                 {tab.title}
               </div>
@@ -167,15 +163,18 @@ const Tabs = observer(({ config }: TabsProps) => {
             </div>
           </Fragment>
         ))}
+
+        <div
+          className="drag-handle"
+          draggable
+          onDrag={evt => ldStore.onDrag(evt)}
+          onDragStart={evt => onDragStart(evt, config)}
+          onDragEnd={() => (ldStore.source = null)}
+          onDragExit={() => (ldStore.source = null)}
+        ></div>
       </div>
 
-      <div
-        className="tab-content"
-        onDragOver={evt => evt.preventDefault()}
-        onDragEnter={() => {
-          console.log('onDragEnter', config)
-        }}
-      >
+      <div className="tab-content" onDragOver={evt => evt.preventDefault()}>
         {current.title}
 
         <div

@@ -76,6 +76,12 @@ export const removeItem = (config: IConfig, rootTree: IConfig) => {
   }
   parent.children.splice(index, 1)
 
+  // 删除后, 均分给其他子项
+  const average = config.style.flexGrow / parent.children.length
+  parent.children.forEach(item => {
+    item.style.flexGrow += average
+  })
+
   return index
 }
 
@@ -100,6 +106,14 @@ export function findParentNode(id: string, node: IConfig): IConfig {
   }
 }
 
+function isLessThanOneWithTolerance(num, epsilon = 0.0001) {
+  if (Math.abs(num - 1) <= epsilon) {
+    return false
+  }
+
+  return num < 1
+}
+
 export function fixLayout(layout: IConfig) {
   dfs(layout)
 
@@ -114,12 +128,25 @@ export function fixLayout(layout: IConfig) {
           return
         }
 
-        parent.children.splice(index, 1, node.children[0])
+        const child = node.children[0]
+        child.style.flexGrow = node.style.flexGrow
+
+        parent.children.splice(index, 1, child)
       }
 
       for (const item of node.children ?? []) {
         dfs(item)
       }
+    }
+  }
+}
+
+export function traverse(config: IConfig, traverse: (item: IConfig) => void) {
+  traverse(config)
+
+  if (config.children) {
+    for (const item of config.children) {
+      traverse(item)
     }
   }
 }
