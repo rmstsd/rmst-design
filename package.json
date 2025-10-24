@@ -10,12 +10,11 @@
     "dist"
   ],
   "scripts": {
-    "dev": "pnpm -F playground-nextjs dev",
+    "dev": "pnpm -F playground dev",
     "dev-rmst-design": "pnpm -F rmst-design dev",
-    "dev-spa": "pnpm -F playground dev",
-    "build-nextjs": "pnpm -F playground-nextjs build",
-    "build": "pnpm -F rmst-design build && pnpm -F playground-nextjs build",
-    "start": "pnpm -F playground-nextjs start"
+    "build-nextjs": "pnpm -F playground build",
+    "build": "pnpm -F rmst-design build && pnpm run build-nextjs",
+    "start": "pnpm -F playground start"
   },
   "dependencies": {
     "ahooks": "^3.8.4",
