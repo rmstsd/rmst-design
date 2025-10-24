@@ -29,14 +29,12 @@
     border: 1px solid #ebebeb;
     overflow: hidden;
 
-    &.row-size-0 > * {
-      width: 0;
-    }
-
-    &.column-size-0 > * {
-      height: 0;
-    }
-
+    // &.row-size-0 > * {
+    //   width: 0;
+    // }
+    // &.column-size-0 > * {
+    //   height: 0;
+    // }
     & > * {
       flex-basis: 0;
       flex-shrink: 0;
@@ -46,11 +44,15 @@
 
   .node-item-divider {
     flex-basis: 4px;
-    background-color: #8f8fff;
+    background-color: #cdcdff;
     flex-shrink: 0;
     flex-grow: 0;
     cursor: move;
     user-select: none;
+
+    &:hover {
+      background-color: #6ab2ff;
+    }
   }
 
   .tabs {
@@ -114,37 +116,49 @@
       padding: 8px;
       flex-grow: 1;
       position: relative;
+    }
+  }
 
-      .indicator {
-        --size: 40px;
-        position: absolute;
-        width: var(--size);
-        height: var(--size);
-        border: 1px solid #c0c0c0;
+  .portal-container {
+    flex-grow: 0;
+    width: 0;
+    height: 0;
+  }
 
-        &.over {
-          background-color: blue;
-        }
+  .portal-item {
+    position: absolute;
+    left: 0;
+    overflow: clip;
 
-        &.top {
-          top: 0;
-          left: calc(50% - var(--size) / 2);
-        }
+    .indicator {
+      --size: 40px;
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      border: 1px solid #c0c0c0;
 
-        &.right {
-          right: 0;
-          top: calc(50% - var(--size) / 2);
-        }
+      &.over {
+        background-color: blue;
+      }
 
-        &.bottom {
-          bottom: 0;
-          left: calc(50% - var(--size) / 2);
-        }
+      &.top {
+        top: 0;
+        left: calc(50% - var(--size) / 2);
+      }
 
-        &.left {
-          top: calc(50% - var(--size) / 2);
-          left: 0;
-        }
+      &.right {
+        right: 0;
+        top: calc(50% - var(--size) / 2);
+      }
+
+      &.bottom {
+        bottom: 0;
+        left: calc(50% - var(--size) / 2);
+      }
+
+      &.left {
+        top: calc(50% - var(--size) / 2);
+        left: 0;
       }
     }
   }

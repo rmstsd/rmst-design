@@ -12,14 +12,6 @@ const nextConfig: NextConfig = {
       'rmst-design': './../rmst-design/dist/index.js'
     }
   },
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'rmst-design': path.resolve(__dirname, './../rmst-design/dist/index.js')
-    }
-
-    return config
-  },
   images: {
     remotePatterns: [{ hostname: '*' }]
   }

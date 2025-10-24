@@ -1,8 +1,12 @@
+import { FunctionComponent, ReactNode } from 'react'
+
 export type ITabs = {
   id: string
-  children: { id: string; title: string }[]
+  children: { id: string; title: string; content?: ReactNode }[]
+  selected?: string
   style?: {
     flexGrow?: number
+    rect?: { x: number; y: number; width: number; height: number }
   }
 }
 
@@ -134,6 +138,12 @@ export function fixLayout(layout: IConfig) {
         parent.children.splice(index, 1, child)
       }
 
+      const sum = node.children.reduce((pre, cur) => pre + (cur.style.flexGrow ?? 0), 0)
+      const average = (1 - sum) / node.children.length
+      node.children.forEach(child => {
+        child.style.flexGrow += average
+      })
+
       for (const item of node.children ?? []) {
         dfs(item)
       }
@@ -141,12 +151,16 @@ export function fixLayout(layout: IConfig) {
   }
 }
 
-export function traverse(config: IConfig, traverse: (item: IConfig) => void) {
-  traverse(config)
+export function traverse(config: IConfig, traverseFn: (item: IConfig) => void) {
+  dfs(config)
 
-  if (config.children) {
-    for (const item of config.children) {
-      traverse(item)
+  function dfs(config: IConfig) {
+    traverseFn(config)
+
+    if (config.children) {
+      for (const item of config.children) {
+        dfs(item)
+      }
     }
   }
 }

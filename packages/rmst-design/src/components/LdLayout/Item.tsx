@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Fragment, PointerEvent, useLayoutEffect, useRef, useState } from 'react'
+import { Fragment, PointerEvent, useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
 import { IConfig, ITabs } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
@@ -69,7 +69,13 @@ export const Item = observer(({ config }: ItemProps) => {
     >
       {children.map((childConfig, index) => (
         <Fragment key={index}>
-          {index !== 0 && <div className="node-item-divider" onPointerDown={evt => onPointerDown(evt, childConfig, index)} />}
+          {index !== 0 && (
+            <div
+              className="node-item-divider"
+              onPointerDown={evt => onPointerDown(evt, childConfig, index)}
+              style={{ cursor: mode === 'row' ? 'ew-resize' : 'ns-resize' }}
+            />
+          )}
           <Item config={childConfig} />
         </Fragment>
       ))}
@@ -82,23 +88,43 @@ interface TabsProps {
 }
 
 const Tabs = observer(({ config }: TabsProps) => {
-  const { children: tabs } = config
-  const [selected, setSelected] = useState(tabs[0].id)
+  const { children } = config
 
-  const [overIndicator, setOverIndicator] = useState('')
+  if (!config.selected) {
+    config.selected = children[0].id
+  }
+
   const [overTabIndex, setOverTabIndex] = useState(-1)
+  const tabContentRef = useRef<HTMLDivElement>(null)
 
-  const onDrop = overIndicator => {
-    setOverIndicator('')
+  const onResize = useEffectEvent(() => {
+    const rootLayoutRect = ldStore.rootLayoutEl.getBoundingClientRect()
+    const rect = tabContentRef.current.getBoundingClientRect()
 
-    ldStore.onDrop(overIndicator, config)
-  }
+    children.forEach(tabItem => {
+      ldStore.tabsSize.set(tabItem.id, {
+        x: rect.x - rootLayoutRect.x,
+        y: rect.y - rootLayoutRect.y,
+        width: rect.width,
+        height: rect.height
+      })
+    })
+  })
 
-  const current = tabs.find(tab => tab.id === selected)
+  useEffect(() => {
+    onResize()
+  }, [config.selected])
 
-  if (!current) {
-    setSelected(tabs[0].id)
-  }
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      onResize()
+    })
+
+    observer.observe(tabContentRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const current = children.find(tab => tab.id === config.selected)
 
   if (!current) {
     return null
@@ -118,17 +144,13 @@ const Tabs = observer(({ config }: TabsProps) => {
       <div className="tab-header relative">
         {config.children?.map((tab, index) => (
           <Fragment key={tab.id}>
-            <div className={clsx('tab-item')} onClick={() => setSelected(tab.id)}>
+            <div className={clsx('tab-item')} onClick={() => (config.selected = tab.id)}>
               {index === 0 && (
                 <div
                   className={clsx('tab-item-indicator left', { over: overTabIndex === index })}
                   onDragOver={evt => evt.preventDefault()}
-                  onDragEnter={() => {
-                    setOverTabIndex(index)
-                  }}
-                  onDragLeave={() => {
-                    setOverTabIndex(-1)
-                  }}
+                  onDragEnter={() => setOverTabIndex(index)}
+                  onDragLeave={() => setOverTabIndex(-1)}
                   onDrop={() => {
                     ldStore.onTabItemDrop(config, index)
                     setOverTabIndex(-1)
@@ -136,7 +158,7 @@ const Tabs = observer(({ config }: TabsProps) => {
                 />
               )}
               <div
-                className={clsx('tab-item-content', { selected: tab.id === selected })}
+                className={clsx('tab-item-content', { selected: tab.id === config.selected })}
                 draggable
                 onDrag={evt => ldStore.onDrag(evt)}
                 onDragEnd={() => (ldStore.source = null)}
@@ -149,12 +171,8 @@ const Tabs = observer(({ config }: TabsProps) => {
               <div
                 className={clsx('tab-item-indicator', { over: overTabIndex === index + 1 })}
                 onDragOver={evt => evt.preventDefault()}
-                onDragEnter={() => {
-                  setOverTabIndex(index + 1)
-                }}
-                onDragLeave={() => {
-                  setOverTabIndex(-1)
-                }}
+                onDragEnter={() => setOverTabIndex(index + 1)}
+                onDragLeave={() => setOverTabIndex(-1)}
                 onDrop={() => {
                   ldStore.onTabItemDrop(config, index + 1)
                   setOverTabIndex(-1)
@@ -174,34 +192,7 @@ const Tabs = observer(({ config }: TabsProps) => {
         ></div>
       </div>
 
-      <div className="tab-content" onDragOver={evt => evt.preventDefault()}>
-        {current.title}
-
-        <div
-          className={clsx('indicator top', { over: overIndicator === 'top' })}
-          onDragEnter={() => setOverIndicator('top')}
-          onDragLeave={() => setOverIndicator('')}
-          onDrop={() => onDrop('top')}
-        ></div>
-        <div
-          className={clsx('indicator right', { over: overIndicator === 'right' })}
-          onDragEnter={() => setOverIndicator('right')}
-          onDragLeave={() => setOverIndicator('')}
-          onDrop={() => onDrop('right')}
-        ></div>
-        <div
-          className={clsx('indicator bottom', { over: overIndicator === 'bottom' })}
-          onDragEnter={() => setOverIndicator('bottom')}
-          onDragLeave={() => setOverIndicator('')}
-          onDrop={() => onDrop('bottom')}
-        ></div>
-        <div
-          className={clsx('indicator left', { over: overIndicator === 'left' })}
-          onDragEnter={() => setOverIndicator('left')}
-          onDragLeave={() => setOverIndicator('')}
-          onDrop={() => onDrop('left')}
-        ></div>
-      </div>
+      <div className="tab-content" ref={tabContentRef}></div>
     </div>
   )
 })

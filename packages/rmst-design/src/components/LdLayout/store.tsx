@@ -4,12 +4,31 @@ import { findParentNode, fixLayout, IComponent, IConfig } from './config'
 import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
-import { DragEvent } from 'react'
+import { DragEvent, useEffect } from 'react'
 
 configure({ enforceActions: 'never' })
 
 if (isClient) {
   ;(window as any).__jf = () => ({ isObservable, toJS })
+}
+
+export const ContentEm = props => {
+  useEffect(() => {
+    console.log('useEffect', props.id)
+  }, [])
+
+  return <div>{props.id} 的 content</div>
+}
+
+export const ContentEmMap = {
+  '1': <ContentEm id="1" />,
+  '2': <ContentEm id="2" />,
+  '3': <ContentEm id="3" />,
+  '4': <ContentEm id="4" />,
+  '5': <ContentEm id="5" />,
+  '6': <ContentEm id="6" />,
+  '7': <ContentEm id="7" />,
+  '8': <ContentEm id="8" />
 }
 
 class LdStore {
@@ -58,6 +77,10 @@ class LdStore {
     ]
   }
 
+  tabsSize = new Map()
+
+  rootLayoutEl: HTMLDivElement
+
   source // 一个 tab 项 或 tabs
   sourcePosition = { x: 0, y: 0 }
 
@@ -69,7 +92,8 @@ class LdStore {
     this.sourcePosition = { x: evt.clientX, y: evt.clientY }
   }
 
-  onDrop(overIndicator, target) {
+  // 放在布局块时
+  onLayoutDrop(overIndicator, target) {
     let { source } = this
 
     source = toJS(source)
@@ -88,8 +112,7 @@ class LdStore {
 
     const sourceParent = findParentNode(source.id, this.layout)
     sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
-    const p1 = findParentNode(sourceParent.id, this.layout)
-    const p2 = findParentNode(target.id, this.layout)
+
     if (sourceParent.children.length === 0) {
       removeItem(sourceParent, this.layout)
     }
@@ -111,14 +134,16 @@ class LdStore {
 
     // 放置的方向 和 target 的 flex 布局方向 相同
     if (isSameDirection) {
-      const config: IConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+      let config
+      if (source.mode === 'tabs') {
+        config = source
+      } else {
+        config = { id: genId(), mode: 'tabs', children: [source], style: {} }
 
-      // 在一个容器内移动时, 不用处理 flexGrow
-      // if (p1.id !== p2.id) {
-      const average = target.style.flexGrow / 2
-      target.style.flexGrow = average
-      config.style.flexGrow = average
-      // }
+        const average = target.style.flexGrow / 2
+        target.style.flexGrow = average
+        config.style.flexGrow = average
+      }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
         targetParent.children.splice(index + 1, 0, config)
@@ -136,7 +161,12 @@ class LdStore {
       // 获取 mobx 的代理对象, 而不能直接用 config
       config = targetParent.children[index]
 
-      const tabConfig: IConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+      let tabConfig
+      if (source.mode === 'tabs') {
+        tabConfig = source
+      } else {
+        tabConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+      }
 
       {
         // 需要再套一层的时候, 均分
@@ -160,6 +190,7 @@ class LdStore {
     this.source = null
   }
 
+  // 放在 tab 项时
   onTabItemDrop(targetConfig, index) {
     let { source } = this
     source = toJS(source)
@@ -208,3 +239,13 @@ class LdStore {
 const ldStore = new LdStore()
 
 export default ldStore
+
+if (isClient) {
+  window.ldStore = ldStore
+}
+
+declare global {
+  interface Window {
+    [k: string]: any
+  }
+}

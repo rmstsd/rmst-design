@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 4999",
+    "dev": "next dev -p 4999",
     "dev-debug": "cross-env NODE_OPTIONS='--inspect' next dev --turbopack -p 4999",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start -p 5000"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.6.1",
     "cross-env": "^10.0.0",
     "negotiator": "^1.0.0",
-    "next": "15.5.4",
-    "next-intl": "^4.3.9",
+    "next": "16.0.0",
+    "next-intl": "^4.4.0",
     "next-themes": "^0.4.6",
     "rc-dock": "4.0.0-alpha.2"
   },

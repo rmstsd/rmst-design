@@ -5,9 +5,11 @@ import { Item } from './Item'
 
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
-import { useLayoutEffect } from 'react'
+import { Fragment, useLayoutEffect, useState } from 'react'
 import { traverse } from './config'
 import { cloneDeep } from 'es-toolkit'
+import clsx from 'clsx'
+import { PortalContainer } from './PortalContainer'
 
 export const LdLayout = observer(function LdLayout() {
   useLayoutEffect(() => {
@@ -24,8 +26,10 @@ export const LdLayout = observer(function LdLayout() {
   }, [])
 
   return (
-    <div className="rt-ld-layout">
+    <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
       <Item config={ldStore.layout} />
+
+      <PortalContainer />
 
       {ldStore.source && (
         <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
