@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
+import { version, ViewTransition } from 'react'
+import Child from './Child'
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   const { locale } = await params
@@ -27,6 +29,8 @@ export default async function Home({ params }) {
         <span draggable>12345</span>
         <span style={{ width: 20, backgroundColor: 'red' }}></span>
       </div>
+
+      <Child />
     </div>
   )
 
