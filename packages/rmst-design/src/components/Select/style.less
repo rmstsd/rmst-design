@@ -4,6 +4,7 @@
 
 .@{select-prefix-cls} {
   display: flex;
+  align-items: center;
   padding: 0 10px;
   outline: none;
 
@@ -14,6 +15,17 @@
     outline: none;
     height: 100%;
     padding: 0;
+  }
+
+  .clear {
+    font-size: 12px;
+    visibility: hidden;
+  }
+
+  &:hover {
+    .clear {
+      visibility: visible;
+    }
   }
 
   .interact()
@@ -36,12 +48,21 @@
 .@{select-prefix-cls}-options-wrapper {
   overflow: auto;
   max-height: 200px;
+  padding: 4px;
 
   .@{select-prefix-cls}-option-item {
-    height: 30px;
-    line-height: 30px;
+    height: 36px;
+    padding: 0 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    .propertyTransition(background-color);
 
-    &:hover {
+    &.active {
+      background-color: #e5e5e5;
+    }
+
+    &.hover {
       background-color: #eee;
     }
   }

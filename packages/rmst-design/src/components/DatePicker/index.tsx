@@ -3,10 +3,12 @@ import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { Trigger } from '../Trigger'
 
 import dayjs, { Dayjs } from 'dayjs'
-import { useInteract } from '../_util/hooks'
+import { useControllableValue, useInteract } from '../_util/hooks'
 import clsx from 'clsx'
 
 import './style.less'
+import { IconWrapper } from '../IconWrapper'
+import { X } from 'lucide-react'
 
 interface DatePickerProps extends InteractProps {
   placeholder?: string
@@ -17,6 +19,7 @@ export function DatePicker(props: DatePickerProps) {
   const { prefixCls, size: ctxSize } = use(ConfigContext)
 
   const merSize = size ?? ctxSize
+  const [value, onChange] = useControllableValue({ ...props })
 
   const selectPrefixCls = `${prefixCls}-select`
   const interact = useInteract(selectPrefixCls, { size: merSize, readOnly, disabled })
@@ -58,7 +61,20 @@ export function DatePicker(props: DatePickerProps) {
           interact.setIsFocused(false)
         }}
       >
-        <input ref={inputRef} readOnly={readOnly} placeholder={placeholder} disabled={disabled} />
+        <input
+          ref={inputRef}
+          readOnly={readOnly}
+          placeholder={placeholder}
+          disabled={disabled}
+          value={value ?? ''}
+          onChange={evt => onChange(evt.target.value)}
+        />
+
+        {value && !interact.isDisabledOrReadonly ? (
+          <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
+            <X />
+          </IconWrapper>
+        ) : null}
       </div>
     </Trigger>
   )

@@ -47,23 +47,23 @@
   }
 }
 
-.btn-type(@type) {
-  .@{btn-prefix-cls}-@{type}:not(.@{btn-prefix-cls}-disabled) {
-    @current: @typeMap[@@type][@quiet];
+.btn-type(@status, @type) {
+  .@{btn-prefix-cls}-@{type}.@{status}:not(.@{btn-prefix-cls}-disabled) {
+    @current: @typeMap[@@status][@@type][@quiet];
     // 
     background-color: @current[background-color];
     color: @current[color];
     border-color: @current[border-color];
 
     &:not(.@{btn-prefix-cls}-loading):hover {
-      @current: @typeMap[@@type][@hover];
+      @current: @typeMap[@@status][@@type][@hover];
       // 
       background-color: @current[background-color];
       border-color: @current[border-color];
     }
 
     &:not(.@{btn-prefix-cls}-loading):active {
-      @current: @typeMap[@@type][@active];
+      @current: @typeMap[@@status][@@type][@active];
       // 
       background-color: @current[background-color];
       border-color: @current[border-color];
@@ -71,7 +71,7 @@
   }
 
   .@{btn-prefix-cls}-@{type}.@{btn-prefix-cls}-disabled {
-    @current: @typeMap[@@type][@disabled];
+    @current: @typeMap[@@status][@@type][@disabled];
     // 
     background-color: @current[background-color];
     color: @current[color];
@@ -80,7 +80,7 @@
   }
 
   .@{btn-prefix-cls}-@{type}.@{btn-prefix-cls}-loading {
-    @current: @typeMap[@@type][@disabled];
+    @current: @typeMap[@@status][@@type][@disabled];
     // 
     background-color: @current[background-color];
     color: @current[color];
@@ -93,9 +93,21 @@
 .btn-size(default);
 .btn-size(large);
 // 
-.btn-type(primary);
-.btn-type(outline);
-.btn-type(text);
+.btn-type(default, primary);
+.btn-type(default, outline);
+.btn-type(default, text);
+// 
+.btn-type(success, primary);
+.btn-type(success, outline);
+.btn-type(success, text);
+// 
+.btn-type(warning, primary);
+.btn-type(warning, outline);
+.btn-type(warning, text);
+//
+.btn-type(error, primary);
+.btn-type(error, outline);
+.btn-type(error, text);
 
 /* 基础旋转样式 */
 .rotate-continuously {

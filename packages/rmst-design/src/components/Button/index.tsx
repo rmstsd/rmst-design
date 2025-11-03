@@ -12,6 +12,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement>, PropsWith
   type?: 'primary' | 'outline' | 'text'
   loading?: boolean
   icon?: React.ReactNode
+  status?: 'default' | 'warning' | 'success' | 'error'
 }
 
 const defaultProps: Partial<ButtonProps> = {
@@ -20,7 +21,17 @@ const defaultProps: Partial<ButtonProps> = {
 }
 
 export function Button(props: ButtonProps) {
-  const { className, children, size = 'primary', disabled, loading, type, icon, ...restProps } = { ...defaultProps, ...props }
+  const {
+    className,
+    children,
+    size = 'primary',
+    disabled,
+    loading,
+    type,
+    icon,
+    status = 'default',
+    ...restProps
+  } = { ...defaultProps, ...props }
   const { prefixCls } = use(ConfigContext)
   const btnPrefixCls = `${prefixCls}-btn`
 
@@ -35,6 +46,7 @@ export function Button(props: ButtonProps) {
       [`${btnPrefixCls}-loading`]: loading,
       [`${btnPrefixCls}-icon-only`]: iconOnly
     },
+    status,
     className
   )
 

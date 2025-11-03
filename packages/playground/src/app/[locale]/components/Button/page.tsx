@@ -31,9 +31,7 @@ export default function ButtonDd() {
           large text
         </Button>
       </div>
-
       <br />
-
       <div style={{ display: 'flex', gap: '10px' }}>
         <Button size="small" type="primary" disabled>
           small primary
@@ -42,6 +40,20 @@ export default function ButtonDd() {
           default outline
         </Button>
         <Button size="large" type="text" disabled>
+          large text
+        </Button>
+      </div>
+
+      <br />
+
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <Button size="default" type="primary" status="success">
+          default outline
+        </Button>
+        <Button size="small" type="outline" status="warning">
+          small primary
+        </Button>
+        <Button size="large" type="text" status="error">
           large text
         </Button>
       </div>

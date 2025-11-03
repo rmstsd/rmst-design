@@ -1,79 +1,321 @@
 @typeMap: {
-  @primary: {
-    @quiet: {
-      background-color: @main-color;
-      color: white;
-      border-color: transparent;
+  @default: {
+    @primary: {
+      @quiet: {
+        background-color: @main-color;
+        color: white;
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #366EF4;
+        color: white;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #003CAB;
+        color: white;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: #94bfff;
+        color: white;
+        border-color: transparent;
+      }
     }
 
-    @hover: {
-      background-color: #366EF4;
-      color: white;
-      border-color: transparent;
+    @outline: {
+      @quiet: {
+        background-color: #edf4ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @hover: {
+        background-color: #f3f8ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @active: {
+        background-color: #edf4ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #94bfff;
+        border-color: #94bfff;
+      }
     }
 
-    @active: {
-      background-color: #003CAB;
-      color: white;
-      border-color: transparent;
-    }
+    @text: {
+      @quiet: {
+        background-color: transparent;
+        color: #333;
+        border-color: transparent;
+      }
 
-    @disabled: {
-      background-color: #94bfff;
-      color: white;
-      border-color: transparent;
+      @hover: {
+        background-color: #f5f5f5;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #ebebeb;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #c1c1c1;
+        border-color: transparent;
+      }
     }
   }
 
-  @outline: {
-    @quiet: {
-      background-color: #edf4ff;
-      color: @main-color;
-      border-color: @main-color;
+  @success: {
+    @primary: {
+      @quiet: {
+        background-color: #00B42A;
+        color: white;
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #23C343;
+        color: white;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #009A29;
+        color: white;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: 7BE188;
+        color: white;
+        border-color: transparent;
+      }
     }
 
-    @hover: {
-      background-color: #f3f8ff;
-      color: @main-color;
-      border-color: @main-color;
+    @outline: {
+      @quiet: {
+        background-color: #edf4ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @hover: {
+        background-color: #f3f8ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @active: {
+        background-color: #edf4ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #94bfff;
+        border-color: #94bfff;
+      }
     }
 
-    @active: {
-      background-color: #edf4ff;
-      color: @main-color;
-      border-color: @main-color;
-    }
+    @text: {
+      @quiet: {
+        background-color: transparent;
+        color: #333;
+        border-color: transparent;
+      }
 
-    @disabled: {
-      background-color: transparent;
-      color: #94bfff;
-      border-color: #94bfff;
+      @hover: {
+        background-color: #f5f5f5;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #ebebeb;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #c1c1c1;
+        border-color: transparent;
+      }
     }
   }
 
-  @text: {
-    @quiet: {
-      background-color: transparent;
-      color: #333;
-      border-color: transparent;
+  @warning: {
+    @primary: {
+      @quiet: {
+        background-color: #00B42A;
+        color: white;
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #23C343;
+        color: white;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #009A29;
+        color: white;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: 7BE188;
+        color: white;
+        border-color: transparent;
+      }
     }
 
-    @hover: {
-      background-color: #f5f5f5;
-      color: #333;
-      border-color: transparent;
+    @outline: {
+      @quiet: {
+        background-color: transparent;
+        color: rgb(var(--warning-6));
+        border-color: rgb(var(--warning-6));
+      }
+
+      @hover: {
+        background-color: transparent;
+        color: rgb(var(--warning-5));
+        border-color: rgb(var(--warning-5));
+      }
+
+      @active: {
+        background-color: transparent;
+        color: rgb(var(--warning-7));
+        border-color: rgb(var(--warning-7));
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #94bfff;
+        border-color: #94bfff;
+      }
     }
 
-    @active: {
-      background-color: #ebebeb;
-      color: #333;
-      border-color: transparent;
+    @text: {
+      @quiet: {
+        background-color: transparent;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #f5f5f5;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #ebebeb;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #c1c1c1;
+        border-color: transparent;
+      }
+    }
+  }
+
+  @error: {
+    @primary: {
+      @quiet: {
+        background-color: #00B42A;
+        color: white;
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #23C343;
+        color: white;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #009A29;
+        color: white;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: 7BE188;
+        color: white;
+        border-color: transparent;
+      }
     }
 
-    @disabled: {
-      background-color: transparent;
-      color: #c1c1c1;
-      border-color: transparent;
+    @outline: {
+      @quiet: {
+        background-color: red;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @hover: {
+        background-color: #f3f8ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @active: {
+        background-color: #edf4ff;
+        color: @main-color;
+        border-color: @main-color;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #94bfff;
+        border-color: #94bfff;
+      }
+    }
+
+    @text: {
+      @quiet: {
+        background-color: transparent;
+        color: rgb(var(--danger-6));
+        border-color: transparent;
+      }
+
+      @hover: {
+        background-color: #f5f5f5;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @active: {
+        background-color: #ebebeb;
+        color: #333;
+        border-color: transparent;
+      }
+
+      @disabled: {
+        background-color: transparent;
+        color: #c1c1c1;
+        border-color: transparent;
+      }
     }
   }
 }
