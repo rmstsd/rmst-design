@@ -1,6 +1,6 @@
 import { Select } from 'rmst-design'
 
-const options2 = Array.from({ length: 8 }, (_, idx) => ({ value: `option${idx + 4}`, label: `Option ${idx + 4}` }))
+const options2 = Array.from({ length: 8 }, (_, idx) => ({ value: `option${idx + 1}`, label: `Option ${idx + 1}` }))
 
 export default function SelectDd() {
   return (

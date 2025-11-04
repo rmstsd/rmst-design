@@ -49,8 +49,12 @@
   overflow: auto;
   max-height: 200px;
   padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 
   .@{select-prefix-cls}-option-item {
+    flex-shrink: 0;
     height: 36px;
     padding: 0 8px;
     cursor: pointer;
