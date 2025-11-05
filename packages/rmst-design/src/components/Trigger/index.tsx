@@ -26,6 +26,8 @@ type TriggerProps = {
   onChange?: (visible: boolean) => void
   trigger?: 'click' | 'focus' | 'hover'
   disabled?: boolean
+
+  onExited?: () => void
 }
 
 const defaultProps: TriggerProps = {
@@ -37,7 +39,7 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { value, popup, children, autoAlignPopupWidth, trigger, disabled } = props
+  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited } = props
 
   const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: value })
 
@@ -99,7 +101,8 @@ export function Trigger(props: TriggerProps) {
     keyframes: [
       { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },
       { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
-    ]
+    ],
+    onExited
   })
 
   return (

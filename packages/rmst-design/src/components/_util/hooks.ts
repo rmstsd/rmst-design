@@ -79,6 +79,7 @@ type Animate = {
   appear?: boolean // 首次渲染时是否有动画
   keyframes?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
   keyframesOut?: Keyframe[] | ((dom: HTMLElement) => Keyframe[])
+  onExited?: () => void
 }
 
 export const kfOptions: KeyframeAnimationOptions = {
@@ -87,7 +88,7 @@ export const kfOptions: KeyframeAnimationOptions = {
 }
 
 export const useAnTransition = (config: Animate) => {
-  const { appear = true, open, keyframes, keyframesOut } = config
+  const { appear = true, open, keyframes, keyframesOut, onExited } = config
   const isSSR = useIsSSR()
 
   const domRef = useRef<HTMLElement>(null)
@@ -119,6 +120,7 @@ export const useAnTransition = (config: Animate) => {
       } else {
         close(() => {
           setShouldMount(false)
+          onExited?.()
         })
       }
     }

@@ -44,19 +44,21 @@ export function Select(props: SelectProps) {
     ? propsOptions.filter(item => item.label.toString().toLowerCase().includes(searchValue.toLowerCase()))
     : propsOptions
 
-  const activeItem = options.find(item => item.value === value)
+  // 与关闭动画有关
+  const selectedItem = (visible ? options : propsOptions).find(item => item.value === value)
 
   const cb = useEffectEvent(() => {
-    if (visible && value) {
-      const index = options.findIndex(item => item.value === value)
-      setHoverIndex(index)
+    if (visible) {
+      let index = options.findIndex(item => item.value === value)
+      if (index === -1) {
+        index = 0
+      }
 
-      setTimeout(() => {
-        scrollIntoView(index)
-      })
+      setHoverIndex(index)
+      scrollIntoView(index)
     }
   })
-  useLayoutEffect(cb, [visible, value])
+  useLayoutEffect(cb, [visible, value, searchValue])
 
   const keepFocus = (evt: React.PointerEvent<HTMLDivElement>) => {
     evt.preventDefault()
@@ -73,24 +75,17 @@ export function Select(props: SelectProps) {
     setVisible(false)
     interact.setIsFocused(false)
     inputRef.current.blur()
-    setSearchValue('')
   }
 
   const onPrev = () => {
     const index = clamp(hoverIndex - 1, 0, options.length - 1)
     setHoverIndex(index)
-
-    requestAnimationFrame(() => {
-      scrollIntoView(index)
-    })
+    scrollIntoView(index)
   }
   const onNext = () => {
     const index = clamp(hoverIndex + 1, 0, options.length - 1)
     setHoverIndex(index)
-
-    requestAnimationFrame(() => {
-      scrollIntoView(index)
-    })
+    scrollIntoView(index)
   }
 
   const onKeyDown = getHotkeyHandler(
@@ -114,8 +109,7 @@ export function Select(props: SelectProps) {
         keyboardKey.Enter,
         evt => {
           evt.preventDefault()
-          hide()
-          onChange?.(options[hoverIndex].value)
+          onSelect(options[hoverIndex])
         }
       ]
     ])
@@ -166,6 +160,9 @@ export function Select(props: SelectProps) {
           hide()
         }
       }}
+      onExited={() => {
+        setSearchValue('')
+      }}
     >
       <div
         className={interact.cls}
@@ -186,12 +183,10 @@ export function Select(props: SelectProps) {
         <input
           ref={inputRef}
           disabled={disabled}
-          placeholder={visible ? activeItem?.label.toString() || placeholder : placeholder}
-          value={visible ? searchValue : activeItem?.label ?? ''}
-          onChange={evt => {
-            setSearchValue(evt.target.value)
-            setHoverIndex(0)
-          }}
+          placeholder={visible ? selectedItem?.label.toString() || placeholder : placeholder}
+          readOnly={readOnly}
+          value={visible ? searchValue : selectedItem?.label ?? ''}
+          onChange={evt => setSearchValue(evt.target.value)}
         />
 
         {value && !interact.isDisabledOrReadonly ? (
