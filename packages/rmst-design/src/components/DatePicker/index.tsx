@@ -1,4 +1,4 @@
-import { use, useRef, useState } from 'react'
+import { use, useRef, useState, useEffectEvent } from 'react'
 import ConfigContext, { InteractProps } from '../_util/ConfigProvider'
 import { Trigger } from '../Trigger'
 
