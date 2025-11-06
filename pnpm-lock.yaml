@@ -115,6 +115,9 @@ importers:
       mobx-react-lite:
         specifier: ^4.1.0
         version: 4.1.1(mobx@6.15.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
       object-fit-math:
         specifier: ^1.0.0
         version: 1.0.0
@@ -1200,6 +1203,9 @@ packages:
 
   mobx@6.15.0:
     resolution: {integrity: sha512-UczzB+0nnwGotYSgllfARAqWCJ5e/skuV2K/l+Zyck/H6pJIhLXuBnz+6vn2i211o7DtbE78HQtsYEKICHGI+g==}
+
+  moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
@@ -2575,6 +2581,8 @@ snapshots:
       react-dom: 19.2.0(react@19.2.0)
 
   mobx@6.15.0: {}
+
+  moment@2.30.1: {}
 
   mz@2.7.0:
     dependencies:

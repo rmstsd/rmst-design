@@ -5,16 +5,18 @@ import { useControllableValue, useInteract } from '../_util/hooks'
 import { IconWrapper } from '../IconWrapper'
 
 import './style.less'
+import { mergeRefs } from 'react-merge-refs'
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'>, InteractProps {
   value?: string
   onChange?: (value: string) => void
 
   after?: ReactNode
+  ref?: React.Ref<HTMLInputElement>
 }
 
 export function Input(props: InputProps) {
-  const { className, size, readOnly, disabled, placeholder, after, ...rest } = props
+  const { className, size, readOnly, disabled, placeholder, after, ref, ...rest } = props
 
   const [value, onChange] = useControllableValue({ ...props })
 
@@ -44,7 +46,7 @@ export function Input(props: InputProps) {
   return (
     <span
       className={interact.cls}
-      ref={interact.domRef}
+      ref={mergeRefs([interact.domRef, ref])}
       onPointerDown={() => {
         if (interact.isDisabledOrReadonly) {
           return

@@ -3,7 +3,7 @@
 @select-prefix-cls: ~'@{prefixCls}-select';
 
 .@{select-prefix-cls} {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding: 0 10px;
   outline: none;
@@ -17,9 +17,31 @@
     padding: 0;
   }
 
+  .suffix {
+    width: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+  }
+
   .clear {
-    font-size: 12px;
-    visibility: hidden;
+    display: none;
+  }
+
+  .select-arrow {
+    transform-origin: center;
+    .propertyTransition(transform);
+  }
+
+  &:hover {
+    .clear {
+      display: block;
+
+      & + .select-arrow {
+        display: none;
+      }
+    }
   }
 
   &:hover {

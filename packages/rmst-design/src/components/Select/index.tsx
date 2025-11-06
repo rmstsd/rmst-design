@@ -12,12 +12,14 @@ import './style.less'
 import clsx from 'clsx'
 import { clamp } from 'es-toolkit'
 import { IconWrapper } from '../IconWrapper'
-import { X } from 'lucide-react'
+import { ChevronDown, X } from 'lucide-react'
 
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {
   options?: OptionItem[]
   placeholder?: string
+  className?: string
+  style?: React.CSSProperties
 }
 
 const defaultProps: SelectProps = {
@@ -26,7 +28,7 @@ const defaultProps: SelectProps = {
 
 export function Select(props: SelectProps) {
   props = mergeProps(defaultProps, props)
-  const { size, readOnly, disabled, options: propsOptions, placeholder } = props
+  const { size, readOnly, disabled, options: propsOptions, placeholder, className, style } = props
 
   const { prefixCls, size: ctxSize } = use(ConfigContext)
   const merSize = size ?? ctxSize
@@ -165,7 +167,8 @@ export function Select(props: SelectProps) {
       }}
     >
       <div
-        className={interact.cls}
+        className={clsx(interact.cls, className)}
+        style={style}
         onPointerDown={() => {
           requestAnimationFrame(() => {
             inputRef.current.focus()
@@ -189,11 +192,15 @@ export function Select(props: SelectProps) {
           onChange={evt => setSearchValue(evt.target.value)}
         />
 
-        {value && !interact.isDisabledOrReadonly ? (
-          <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
-            <X />
-          </IconWrapper>
-        ) : null}
+        <span className="suffix">
+          {value && !interact.isDisabledOrReadonly ? (
+            <IconWrapper className="clear" onClick={() => onChange('')} onPointerDown={evt => evt.preventDefault()}>
+              <X />
+            </IconWrapper>
+          ) : null}
+
+          <ChevronDown className="select-arrow" style={{ transform: visible ? 'rotate(180deg)' : '' }} />
+        </span>
       </div>
     </Trigger>
   )

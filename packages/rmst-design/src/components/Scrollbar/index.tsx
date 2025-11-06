@@ -4,10 +4,13 @@ import { HtmlHTMLAttributes, PropsWithChildren, useLayoutEffect, useRef, useStat
 
 import './style.less'
 
-interface ScrollbarProps extends PropsWithChildren, HtmlHTMLAttributes<HTMLElement> {}
+interface ScrollbarProps extends PropsWithChildren, HtmlHTMLAttributes<HTMLElement> {
+  disabledShadowTop?: boolean
+  disabledShadowBottom?: boolean
+}
 
 export function Scrollbar(props: ScrollbarProps) {
-  const { children, ...htmlAttr } = props
+  const { children, disabledShadowTop, disabledShadowBottom, ...htmlAttr } = props
 
   const [thumbHeight, setThumbHeight] = useState(0)
   const [ratio, setRatio] = useState(0)
@@ -104,9 +107,9 @@ export function Scrollbar(props: ScrollbarProps) {
     <div {...htmlAttr} ref={rootDomRef} className={clsx('rmst-scrollbar', htmlAttr.className)}>
       <section
         className={clsx('rmst-scrollbar-view', {
-          top: shadow.hasTop,
-          bottom: shadow.hasBottom,
-          all: shadow.hasTop && shadow.hasBottom
+          top: !disabledShadowTop && shadow.hasTop,
+          bottom: !disabledShadowBottom && shadow.hasBottom,
+          all: !disabledShadowTop && !disabledShadowBottom && shadow.hasTop && shadow.hasBottom
         })}
         ref={viewportDomRef}
         onScroll={onScroll}

@@ -3,6 +3,11 @@
 @picker-prefix-cls: ~'@{prefixCls}-picker';
 
 .@{picker-prefix-cls} {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  outline: none;
+
   input {
     background-color: transparent;
     border: none;
@@ -12,14 +17,27 @@
     padding: 0;
   }
 
-  .clear {
-    font-size: 12px;
-    visibility: hidden;
+  .suffix {
+    width: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
   }
+
+  .clear {
+    display: none;
+  }
+
+  .picker-icon {}
 
   &:hover {
     .clear {
-      visibility: visible;
+      display: block;
+
+      & + .picker-icon {
+        display: none;
+      }
     }
   }
 
@@ -38,4 +56,367 @@
       font-size: @sizeMap[@@size][font-size];
     }
   }
+}
+
+// 
+:root {
+  --brand-1: #fbfeed;
+  --brand-2: #eefbb7;
+  --brand-3: #e6f893;
+  --brand-4: #e2f781;
+  --brand-5: #ddf66f;
+  --brand-6: #d5f44b;
+  --brand-7: #aac33c;
+  --brand-font-1-primary: #111;
+  --brand-font-2-secondary: #666;
+  --brand-font-3-placeholder: #999;
+  --brand-font-4-disabled: #bbb;
+  --brand-font-white: #fff;
+  --brand-outline: 2px solid var(--brand-5);
+}
+
+* {
+  outline-offset: 1px;
+}
+
+.rui-input-date {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  width: 240px;
+  height: 36px;
+  line-height: 34px;
+  border-radius: 0;
+  color: #111;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  padding-left: 12px;
+  color: #323233;
+  transition-property: border, box-shadow;
+  transition-duration: 0.1s;
+  transition-timing-function: linear;
+}
+
+@media (min-width: 640px) {
+  .rui-input-date {
+    height: 32px;
+    line-height: 30px;
+  }
+}
+
+.rui-input-date:is(:hover):not(.rui-input-date.disabled) {
+  border: 1px solid #e1e1e1;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.rui-input-date:is(:hover):not(.rui-input-date.disabled) .clear-wrapper {
+  display: flex;
+}
+
+.rui-input-date:is(:hover):not(.rui-input-date.disabled) .clear-wrapper + .dp-icon {
+  display: none;
+}
+
+.rui-input-date.focused:not(.rui-input-date.disabled) {
+  border: 1px solid #111;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.1);
+}
+
+.rui-input-date.size-small {
+  font-size: 12px;
+  border-radius: 0;
+  height: 24px;
+  line-height: 22px;
+}
+
+.rui-input-date.size-middle {
+  font-size: 14px;
+  border-radius: 0;
+  height: 32px;
+  line-height: 30px;
+}
+
+.rui-input-date.size-large {
+  font-size: 16px;
+  border-radius: 0;
+  height: 40px;
+  line-height: 38px;
+}
+
+.rui-input-date.size-super-large {
+  font-size: 18px;
+  border-radius: 0;
+  height: 48px;
+  line-height: 46px;
+}
+
+.rui-input-date.readonly {
+  background: #f5f5f5;
+}
+
+.rui-input-date.readonly {
+  color: #666;
+}
+
+.rui-input-date.disabled {
+  cursor: not-allowed;
+  color: #999;
+  background: #f2f3f4;
+}
+
+.rui-input-date.disabled input {
+  cursor: not-allowed;
+}
+
+.rui-input-date .dp-icon-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 100%;
+}
+
+.rui-input-date .clear-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #dcdee0;
+  border-radius: 99px;
+  text-align: center;
+  width: 16px;
+  height: 16px;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rui-input-date .clear-wrapper:hover {
+  background-color: #d5d5d6;
+}
+
+.rui-input-date .clear-wrapper + .dp-icon {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .rui-input-date .clear-wrapper {
+    display: none;
+  }
+
+  .rui-input-date .clear-wrapper + .dp-icon {
+    display: flex;
+  }
+}
+
+.rui-input-date .dp-icon {
+  color: #bfbfbf;
+}
+
+.rui-input-date .dp-input-wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.rui-input-date .dp-input-wrapper .dp-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  box-sizing: border-box;
+  color: #111;
+}
+
+.rui-input-date .dp-input-wrapper .dp-input::placeholder {
+  color: #999;
+}
+
+.rui-input-date-popup {
+  border: 1px solid #e9e9e9;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.12);
+  background: #fff;
+  overflow: auto;
+  box-sizing: border-box;
+  width: 290px;
+}
+
+.rui-input-date-popup .input-date-header {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.rui-input-date-popup .input-date-footer {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid #e9e9e9;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.rui-input-date-popup .date-panel .picker-header {
+  display: flex;
+  padding: 8px 16px;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-icon {
+  border-radius: 50%;
+  font-size: 12px;
+  user-select: none;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: #7d7e80;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-icon:hover {
+  background-color: #e5e6eb;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-icon.hidden {
+  visibility: hidden;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-value {
+  flex: 1;
+  text-align: center;
+  line-height: 24px;
+  color: #323233;
+  font-weight: 500;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-value .picker-header-label {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+.rui-input-date-popup .date-panel .picker-header .picker-header-value .picker-header-label:hover {
+  background-color: #eee;
+}
+
+.rui-input-date-popup .date-panel .picker-body {
+  padding: 0 16px;
+  padding-bottom: 10px;
+}
+
+.rui-input-date-popup .date-panel .picker-body .panel-date {
+  display: flex;
+  flex-direction: column;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row {
+  display: flex;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell {
+  flex: 1;
+  text-align: center;
+  padding: 2px;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .panel-date-week-item {
+  height: 24px;
+  line-height: 24px;
+  color: #939496;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date {
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date:hover {
+  border-color: #0052D9;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date.last-month,
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date.next-month {
+  color: #c8c9cc;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date.today {
+  border-color: #0052D9;
+}
+
+.rui-input-date-popup .date-panel .picker-body .picker-row .picker-cell .picker-cell-date.selected {
+  color: #fff;
+  background-color: #0052D9;
+  ;
+}
+
+.time-panel {
+  width: 300px;
+  height: 200px;
+  margin-top: 4px;
+  background-color: #fff;
+  width: 168px;
+  height: 280px;
+  border-radius: 4px;
+  box-shadow: 0px 6px 18px 0px rgba(38, 38, 38, 0.14);
+  display: flex;
+  flex-direction: column;
+}
+
+.time-panel-content {
+  flex-grow: 1;
+  height: 0;
+  display: flex;
+}
+
+.time-panel-scroll {
+  flex-grow: 1;
+  height: 100%;
+  overflow: auto;
+}
+
+.time-panel-scroll .item {
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.time-panel-scroll .item:hover {
+  background: #edf4ff;
+}
+
+.time-panel-scroll .item.time-selected {
+  font-weight: bold;
+  background-color: #f7f7f7;
+}
+
+.height-placeholder {
+  height: 211px;
+}
+
+.time-panel-footer {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid #e9e9e9;
+  padding-right: 16px;
+  gap: 16px;
 }
