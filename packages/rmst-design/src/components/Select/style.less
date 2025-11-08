@@ -68,12 +68,14 @@
 }
 
 .@{select-prefix-cls}-options-wrapper {
-  overflow: auto;
   max-height: 200px;
-  padding: 4px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+
+  .rmst-scrollbar-view {
+    padding: 4px;
+  }
 
   .@{select-prefix-cls}-option-item {
     flex-shrink: 0;

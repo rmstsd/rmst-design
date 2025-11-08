@@ -13,6 +13,7 @@ import clsx from 'clsx'
 import { clamp } from 'es-toolkit'
 import { IconWrapper } from '../IconWrapper'
 import { ChevronDown, X } from 'lucide-react'
+import { Scrollbar } from '../Scrollbar'
 
 type OptionItem = { value: string | number; label: string | number }
 interface SelectProps extends InteractProps {
@@ -123,7 +124,7 @@ export function Select(props: SelectProps) {
   }
 
   const popup = (
-    <div className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
+    <Scrollbar className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
       {options.length === 0 && <Empty />}
       {options.map((item, index) => (
         <div
@@ -142,7 +143,7 @@ export function Select(props: SelectProps) {
           {item.label}
         </div>
       ))}
-    </div>
+    </Scrollbar>
   )
 
   return (
