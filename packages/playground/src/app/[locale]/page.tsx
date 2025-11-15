@@ -4,6 +4,8 @@ import { startTransition, useEffect, useLayoutEffect, useRef, useState, ViewTran
 import { Button, useIsSSR } from 'rmst-design'
 import { shuffle } from 'es-toolkit/array'
 
+import './home.css'
+
 let index = 0
 const bgColors = [
   '#EAE8E0', // 深奶油白
@@ -42,7 +44,9 @@ export default function Home() {
         prevPos.current[el.id] = el.getBoundingClientRect()
       })
 
-      setList(shuffle(list))
+      startTransition(() => {
+        setList(shuffle(list))
+      })
     }, 3000)
 
     return () => {
@@ -102,11 +106,11 @@ export default function Home() {
 
       <div className="flex flex-col gap-2 p-2">
         {visible && (
-          <ViewTransition>
-            <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
-              Input
-            </div>
-          </ViewTransition>
+          // <ViewTransition name="aaadsa" default="bbbb">
+          <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
+            Input
+          </div>
+          // </ViewTransition>
         )}
 
         <div className="p-3 bg-pink-100">Select</div>
@@ -135,6 +139,19 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* <div className="flex gap-2 flex-wrap">
+          {list.map(item => (
+            <ViewTransition key={item.id}>
+              <div
+                className="p-3 text-white shrink-0 w-[50px] h-[50px] flex items-center justify-center"
+                style={{ backgroundColor: item.bgColor }}
+              >
+                {item.id}
+              </div>
+            </ViewTransition>
+          ))}
+        </div> */}
       </div>
     </div>
   )
