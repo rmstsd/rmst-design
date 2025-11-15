@@ -1,7 +1,7 @@
 'use client'
 
-import { use, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Button } from 'rmst-design'
+import { startTransition, useEffect, useLayoutEffect, useRef, useState, ViewTransition } from 'react'
+import { Button, useIsSSR } from 'rmst-design'
 import { shuffle } from 'es-toolkit/array'
 
 let index = 0
@@ -21,10 +21,11 @@ function getBgColor() {
   index = (index + 1) % bgColors.length
   return bgColors[index]
 }
-
 export default function Home() {
   const [visible, setVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  const isSSR = useIsSSR()
 
   const [list, setList] = useState(
     ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map(item => ({
@@ -34,24 +35,6 @@ export default function Home() {
   )
   const refList = useRef<HTMLDivElement[]>([])
   const prevPos = useRef<Record<string, DOMRect>>({})
-
-  useLayoutEffect(() => {
-    if (!visible) {
-      return
-    }
-
-    const el = ref.current
-    let height = el.clientHeight
-    el.style.height = '0'
-    el.style.transform = 'scale(0.2)'
-    el.style.overflow = 'hidden'
-
-    document.body.offsetHeight
-
-    el.style.transition = 'height 1s, transform 0.5s'
-    el.style.height = `${height}px`
-    el.style.transform = 'scale(1)'
-  }, [visible])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -101,15 +84,29 @@ export default function Home() {
     }
   }, [list])
 
+  if (isSSR) {
+    return null
+  }
+
   return (
     <div>
-      <Button onClick={() => setVisible(!visible)}>Toggle</Button>
+      <Button
+        onClick={() => {
+          startTransition(() => {
+            setVisible(!visible)
+          })
+        }}
+      >
+        Toggle
+      </Button>
 
       <div className="flex flex-col gap-2 p-2">
         {visible && (
-          <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
-            Input
-          </div>
+          <ViewTransition>
+            <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
+              Input
+            </div>
+          </ViewTransition>
         )}
 
         <div className="p-3 bg-pink-100">Select</div>
