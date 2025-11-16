@@ -1,4 +1,4 @@
-import React, { isValidElement, ReactNode, useRef, useState } from 'react'
+import React, { isValidElement, ReactNode } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 import { mergeProps, useAnTransition, useControllableValue } from '../_util/hooks'
 import { Portal } from '../Portal'
@@ -28,6 +28,7 @@ type TriggerProps = {
   disabled?: boolean
 
   onExited?: () => void
+  _debugName?: string
 }
 
 const defaultProps: TriggerProps = {

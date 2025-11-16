@@ -1,12 +1,18 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Button, Trigger } from 'rmst-design'
+import { Button, Portal, Trigger, useIsSSR } from 'rmst-design'
 
 export default function TriggerDd() {
   const ref = useRef<HTMLButtonElement>(null)
 
-  const [open, setOpen] = useState(true)
+  const isSSR = useIsSSR()
+
+  const [open, setOpen] = useState(false)
+
+  // if (isSSR) {
+  //   return null
+  // }
 
   return (
     <div>
@@ -23,7 +29,13 @@ export default function TriggerDd() {
 
       <hr />
 
-      <Trigger popup={<div>popup</div>}>
+      <Trigger
+        popup={
+          <Trigger popup={<div className="border">popup 2</div>}>
+            <div className="border">popup 1</div>
+          </Trigger>
+        }
+      >
         <div style={{ border: '1px solid red' }}>
           <input type="text" />
           <h1>aa</h1>
