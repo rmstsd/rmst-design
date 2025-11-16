@@ -16,7 +16,7 @@ export default function TriggerDd() {
 
   return (
     <div>
-      <Trigger popup={<div>popup</div>}>
+      {/* <Trigger popup={<div>popup</div>}>
         <Button
           ref={ref}
           onClick={() => {
@@ -25,13 +25,14 @@ export default function TriggerDd() {
         >
           click
         </Button>
-      </Trigger>
+      </Trigger> */}
 
       <hr />
 
       <Trigger
+        _debugName="1"
         popup={
-          <Trigger popup={<div className="border">popup 2</div>}>
+          <Trigger _debugName="2" popup={<div className="border">popup 2</div>}>
             <div className="border">popup 1</div>
           </Trigger>
         }
@@ -43,13 +44,13 @@ export default function TriggerDd() {
         </div>
       </Trigger>
 
-      <Trigger value={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
+      {/* <Trigger value={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
         <Button style={{ marginTop: 400 }}>受控</Button>
       </Trigger>
 
       <Trigger popup={<div>非受控 popup</div>}>
         <Button style={{ marginTop: 400 }}>非受控</Button>
-      </Trigger>
+      </Trigger> */}
     </div>
   )
 }
