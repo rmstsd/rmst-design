@@ -3,12 +3,12 @@ import { Locale, NextIntlClientProvider } from 'next-intl'
 import { headers } from 'next/headers'
 import { SelectTheme, ThemeProvider } from '@/components/Theme'
 
-import '@/css'
-
 import { Link } from '@/i18n/navigation'
 import Header, { headerHeight } from '@/components/Header'
 import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
+
+import '@/css'
 
 export function generateStaticParams() {
   const staticParams = routing.locales.map(locale => ({ locale }))
