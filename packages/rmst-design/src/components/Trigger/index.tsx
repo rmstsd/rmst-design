@@ -40,7 +40,7 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited } = props
+  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited, _debugName } = props
 
   const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: value })
 
