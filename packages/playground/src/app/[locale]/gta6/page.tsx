@@ -10,9 +10,12 @@ import videoImage_1 from './assets/videoImage_1.webp'
 import videoImage_2 from './assets/videoImage_2.webp'
 import videoImage_3 from './assets/videoImage_3.webp'
 
+import Jason_Duval_01 from './assets/Jason_Duval_01.webp'
+
 import './page.scss'
 import { useEffect, useRef, useState } from 'react'
 import { createAnimation, spFn } from './ant'
+import ImageContainer from './ImageContainer/ImageContainer'
 
 const $ = selector => {
   const el = document.querySelector(selector) as HTMLElement
@@ -143,8 +146,13 @@ export default function Gta6() {
         </main>
       </div>
 
-      <section>
+      <section className="bg-gray-900">
         <Image src={videoImage_1} alt="" className="w-full h-auto" />
+
+        <div className="" style={{ padding: '10vh 10vw' }}>
+          <ImageContainer src={Jason_Duval_01} />
+        </div>
+
         <Image src={videoImage_2} alt="" className="w-full h-auto" />
         <Image src={videoImage_3} alt="" className="w-full h-auto" />
       </section>

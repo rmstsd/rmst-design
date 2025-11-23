@@ -10,10 +10,17 @@ import './style.less'
 import { Button } from '../Button'
 import { kfOptions, useAnTransition } from '../_util/hooks'
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  kfaOptions?: KeyframeAnimationOptions
+}
+
+const defaultProps: ImageProps = {
+  kfaOptions: kfOptions
+}
 
 export function Image(props: ImageProps) {
-  const { src, ...restProps } = props
+  props = { ...defaultProps, ...props }
+  const { src, kfaOptions, ...restProps } = props
 
   const imageRef = useRef<HTMLImageElement>(null)
   const previewImageRef = useRef<HTMLImageElement>(null)
@@ -83,13 +90,15 @@ export function Image(props: ImageProps) {
     const endRect = previewImage.getBoundingClientRect()
 
     const objectFit = getComputedStyle(imageRef.current).objectFit
+    const objectPosition = getComputedStyle(imageRef.current).objectPosition
     previewImage.style.objectFit = objectFit
+    previewImage.style.objectPosition = objectPosition
 
     const kfs = [
       { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
       { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
     ]
-    previewImage.animate(kfs, kfOptions)
+    previewImage.animate(kfs, kfaOptions)
   }
 
   const hide = () => {
@@ -106,7 +115,7 @@ export function Image(props: ImageProps) {
       { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
       { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
     ]
-    animationRef.current = previewImage.animate(kfs, { ...kfOptions, fill: 'forwards' })
+    animationRef.current = previewImage.animate(kfs, { ...kfaOptions, fill: 'forwards' })
 
     animationRef.current.onfinish = () => {
       setPreviewImageStyle({})
