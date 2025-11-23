@@ -94,6 +94,11 @@ export default function Home() {
 
   return (
     <div>
+      <div className="flex border " style={{ width: 600, margin: 30 }}>
+        <div className="rec w-[100px] h-[100px] bg-red-500"></div>
+        <div className="rec w-[100px] h-[100px] bg-green-500 " style={{ flexGrow: 0.2 }}></div>
+      </div>
+
       <Button
         onClick={() => {
           startTransition(() => {

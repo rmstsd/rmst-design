@@ -24,8 +24,13 @@ export default function Header() {
       <Link href="/ahome" className={pathname === '/ahome' ? 'header-link-active' : ''}>
         ahome
       </Link>
+
       <Link href="/blog" className={pathname === '/blog' ? 'header-link-active' : ''}>
         blog
+      </Link>
+
+      <Link href="/gta6" className={pathname === '/gta6' ? 'header-link-active' : ''}>
+        gta6
       </Link>
 
       <SelectTheme />
