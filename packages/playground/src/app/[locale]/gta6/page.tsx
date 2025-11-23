@@ -6,6 +6,10 @@ import gtaLogoHHead from './assets/gtaLogoHHead.webp'
 import gtaLogo from './assets/gtaLogo.svg'
 import gtaVi from './assets/gtaVi.png'
 
+import videoImage_1 from './assets/videoImage_1.webp'
+import videoImage_2 from './assets/videoImage_2.webp'
+import videoImage_3 from './assets/videoImage_3.webp'
+
 import './page.scss'
 import { useEffect, useRef, useState } from 'react'
 import { createAnimation, spFn } from './ant'
@@ -55,8 +59,18 @@ export default function Gta6() {
         $('.banner-inner').style.opacity = `${value}`
       })
 
-      spFn({ scrollValue: scrollTop, scrollStart: 500, scrollEnd: 900, valueStart: 0, valueEnd: 1 }, value => {
-        $('.fs-text').style.opacity = value
+      if (scrollTop < 900) {
+        spFn({ scrollValue: scrollTop, scrollStart: 500, scrollEnd: 1000, valueStart: 0, valueEnd: 1 }, value => {
+          $('.fs-text').style.opacity = value
+        })
+      } else if (900 < scrollTop) {
+        spFn({ scrollValue: scrollTop, scrollStart: 1000, scrollEnd: 1500, valueStart: 1, valueEnd: 0 }, value => {
+          $('.fs-text').style.opacity = value
+        })
+      }
+
+      spFn({ scrollValue: scrollTop, scrollStart: 1500, scrollEnd: 2000, valueStart: 0, valueEnd: 1 }, value => {
+        $('.ze-text').style.opacity = value
       })
     }
 
@@ -77,17 +91,17 @@ export default function Gta6() {
     }
   }, [isVisible])
 
-  if (!isVisible) {
-    return null
-  }
+  // if (!isVisible) {
+  //   return null
+  // }
 
   const test = <div className="test-bg h-screen bg-purple-100" style={{ backgroundImage: `url('${gtaVi.src}')` }}></div>
 
   return (
     <div className="gta overflow-auto fixed z-20 inset-0 bg-white" ref={containerRef}>
-      {test}
+      {/* {test} */}
 
-      {/* <div className="playground bg-gray-700" style={{ height: '500vh' }}>
+      <div className="playground bg-gray-700" style={{ height: '300vh' }}>
         <div
           className="banner-container overflow-clip"
           style={
@@ -112,7 +126,28 @@ export default function Gta6() {
             敬请期待
           </div>
         </main>
-      </div> */}
+
+        <main
+          className="ze-text h-screen sticky w-full z-10 top-0 bg-gray-900 flow-root bg-clip-text font-bold "
+          style={{
+            color: 'transparent',
+            padding: '20vh',
+            backgroundImage:
+              'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
+          }}
+        >
+          <div style={{ fontSize: 77 }}>美国罪恶城</div>
+          <div style={{ fontSize: 26 }}>
+            杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
+          </div>
+        </main>
+      </div>
+
+      <section>
+        <Image src={videoImage_1} alt="" className="w-full h-auto" />
+        <Image src={videoImage_2} alt="" className="w-full h-auto" />
+        <Image src={videoImage_3} alt="" className="w-full h-auto" />
+      </section>
 
       <div style={{ height: 1000 }}></div>
     </div>
