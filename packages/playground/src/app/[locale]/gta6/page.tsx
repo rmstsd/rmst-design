@@ -11,6 +11,8 @@ import videoImage_2 from './assets/videoImage_2.webp'
 import videoImage_3 from './assets/videoImage_3.webp'
 
 import Jason_Duval_01 from './assets/Jason_Duval_01.webp'
+import Jason_Duval_02 from './assets/Jason_Duval_02.webp'
+import Jason_Duval_06 from './assets/Jason_Duval_06.webp'
 
 import './page.scss'
 import { useEffect, useRef, useState } from 'react'
@@ -148,12 +150,39 @@ export default function Gta6() {
 
       <section className="bg-gray-900">
         <Image src={videoImage_1} alt="" className="w-full h-auto" />
+        <section className="flex gap-10" style={{ padding: '10vh 15vw' }}>
+          <div className="flex-grow w-0 flex-shrink-0">
+            <div className="text-6xl font-bold" style={{ color: '#fff9cb' }}>
+              杰森 · 杜瓦
+            </div>
+            <div className="text-4xl font-bold mt-10" style={{ color: '#ffb0c4' }}>
+              杰森想过上轻松日子，可生活却越来越艰难。
+            </div>
+            <div className="text-2xl text-white mt-8">
+              杰森从小就与骗子和小偷为伍。他曾短暂参军，希望洗去少年时期不堪的过往。退伍后，他在各个礁岛间做起了自己最擅长的活计：替毒贩跑腿。或许，做出改变的时候到了。
+            </div>
+            <ImageContainer src={Jason_Duval_01} className="mt-20 h-[1000px]" style={{ objectPosition: '80% center' }} />
+          </div>
 
-        <div className="" style={{ padding: '10vh 10vw' }}>
-          <ImageContainer src={Jason_Duval_01} />
-        </div>
+          <div className="flex-grow w-0 flex-shrink-0 pt-32">
+            <ImageContainer
+              src={Jason_Duval_02}
+              className="mt-8 h-[800px]"
+              style={{ width: '100vw', objectPosition: '30% center' }}
+            />
+            <ImageContainer src={Jason_Duval_06} className="mt-8 aspect-square" style={{ objectPosition: '40% center' }} />
+          </div>
+        </section>
 
         <Image src={videoImage_2} alt="" className="w-full h-auto" />
+        <section>
+          <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2] " style={{ color: '#fff9cb' }}>
+            要是情况不对，转
+            <br />
+            头叫我就好。
+          </div>
+        </section>
+
         <Image src={videoImage_3} alt="" className="w-full h-auto" />
       </section>
 
