@@ -6,7 +6,7 @@ import { shuffle } from 'es-toolkit/array'
 
 import './home.css'
 
-let index = 0
+let bIndex = 0
 const bgColors = [
   '#EAE8E0', // 深奶油白
   '#A0C4D8', // 深莫兰迪蓝
@@ -20,8 +20,8 @@ const bgColors = [
   '#D0CADC' // 深淡紫灰
 ]
 function getBgColor() {
-  index = (index + 1) % bgColors.length
-  return bgColors[index]
+  bIndex = (bIndex + 1) % bgColors.length
+  return bgColors[bIndex]
 }
 export default function Home() {
   const [visible, setVisible] = useState(false)
@@ -157,7 +157,78 @@ export default function Home() {
             </ViewTransition>
           ))}
         </div> */}
+
+        <IPhone />
       </div>
+    </div>
+  )
+}
+
+const list = ['aa', 'b', 'ccc', 'ddddd']
+
+const IPhone = () => {
+  const [active, setActive] = useState('')
+
+  const refList = useRef<HTMLDivElement[]>([])
+  const prevPos = useRef<DOMRect[]>(null)
+
+  useLayoutEffect(() => {
+    if (!prevPos.current) {
+      prevPos.current = refList.current.map(item => item.getBoundingClientRect())
+
+      return
+    }
+
+    const newPos = refList.current.map(item => item.getBoundingClientRect())
+
+    newPos.forEach((newItem, index) => {
+      const oldItem = prevPos.current[index]
+
+      const el = refList.current[index]
+
+      const dx = oldItem.width - newItem.width
+      const dy = oldItem.height - newItem.height
+
+      if (dx || dy) {
+        el.style.width = `${oldItem.width}px`
+        el.style.height = `${oldItem.height}px`
+
+        document.body.offsetHeight
+
+        el.style.transition = 'width 300ms, height 300ms'
+        el.style.transitionTimingFunction = 'cubic-bezier(0.27, 0.30, 0.56, 1.46)'
+        el.style.width = `${newItem.width}px`
+        el.style.height = `${newItem.height}px`
+        el.style.color = 'transparent'
+
+        el.addEventListener(
+          'transitionend',
+          () => {
+            el.style.transition = ''
+            el.style.height = ``
+            el.style.color = 'black'
+          },
+          { once: true }
+        )
+      }
+    })
+
+    prevPos.current = newPos
+  }, [active])
+
+  return (
+    <div className="m-6 flex gap-2 flex-col items-start p-6 border">
+      {list.map((item, index) => (
+        <div
+          key={item}
+          className="p-2 shrink-0 flex items-center justify-center bg-pink-100 break-all overflow-clip"
+          style={{ width: active === item ? '100px' : '' }}
+          onClick={() => setActive(item)}
+          ref={el => void (refList.current[index] = el)}
+        >
+          {active === item ? item.repeat(20) : item}
+        </div>
+      ))}
     </div>
   )
 }
