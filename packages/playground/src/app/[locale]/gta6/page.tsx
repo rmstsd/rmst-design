@@ -14,6 +14,10 @@ import Jason_Duval_01 from './assets/Jason_Duval_01.webp'
 import Jason_Duval_02 from './assets/Jason_Duval_02.webp'
 import Jason_Duval_06 from './assets/Jason_Duval_06.webp'
 
+import Jason_Duval_05 from './assets/Jason_Duval_05.webp'
+import Jason_Duval_03 from './assets/Jason_Duval_03.webp'
+import Jason_Duval_04 from './assets/Jason_Duval_04.webp'
+
 import './page.scss'
 import { useEffect, useRef, useState } from 'react'
 import { createAnimation, spFn } from './ant'
@@ -64,19 +68,26 @@ export default function Gta6() {
         $('.banner-inner').style.opacity = `${value}`
       })
 
-      if (scrollTop < 900) {
+      if (scrollTop < 1000) {
         spFn({ scrollValue: scrollTop, scrollStart: 500, scrollEnd: 1000, valueStart: 0, valueEnd: 1 }, value => {
           $('.fs-text').style.opacity = value
         })
-      } else if (900 < scrollTop) {
+      } else if (1000 < scrollTop) {
         spFn({ scrollValue: scrollTop, scrollStart: 1000, scrollEnd: 1500, valueStart: 1, valueEnd: 0 }, value => {
           $('.fs-text').style.opacity = value
         })
       }
 
-      spFn({ scrollValue: scrollTop, scrollStart: 1500, scrollEnd: 2000, valueStart: 0, valueEnd: 1 }, value => {
-        $('.ze-text').style.opacity = value
-      })
+      if (scrollTop < 2000) {
+        spFn({ scrollValue: scrollTop, scrollStart: 1500, scrollEnd: 2000, valueStart: 0, valueEnd: 1 }, value => {
+          $('.ze-text').style.opacity = value
+        })
+      } else if (2000 < scrollTop) {
+        spFn({ scrollValue: scrollTop, scrollStart: 2000, scrollEnd: 2500, valueStart: 1, valueEnd: 0 }, value => {
+          $('.ze-text').style.opacity = value
+          $('.playground-1').style.backgroundColor = `rgba(0, 0, 0, ${value})`
+        })
+      }
     }
 
     update(containerRef.current.scrollTop)
@@ -106,7 +117,7 @@ export default function Gta6() {
     <div className="gta overflow-auto fixed z-20 inset-0 bg-white" ref={containerRef}>
       {/* {test} */}
 
-      <div className="playground bg-gray-700" style={{ height: '300vh' }}>
+      <div className="playground-1  bg-gray-900 relative z-50" style={{ height: '400vh' }}>
         <div
           className="banner-container overflow-clip"
           style={
@@ -132,25 +143,26 @@ export default function Gta6() {
           </div>
         </main>
 
-        <main
-          className="ze-text h-screen sticky w-full z-10 top-0 bg-gray-900 flow-root bg-clip-text font-bold "
-          style={{
-            color: 'transparent',
-            padding: '20vh',
-            backgroundImage:
-              'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
-          }}
-        >
-          <div style={{ fontSize: 77 }}>美国罪恶城</div>
-          <div style={{ fontSize: 26 }}>
-            杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
+        <main className="ze-text h-screen sticky w-full z-10 top-0 bg-gray-900 flow-root  " style={{ padding: '20vh' }}>
+          <div
+            className="bg-clip-text font-bold"
+            style={{
+              color: 'transparent',
+              backgroundImage:
+                'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
+            }}
+          >
+            <div style={{ fontSize: 77 }}>美国罪恶城</div>
+            <div style={{ fontSize: 26 }}>
+              杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
+            </div>
           </div>
         </main>
       </div>
 
-      <section className="bg-gray-900">
-        <Image src={videoImage_1} alt="" className="w-full h-auto" />
-        <section className="flex gap-10" style={{ padding: '10vh 15vw' }}>
+      <main className="bg-gray-900 relative z-10" style={{ marginTop: '-200vh' }}>
+        <Image src={videoImage_1} alt="" className="w-full h-screen sticky top-0 object-cover" />
+        <section className="flex gap-10 relative" style={{ padding: '10vh 15vw', marginTop: '100vh' }}>
           <div className="flex-grow w-0 flex-shrink-0">
             <div className="text-6xl font-bold" style={{ color: '#fff9cb' }}>
               杰森 · 杜瓦
@@ -181,10 +193,27 @@ export default function Gta6() {
             <br />
             头叫我就好。
           </div>
+
+          <section className="flex gap-10" style={{ padding: '10vh 15vw' }}>
+            <div className="flex-grow w-0 flex-shrink-0 pt-32">
+              <div className="text-5xl font-bold w-[300px] leading-[1.2] mx-auto" style={{ color: '#ffb0c4' }}>
+                又一天快活日子，对吧？
+              </div>
+              <ImageContainer src={Jason_Duval_05} className="mt-8 aspect-square" style={{ objectPosition: '30% center' }} />
+              <ImageContainer src={Jason_Duval_03} className="mt-8 aspect-square" style={{ objectPosition: '10% center' }} />
+            </div>
+
+            <div className="flex-grow w-0 flex-shrink-0 pt-32">
+              <div className="text-2xl leading-[1.5] text-white">
+                遇见露西娅，可能是他这辈子的万幸，又或者是不幸。杰森清楚自己想要的结果，但此刻，他有些彷徨。
+              </div>
+              <ImageContainer src={Jason_Duval_04} className="mt-8 aspect-[9/16]" style={{ objectPosition: '25% center' }} />
+            </div>
+          </section>
         </section>
 
         <Image src={videoImage_3} alt="" className="w-full h-auto" />
-      </section>
+      </main>
 
       <div style={{ height: 1000 }}></div>
     </div>
