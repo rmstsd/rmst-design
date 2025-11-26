@@ -118,9 +118,6 @@ export default function Home() {
           // </ViewTransition>
         )}
 
-        <div className="p-3 bg-pink-100">Select</div>
-        <div className="p-3 bg-orange-100">DatePicker</div>
-
         <hr />
 
         <div className="flex gap-2 flex-wrap">

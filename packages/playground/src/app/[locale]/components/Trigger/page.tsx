@@ -20,9 +20,7 @@ export default function TriggerDd() {
         open
       </Button>
       <Trigger popup={<div>popup</div>}>
-        <Button ref={ref} onClick={() => {}}>
-          click
-        </Button>
+        <Button onClick={() => {}}>click</Button>
       </Trigger>
 
       <hr className="my-3" />
