@@ -1,6 +1,6 @@
 'use client'
 
-import { startTransition, useEffect, useLayoutEffect, useRef, useState, ViewTransition } from 'react'
+import { startTransition, useEffect, useInsertionEffect, useLayoutEffect, useRef, useState, ViewTransition } from 'react'
 import { Button, useIsSSR } from 'rmst-design'
 import { shuffle } from 'es-toolkit/array'
 
@@ -65,6 +65,10 @@ export default function Home() {
         const prev = prevPos.current[el.id]
         const cur = newPos[el.id]
 
+        if (!prev || !cur) {
+          return
+        }
+
         const dx = prev.left - cur.left
         const dy = prev.top - cur.top
 
@@ -86,6 +90,10 @@ export default function Home() {
         }
       })
     }
+
+    refList.current.forEach(el => {
+      prevPos.current[el.id] = el.getBoundingClientRect()
+    })
   }, [list])
 
   if (isSSR) {
@@ -109,7 +117,7 @@ export default function Home() {
         Toggle
       </Button>
 
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2 p-2 items-start">
         {visible && (
           // <ViewTransition name="aaadsa" default="bbbb">
           <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
@@ -127,6 +135,19 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        <Button
+          onClick={() => {
+            // 随机插入一个元素
+            setList(prev => {
+              const randomIndex = Math.floor(Math.random() * prev.length)
+              const randomItem = Math.random().toString(36).substring(2, 6)
+              return [...prev.slice(0, randomIndex), { id: randomItem, bgColor: getBgColor() }, ...prev.slice(randomIndex)]
+            })
+          }}
+        >
+          插入
+        </Button>
 
         <div className="flex gap-2 flex-wrap">
           {list.map((item, index) => (
