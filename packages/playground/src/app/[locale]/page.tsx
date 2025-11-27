@@ -5,6 +5,7 @@ import { Button, useIsSSR } from 'rmst-design'
 import { shuffle } from 'es-toolkit/array'
 
 import './home.css'
+import TransitionGroup from '@/components/TransitionGroup'
 
 let bIndex = 0
 const bgColors = [
@@ -30,7 +31,7 @@ export default function Home() {
   const isSSR = useIsSSR()
 
   const [list, setList] = useState(
-    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map(item => ({
+    ['a', 'b', 'c', 'd'].map(item => ({
       id: item,
       bgColor: getBgColor()
     }))
@@ -38,66 +39,56 @@ export default function Home() {
   const refList = useRef<HTMLDivElement[]>([])
   const prevPos = useRef<Record<string, { left: number; top: number }>>({})
 
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     refList.current.forEach(el => {
-  //       prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
-  //     })
-
-  //     // setList(shuffle(list))
-  //   }, 3000)
-
-  //   return () => {
-  //     clearInterval(timer)
-  //   }
-  // }, [])
-
   const dRef = useRef(false)
 
-  useLayoutEffect(() => {
-    if (Object.keys(prevPos.current).length) {
-      console.log('ddd')
-      dRef.current = true
-      const newPos: Record<string, { left: number; top: number }> = {}
-      refList.current.forEach(el => {
-        newPos[el.id] = { left: el.offsetLeft, top: el.offsetTop }
-      })
+  // 原理探索
+  // useLayoutEffect(() => {
+  //   if (Object.keys(prevPos.current).length) {
+  //     dRef.current = true
+  //     const newPos: Record<string, { left: number; top: number }> = {}
+  //     refList.current.forEach(el => {
+  //       newPos[el.id] = { left: el.offsetLeft, top: el.offsetTop }
+  //     })
 
-      refList.current.forEach(el => {
-        const prev = prevPos.current[el.id]
-        const cur = newPos[el.id]
+  //     refList.current.forEach(el => {
+  //       const prev = prevPos.current[el.id]
+  //       const cur = newPos[el.id]
 
-        if (!prev || !cur) {
-          return
-        }
+  //       if (!prev || !cur) {
+  //         return
+  //       }
 
-        const dx = prev.left - cur.left
-        const dy = prev.top - cur.top
+  //       // 如果在运动过程中, 让其立刻到终点
+  //       el.style.transition = ''
+  //       document.body.offsetHeight
 
-        if (dx || dy) {
-          el.style.transform = `translate(${dx}px, ${dy}px)`
-          document.body.offsetHeight
+  //       const dx = prev.left - cur.left
+  //       const dy = prev.top - cur.top
 
-          el.style.transition = 'transform 2s'
-          el.style.transform = ''
+  //       if (dx || dy) {
+  //         el.style.transform = `translate(${dx}px, ${dy}px)`
+  //         document.body.offsetHeight
 
-          el.addEventListener(
-            'transitionend',
-            () => {
-              el.style.transition = ''
-              el.style.transform = ''
-              dRef.current = false
-            },
-            { once: true }
-          )
-        }
-      })
-    }
+  //         el.style.transition = 'transform 2s'
+  //         el.style.transform = ''
 
-    refList.current.forEach(el => {
-      prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
-    })
-  }, [list])
+  //         el.addEventListener(
+  //           'transitionend',
+  //           () => {
+  //             el.style.transition = ''
+  //             el.style.transform = ''
+  //             dRef.current = false
+  //           },
+  //           { once: true }
+  //         )
+  //       }
+  //     })
+  //   }
+
+  //   refList.current.forEach(el => {
+  //     prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
+  //   })
+  // }, [list])
 
   const [a, setA] = useState(false)
 
@@ -109,14 +100,18 @@ export default function Home() {
   const dong = () => {
     const t2 = domRef.current
     const newLeft = domRef.current.offsetLeft
+
+    t2.style.transition = ''
+
+    t2.offsetTop
+
     t2.style.transform = `translateX(${oldRef.current - newLeft}px)`
 
     t2.offsetTop
 
-    t2.style.transition = 'all 0.5s'
+    t2.style.transition = 'all 1s'
     t2.style.transform = 'translateX(0)'
 
-    abCtRef.current.abort()
     abCtRef.current = new AbortController()
 
     t2.addEventListener(
@@ -144,9 +139,9 @@ export default function Home() {
           setA(!a)
 
           oldRef.current = domRef.current.offsetLeft
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             dong()
-          }, 0)
+          })
         }}
       >
         set
@@ -185,7 +180,6 @@ export default function Home() {
             洗牌
           </Button>
         </div>
-
         <div className="flex gap-2 flex-wrap">
           {list.map(item => (
             <div id={item.id} key={item.id} className="p-3 shrink-0 w-[50px] h-[50px] flex items-center justify-center">
@@ -193,7 +187,6 @@ export default function Home() {
             </div>
           ))}
         </div>
-
         <div className="flex gap-2 flex-wrap">
           {list.map((item, index) => (
             <div
@@ -207,21 +200,19 @@ export default function Home() {
             </div>
           ))}
         </div>
+        {/* <IPhone /> */}
 
-        {/* <div className="flex gap-2 flex-wrap">
+        <TransitionGroup>
           {list.map(item => (
-            <ViewTransition key={item.id}>
-              <div
-                className="p-3 text-white shrink-0 w-[50px] h-[50px] flex items-center justify-center"
-                style={{ backgroundColor: item.bgColor }}
-              >
-                {item.id}
-              </div>
-            </ViewTransition>
+            <div
+              key={item.id}
+              className="p-3 text-white shrink-0 flex items-center justify-center"
+              style={{ backgroundColor: item.bgColor }}
+            >
+              {item.id}
+            </div>
           ))}
-        </div> */}
-
-        <IPhone />
+        </TransitionGroup>
       </div>
     </div>
   )
