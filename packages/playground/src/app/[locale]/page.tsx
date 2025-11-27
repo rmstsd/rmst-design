@@ -36,29 +36,31 @@ export default function Home() {
     }))
   )
   const refList = useRef<HTMLDivElement[]>([])
-  const prevPos = useRef<Record<string, DOMRect>>({})
+  const prevPos = useRef<Record<string, { left: number; top: number }>>({})
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      refList.current.forEach(el => {
-        prevPos.current[el.id] = el.getBoundingClientRect()
-      })
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     refList.current.forEach(el => {
+  //       prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
+  //     })
 
-      startTransition(() => {
-        setList(shuffle(list))
-      })
-    }, 3000)
+  //     // setList(shuffle(list))
+  //   }, 3000)
 
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
+  //   return () => {
+  //     clearInterval(timer)
+  //   }
+  // }, [])
+
+  const dRef = useRef(false)
 
   useLayoutEffect(() => {
     if (Object.keys(prevPos.current).length) {
-      const newPos: Record<string, DOMRect> = {}
+      console.log('ddd')
+      dRef.current = true
+      const newPos: Record<string, { left: number; top: number }> = {}
       refList.current.forEach(el => {
-        newPos[el.id] = el.getBoundingClientRect()
+        newPos[el.id] = { left: el.offsetLeft, top: el.offsetTop }
       })
 
       refList.current.forEach(el => {
@@ -84,6 +86,7 @@ export default function Home() {
             () => {
               el.style.transition = ''
               el.style.transform = ''
+              dRef.current = false
             },
             { once: true }
           )
@@ -92,9 +95,41 @@ export default function Home() {
     }
 
     refList.current.forEach(el => {
-      prevPos.current[el.id] = el.getBoundingClientRect()
+      prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
     })
   }, [list])
+
+  const [a, setA] = useState(false)
+
+  const domRef = useRef<HTMLDivElement>(null)
+  const abCtRef = useRef<AbortController>(new AbortController())
+
+  let oldRef = useRef(0)
+
+  const dong = () => {
+    const t2 = domRef.current
+    const newLeft = domRef.current.offsetLeft
+    t2.style.transform = `translateX(${oldRef.current - newLeft}px)`
+
+    t2.offsetTop
+
+    t2.style.transition = 'all 0.5s'
+    t2.style.transform = 'translateX(0)'
+
+    abCtRef.current.abort()
+    abCtRef.current = new AbortController()
+
+    t2.addEventListener(
+      'transitionend',
+      () => {
+        t2.style.transition = ''
+        t2.style.transform = ''
+
+        abCtRef.current.abort()
+      },
+      { signal: abCtRef.current.signal }
+    )
+  }
 
   if (isSSR) {
     return null
@@ -102,31 +137,54 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex border " style={{ width: 600, margin: 30 }}>
-        <div className="rec w-[100px] h-[100px] bg-red-500"></div>
-        <div className="rec w-[100px] h-[100px] bg-green-500 " style={{ flexGrow: 0.2 }}></div>
-      </div>
+      <Button onClick={() => dong()}>动</Button>
 
       <Button
         onClick={() => {
-          startTransition(() => {
-            setVisible(!visible)
-          })
+          setA(!a)
+
+          oldRef.current = domRef.current.offsetLeft
+          setTimeout(() => {
+            dong()
+          }, 0)
         }}
       >
-        Toggle
+        set
       </Button>
 
-      <div className="flex flex-col gap-2 p-2 items-start">
-        {visible && (
-          // <ViewTransition name="aaadsa" default="bbbb">
-          <div className=" bg-red-100 " style={{ height: 60 }} ref={ref}>
-            Input
-          </div>
-          // </ViewTransition>
-        )}
+      <div className="flex gap-6 pl-24">
+        {a && <div className="border mr-3 w-9">a</div>}
 
-        <hr />
+        <div
+          ref={domRef}
+          className="test-2 p-3 text-white shrink-0 w-[50px] h-[50px] flex items-center justify-center bg-pink-500"
+        >
+          哈哈
+        </div>
+      </div>
+      <div className="flex flex-col gap-2 p-2 items-start">
+        <div>
+          <Button
+            onClick={() => {
+              // 随机插入一个元素
+              setList(prev => {
+                const randomIndex = Math.floor(Math.random() * prev.length)
+                const randomItem = Math.random().toString(36).substring(2, 6)
+                return [...prev.slice(0, randomIndex), { id: randomItem, bgColor: getBgColor() }, ...prev.slice(randomIndex)]
+              })
+            }}
+          >
+            插入
+          </Button>
+
+          <Button
+            onClick={() => {
+              setList(shuffle(list))
+            }}
+          >
+            洗牌
+          </Button>
+        </div>
 
         <div className="flex gap-2 flex-wrap">
           {list.map(item => (
@@ -135,19 +193,6 @@ export default function Home() {
             </div>
           ))}
         </div>
-
-        <Button
-          onClick={() => {
-            // 随机插入一个元素
-            setList(prev => {
-              const randomIndex = Math.floor(Math.random() * prev.length)
-              const randomItem = Math.random().toString(36).substring(2, 6)
-              return [...prev.slice(0, randomIndex), { id: randomItem, bgColor: getBgColor() }, ...prev.slice(randomIndex)]
-            })
-          }}
-        >
-          插入
-        </Button>
 
         <div className="flex gap-2 flex-wrap">
           {list.map((item, index) => (
