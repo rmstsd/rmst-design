@@ -126,12 +126,28 @@ export default function Home() {
     )
   }
 
+  const [count, setCount] = useState(1)
+
+  useLayoutEffect(() => {
+    console.log('setup', ttRef.current?.textContent)
+    return () => {
+      // 访问也是最新的 dom
+      console.log('cleanup', ttRef.current.textContent)
+    }
+  }, [count])
+
+  const ttRef = useRef<HTMLButtonElement>(null)
+
   if (isSSR) {
     return null
   }
 
   return (
     <div>
+      <button ref={ttRef} onClick={() => setCount(count + 1)}>
+        qq {count}
+      </button>
+
       <Button onClick={() => dong()}>动</Button>
 
       <Button

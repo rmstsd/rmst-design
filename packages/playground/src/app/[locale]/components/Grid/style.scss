@@ -1,0 +1,45 @@
+.gr-demo {
+  .container {
+    container-type: size;
+    container-name: asd;
+    background-color: #ffd8d8;
+    height: 100px;
+  }
+
+  .container2 {
+    background-color: #d8ffd8;
+    height: 100px;
+    container-type: size;
+  }
+}
+
+@container asd (min-width: 700px) {
+  .container {
+    background-color: rgb(54, 101, 255);
+  }
+
+  h1 {
+    color: orange;
+  }
+}
+
+.container-flex {
+  display: flex;
+
+  .left {
+    background-color: #ffe1e6;
+    padding: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .right {
+    background-color: #f9f9cb;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+}

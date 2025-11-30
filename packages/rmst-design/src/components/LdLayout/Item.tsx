@@ -98,6 +98,9 @@ const Tabs = observer(({ config }: TabsProps) => {
   const tabContentRef = useRef<HTMLDivElement>(null)
 
   const onResize = useEffectEvent(() => {
+    if (!ldStore.rootLayoutEl) {
+      return
+    }
     const rootLayoutRect = ldStore.rootLayoutEl.getBoundingClientRect()
     const rect = tabContentRef.current.getBoundingClientRect()
 
