@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { Fragment, PointerEvent, useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
-import { IConfig, ITabs } from './config'
+import { IConfig, ITabs, Total_Grow } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
 import { startDrag } from '../_util/drag'
@@ -51,7 +51,7 @@ export const Item = observer(({ config }: ItemProps) => {
           size = containerRect.height
         }
 
-        const delta = distance / size
+        const delta = (distance / size) * Total_Grow
 
         prev.style.flexGrow = clamp(downSnap.prev + delta, min, max)
         next.style.flexGrow = clamp(downSnap.next - delta, min, max)
@@ -143,7 +143,7 @@ const Tabs = observer(({ config }: TabsProps) => {
   }
 
   return (
-    <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow || 1 }}>
+    <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow }}>
       <div className="tab-header relative">
         {config.children?.map((tab, index) => (
           <Fragment key={tab.id}>

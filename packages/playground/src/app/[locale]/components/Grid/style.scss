@@ -22,24 +22,3 @@
     color: orange;
   }
 }
-
-.container-flex {
-  display: flex;
-
-  .left {
-    background-color: #ffe1e6;
-    padding: 2px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    flex-shrink: 1;
-    min-width: 0;
-  }
-
-  .right {
-    background-color: #f9f9cb;
-    padding: 2px;
-    flex-shrink: 0;
-  }
-}

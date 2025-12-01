@@ -6,7 +6,7 @@ import { Item } from './Item'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
 import { Fragment, useLayoutEffect, useState } from 'react'
-import { traverse } from './config'
+import { Total_Grow, traverse } from './config'
 import { cloneDeep } from 'es-toolkit'
 import clsx from 'clsx'
 import { PortalContainer } from './PortalContainer'
@@ -18,7 +18,7 @@ export const LdLayout = observer(function LdLayout() {
       if (item.mode === 'row' || item.mode === 'column') {
         item.children?.forEach(child => {
           child.style ??= {
-            flexGrow: 1 / item.children.length
+            flexGrow: Total_Grow / item.children.length
           }
         })
       }

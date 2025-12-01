@@ -1,5 +1,7 @@
 import { FunctionComponent, ReactNode } from 'react'
 
+export const Total_Grow = 100
+
 export type ITabs = {
   id: string
   children: { id: string; title: string; content?: ReactNode }[]
@@ -139,7 +141,7 @@ export function fixLayout(layout: IConfig) {
       }
 
       const sum = node.children.reduce((pre, cur) => pre + (cur.style.flexGrow ?? 0), 0)
-      const average = (1 - sum) / node.children.length
+      const average = (Total_Grow - sum) / node.children.length
       node.children.forEach(child => {
         child.style.flexGrow += average
       })

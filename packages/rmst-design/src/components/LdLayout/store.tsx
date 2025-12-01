@@ -1,5 +1,5 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import { findParentNode, fixLayout, IComponent, IConfig } from './config'
+import { findParentNode, fixLayout, IComponent, IConfig, Total_Grow } from './config'
 
 import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
@@ -13,9 +13,9 @@ if (isClient) {
 }
 
 export const ContentEm = props => {
-  useEffect(() => {
-    console.log('useEffect', props.id)
-  }, [])
+  // useEffect(() => {
+  //   console.log('useEffect', props.id)
+  // }, [])
 
   return <div>{props.id} 的 content</div>
 }
@@ -153,6 +153,7 @@ class LdStore {
         targetParent.children.splice(index, 0, config)
       }
     } else {
+      console.log('-- else')
       // 需要再套一层
       const newMode = targetParent.mode === 'row' ? 'column' : 'row'
       let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
@@ -170,8 +171,8 @@ class LdStore {
 
       {
         // 需要再套一层的时候, 均分
-        target.style.flexGrow = 0.5
-        tabConfig.style.flexGrow = 0.5
+        target.style.flexGrow = Total_Grow / 2
+        tabConfig.style.flexGrow = Total_Grow / 2
       }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
