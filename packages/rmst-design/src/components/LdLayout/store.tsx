@@ -1,5 +1,5 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import { findParentNode, fixLayout, IComponent, IConfig, Total_Grow } from './config'
+import { findParentNode, fixLayout, IComponent, IConfig, Total_Grow, validateLayout } from './config'
 
 import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
@@ -188,6 +188,8 @@ class LdStore {
     this.layout = cloneDeep(this.layout)
     console.log('layout', toJS(this.layout))
 
+    validateLayout(this.layout)
+
     this.source = null
   }
 
@@ -213,9 +215,8 @@ class LdStore {
       }
     }
 
-    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
-
     sourceParent.children.splice(originIndex, 1)
+    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
 
     if (source.mode === 'tabs') {
       const average = source.style.flexGrow / sourceParent.children.length
@@ -228,10 +229,11 @@ class LdStore {
       removeItem(sourceParent, this.layout)
     }
 
-    console.log('layout', toJS(this.layout))
-
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
+    console.log('layout', toJS(this.layout))
+
+    validateLayout(this.layout)
 
     this.source = null
   }

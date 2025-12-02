@@ -112,14 +112,6 @@ export function findParentNode(id: string, node: IConfig): IConfig {
   }
 }
 
-function isLessThanOneWithTolerance(num, epsilon = 0.0001) {
-  if (Math.abs(num - 1) <= epsilon) {
-    return false
-  }
-
-  return num < 1
-}
-
 export function fixLayout(layout: IConfig) {
   dfs(layout)
 
@@ -140,17 +132,35 @@ export function fixLayout(layout: IConfig) {
         parent.children.splice(index, 1, child)
       }
 
-      const sum = node.children.reduce((pre, cur) => pre + (cur.style.flexGrow ?? 0), 0)
-      const average = (Total_Grow - sum) / node.children.length
-      node.children.forEach(child => {
-        child.style.flexGrow += average
-      })
+      // const sum = node.children.reduce((pre, cur) => pre + (cur.style.flexGrow ?? 0), 0)
+      // const average = (Total_Grow - sum) / node.children.length
+      // node.children.forEach(child => {
+      //   child.style.flexGrow += average
+      // })
 
       for (const item of node.children ?? []) {
         dfs(item)
       }
     }
   }
+}
+
+export function validateLayout(layout: IConfig) {
+  traverse(layout, item => {
+    if (item.mode === 'column' || item.mode === 'row') {
+      const sum = item.children.reduce((pre, cur) => pre + cur.style.flexGrow, 0)
+
+      if (sum - 100 > 0.0001) {
+        console.error('不对')
+      }
+    } else if (item.mode === 'tabs') {
+      // 修正选中项
+      const tabsConfig = item as ITabs
+      if (!tabsConfig.children.map(child => child.id).includes(tabsConfig.selected)) {
+        tabsConfig.selected = tabsConfig.children[0].id
+      }
+    }
+  })
 }
 
 export function traverse(config: IConfig, traverseFn: (item: IConfig) => void) {

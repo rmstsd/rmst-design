@@ -51,13 +51,7 @@ const PortalItem = observer(({ tc }: any) => {
       key={tc.id}
       data-tabs-id={tc.tabsId}
       className="portal-item"
-      style={{
-        left: rect?.x,
-        top: rect?.y,
-        width: rect?.width,
-        height: rect?.height,
-        display: tc.visible ? 'block' : 'none'
-      }}
+      style={{ left: rect?.x, top: rect?.y, width: rect?.width, height: rect?.height, display: tc.visible ? 'block' : 'none' }}
     >
       {tc.content}
 

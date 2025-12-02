@@ -129,37 +129,37 @@
     position: absolute;
     left: 0;
     overflow: clip;
+  }
 
-    .indicator {
-      --size: 40px;
-      position: absolute;
-      width: var(--size);
-      height: var(--size);
-      border: 1px solid #c0c0c0;
+  .indicator {
+    --size: 40px;
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    border: 1px solid #c0c0c0;
 
-      &.over {
-        background-color: blue;
-      }
+    &.over {
+      background-color: blue;
+    }
 
-      &.top {
-        top: 0;
-        left: calc(50% - var(--size) / 2);
-      }
+    &.top {
+      top: 0;
+      left: calc(50% - var(--size) / 2);
+    }
 
-      &.right {
-        right: 0;
-        top: calc(50% - var(--size) / 2);
-      }
+    &.right {
+      right: 0;
+      top: calc(50% - var(--size) / 2);
+    }
 
-      &.bottom {
-        bottom: 0;
-        left: calc(50% - var(--size) / 2);
-      }
+    &.bottom {
+      bottom: 0;
+      left: calc(50% - var(--size) / 2);
+    }
 
-      &.left {
-        top: calc(50% - var(--size) / 2);
-        left: 0;
-      }
+    &.left {
+      top: calc(50% - var(--size) / 2);
+      left: 0;
     }
   }
 }
