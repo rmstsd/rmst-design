@@ -1,0 +1,8 @@
+.gta-image {
+  object-fit: cover;
+  transition: all ease 400ms;
+
+  &:hover {
+    border: 8px solid #fff9cb;
+  }
+}

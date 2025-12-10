@@ -1,0 +1,24 @@
+.gr-demo {
+  .container {
+    container-type: size;
+    container-name: asd;
+    background-color: #ffd8d8;
+    height: 100px;
+  }
+
+  .container2 {
+    background-color: #d8ffd8;
+    height: 100px;
+    container-type: size;
+  }
+}
+
+@container asd (min-width: 700px) {
+  .container {
+    background-color: rgb(54, 101, 255);
+  }
+
+  h1 {
+    color: orange;
+  }
+}

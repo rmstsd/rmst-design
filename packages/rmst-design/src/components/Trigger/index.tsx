@@ -40,7 +40,7 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited } = props
+  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited, _debugName } = props
 
   const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: value })
 
@@ -98,6 +98,7 @@ export function Trigger(props: TriggerProps) {
   })
 
   const { shouldMount, setDomRef } = useAnTransition({
+    appear: false,
     open: popupVisible,
     keyframes: [
       { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },

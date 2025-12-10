@@ -27,11 +27,11 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
   const abCt = new AbortController()
 
   const target = downEvt.target as HTMLElement
-  target.setPointerCapture(downEvt.pointerId)
+  // target.setPointerCapture(downEvt.pointerId)
 
   let isMoved = false
 
-  target.addEventListener(
+  document.addEventListener(
     'pointermove',
     moveEvt => {
       const dis = Math.hypot(moveEvt.clientX - downEvt.clientX, moveEvt.clientY - downEvt.clientY)
@@ -66,8 +66,8 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
     }
   }
 
-  target.addEventListener('pointerup', cancel, { signal: abCt.signal })
-  target.addEventListener('pointercancel', cancel, { signal: abCt.signal })
+  document.addEventListener('pointerup', cancel, { signal: abCt.signal })
+  document.addEventListener('pointercancel', cancel, { signal: abCt.signal })
 }
 
 export function clearWebSelection() {

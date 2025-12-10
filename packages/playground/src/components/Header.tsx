@@ -17,15 +17,20 @@ export default function Header() {
         首页
       </Link>
 
-      <Link href="/components/Button" className={pathname === '/components/Button' ? 'header-link-active' : ''}>
+      <Link href="/components/Button" className={pathname.startsWith('/components/') ? 'header-link-active' : ''}>
         组件
       </Link>
 
       <Link href="/ahome" className={pathname === '/ahome' ? 'header-link-active' : ''}>
         ahome
       </Link>
+
       <Link href="/blog" className={pathname === '/blog' ? 'header-link-active' : ''}>
         blog
+      </Link>
+
+      <Link href="/gta6" className={pathname === '/gta6' ? 'header-link-active' : ''}>
+        gta6
       </Link>
 
       <SelectTheme />

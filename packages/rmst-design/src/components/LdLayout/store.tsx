@@ -1,10 +1,20 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import { findParentNode, fixLayout, IComponent, IConfig } from './config'
+import {
+  findParentNode,
+  fixLayout,
+  getComponentById,
+  IComponent,
+  IConfig,
+  isPointInTriangle,
+  Total_Grow,
+  validateLayout
+} from './config'
 
 import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
 import { DragEvent, useEffect } from 'react'
+import { startDrag } from '../_util/drag'
 
 configure({ enforceActions: 'never' })
 
@@ -13,9 +23,9 @@ if (isClient) {
 }
 
 export const ContentEm = props => {
-  useEffect(() => {
-    console.log('useEffect', props.id)
-  }, [])
+  // useEffect(() => {
+  //   console.log('useEffect', props.id)
+  // }, [])
 
   return <div>{props.id} 的 content</div>
 }
@@ -35,6 +45,7 @@ class LdStore {
   layout: IConfig = {
     mode: 'row',
     id: genId(),
+    isRoot: true,
     children: [
       {
         mode: 'tabs',
@@ -81,15 +92,95 @@ class LdStore {
 
   rootLayoutEl: HTMLDivElement
 
-  source // 一个 tab 项 或 tabs
+  source: IConfig // 一个 tab 项 或 tabs
   sourcePosition = { x: 0, y: 0 }
+
+  overIndicatorRect: { left: number; top: number; width: number; height: number } = null
 
   constructor() {
     makeAutoObservable(this)
   }
 
-  onDrag(evt: DragEvent) {
-    this.sourcePosition = { x: evt.clientX, y: evt.clientY }
+  onPointerDown(downEvt: React.PointerEvent, tab) {
+    let overIndicator
+    let targetId
+
+    startDrag(downEvt, {
+      onDragStart: downEvt => {
+        ldStore.source = tab
+      },
+      onDragMove: moveEvt => {
+        ldStore.sourcePosition = { x: moveEvt.clientX, y: moveEvt.clientY }
+
+        const target = moveEvt.target as HTMLElement
+        const tabContentDom = target.closest(`[data-tab-content-id]`)
+
+        if (!tabContentDom) {
+          targetId = ''
+          overIndicator = ''
+          return
+        }
+
+        targetId = tabContentDom.getAttribute('data-tab-content-id')
+        const rect = document.querySelector(`[data-id="${targetId}"]`)?.getBoundingClientRect()
+
+        if (targetId === this.source.id) {
+          this.overIndicatorRect = rect.toJSON()
+          return
+        }
+
+        const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+
+        const list = [
+          {
+            indicator: 'top',
+            a: { x: rect.left, y: rect.top },
+            b: { x: rect.right, y: rect.top },
+            c: { x: center.x, y: center.y },
+            overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height / 2 }
+          },
+          {
+            indicator: 'right',
+            a: { x: rect.right, y: rect.top },
+            b: { x: rect.right, y: rect.bottom },
+            c: { x: center.x, y: center.y },
+            overIndicatorRect: { left: center.x, top: rect.top, width: rect.width / 2, height: rect.height }
+          },
+          {
+            indicator: 'bottom',
+            a: { x: rect.left, y: rect.bottom },
+            b: { x: rect.right, y: rect.bottom },
+            c: { x: center.x, y: center.y },
+            overIndicatorRect: { left: rect.left, top: center.y, width: rect.width, height: rect.height / 2 }
+          },
+          {
+            indicator: 'left',
+            a: { x: rect.left, y: rect.top },
+            b: { x: rect.left, y: rect.bottom },
+            c: { x: center.x, y: center.y },
+            overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width / 2, height: rect.height }
+          }
+        ]
+
+        for (const item of list) {
+          if (isPointInTriangle({ x: moveEvt.clientX, y: moveEvt.clientY }, item.a, item.b, item.c)) {
+            overIndicator = item.indicator
+
+            this.overIndicatorRect = item.overIndicatorRect
+            break
+          }
+        }
+      },
+      onDragEnd: upEvt => {
+        if (targetId && overIndicator) {
+          const { config } = getComponentById(targetId, this.layout)
+          this.onLayoutDrop(overIndicator, config)
+        }
+
+        ldStore.overIndicatorRect = null
+        this.source = null
+      }
+    })
   }
 
   // 放在布局块时
@@ -113,6 +204,13 @@ class LdStore {
     const sourceParent = findParentNode(source.id, this.layout)
     sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
 
+    if (source.mode === 'tabs') {
+      const average = source.style.flexGrow / sourceParent.children.length
+      sourceParent.children.forEach(child => {
+        child.style.flexGrow += average
+      })
+    }
+
     if (sourceParent.children.length === 0) {
       removeItem(sourceParent, this.layout)
     }
@@ -134,25 +232,28 @@ class LdStore {
 
     // 放置的方向 和 target 的 flex 布局方向 相同
     if (isSameDirection) {
-      let config
+      let newConfig
       if (source.mode === 'tabs') {
-        config = source
+        newConfig = source
       } else {
-        config = { id: genId(), mode: 'tabs', children: [source], style: {} }
+        newConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+      }
 
+      {
         const average = target.style.flexGrow / 2
         target.style.flexGrow = average
-        config.style.flexGrow = average
+        newConfig.style.flexGrow = average
       }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
-        targetParent.children.splice(index + 1, 0, config)
+        targetParent.children.splice(index + 1, 0, newConfig)
       }
 
       if (overIndicator === 'left' || overIndicator === 'top') {
-        targetParent.children.splice(index, 0, config)
+        targetParent.children.splice(index, 0, newConfig)
       }
     } else {
+      console.log('-- else')
       // 需要再套一层
       const newMode = targetParent.mode === 'row' ? 'column' : 'row'
       let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
@@ -170,8 +271,8 @@ class LdStore {
 
       {
         // 需要再套一层的时候, 均分
-        target.style.flexGrow = 0.5
-        tabConfig.style.flexGrow = 0.5
+        target.style.flexGrow = Total_Grow / 2
+        tabConfig.style.flexGrow = Total_Grow / 2
       }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
@@ -186,6 +287,8 @@ class LdStore {
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
     console.log('layout', toJS(this.layout))
+
+    validateLayout(this.layout)
 
     this.source = null
   }
@@ -212,9 +315,8 @@ class LdStore {
       }
     }
 
-    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
-
     sourceParent.children.splice(originIndex, 1)
+    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
 
     if (source.mode === 'tabs') {
       const average = source.style.flexGrow / sourceParent.children.length
@@ -227,10 +329,11 @@ class LdStore {
       removeItem(sourceParent, this.layout)
     }
 
-    console.log('layout', toJS(this.layout))
-
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
+    console.log('layout', toJS(this.layout))
+
+    validateLayout(this.layout)
 
     this.source = null
   }

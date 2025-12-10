@@ -10,45 +10,57 @@ export default function TriggerDd() {
 
   const [open, setOpen] = useState(false)
 
-  // if (isSSR) {
-  //   return null
-  // }
-
   return (
     <div>
+      <Button
+        onClick={() => {
+          setOpen(!open)
+        }}
+      >
+        open
+      </Button>
       <Trigger popup={<div>popup</div>}>
-        <Button
-          ref={ref}
-          onClick={() => {
-            console.log('click', ref.current)
-          }}
-        >
-          click
-        </Button>
+        <Button onClick={() => {}}>click</Button>
       </Trigger>
 
-      <hr />
+      <hr className="my-3" />
 
       <Trigger
+        value
+        _debugName="1"
         popup={
-          <Trigger popup={<div className="border">popup 2</div>}>
-            <div className="border">popup 1</div>
-          </Trigger>
+          <div className="border p-3">
+            <div className="mb-2">哈哈哈哈 popup 1</div>
+            <Trigger
+              value
+              _debugName="2"
+              popup={
+                <div className="border popup-2 p-3 flex gap-2">
+                  <span>哈哈哈哈哈哈 popup 2</span>
+                  <Trigger value _debugName="2" popup={<div className="border popup-2 p-3">哈哈 popup 3</div>}>
+                    <Button>继续打开</Button>
+                  </Trigger>
+                </div>
+              }
+            >
+              <Button>继续打开</Button>
+            </Trigger>
+          </div>
         }
       >
-        <div style={{ border: '1px solid red' }}>
-          <input type="text" />
-          <h1>aa</h1>
-          <b>bb</b>
-        </div>
+        <Button>嵌套使用</Button>
       </Trigger>
 
-      <Trigger value={open} onChange={visible => setOpen(visible)} popup={<div>受控 popup</div>}>
+      <hr className="my-3" />
+
+      <Trigger popup={<div>受控 popup</div>}>
         <Button style={{ marginTop: 400 }}>受控</Button>
       </Trigger>
 
+      <hr className="my-3" />
+
       <Trigger popup={<div>非受控 popup</div>}>
-        <Button style={{ marginTop: 400 }}>非受控</Button>
+        <Button>非受控</Button>
       </Trigger>
     </div>
   )

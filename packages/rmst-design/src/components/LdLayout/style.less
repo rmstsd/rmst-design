@@ -25,33 +25,39 @@
 
   .node-item {
     display: flex;
-    gap: 10px;
-    border: 1px solid #ebebeb;
     overflow: hidden;
 
-    // &.row-size-0 > * {
-    //   width: 0;
-    // }
-    // &.column-size-0 > * {
-    //   height: 0;
-    // }
+    &.column {
+      flex-direction: column;
+
+      & > .node-item-divider {
+        flex-direction: column;
+      }
+    }
+
     & > * {
       flex-basis: 0;
       flex-shrink: 0;
-      flex-grow: 1;
     }
   }
 
   .node-item-divider {
-    flex-basis: 4px;
-    background-color: #cdcdff;
+    flex-basis: 8px;
     flex-shrink: 0;
     flex-grow: 0;
     cursor: move;
     user-select: none;
+    display: flex;
+    justify-content: center;
+
+    .line {
+      flex-basis: 2px;
+    }
 
     &:hover {
-      background-color: #6ab2ff;
+      .line {
+        background-color: #3575e5;
+      }
     }
   }
 
@@ -78,12 +84,12 @@
           align-items: center;
           gap: 8px;
           padding: 0 16px;
-          border-bottom: 1px solid transparent;
+          border-bottom: 2px solid transparent;
           cursor: pointer;
 
           &.selected {
-            color: blue;
-            border-bottom: 1px solid blue;
+            color: #5771da;
+            border-bottom-color: #7590ff;
           }
         }
 
@@ -91,7 +97,7 @@
           position: absolute;
           right: -4px;
           width: 8px;
-          background-color: #007bff48;
+          background-color: #aad3ff;
           top: 0;
           bottom: 0;
 
@@ -100,7 +106,7 @@
           }
 
           &.over {
-            background-color: blue;
+            background-color: rgb(142, 142, 255);
           }
         }
       }
@@ -129,37 +135,37 @@
     position: absolute;
     left: 0;
     overflow: clip;
+  }
 
-    .indicator {
-      --size: 40px;
-      position: absolute;
-      width: var(--size);
-      height: var(--size);
-      border: 1px solid #c0c0c0;
+  .indicator {
+    --size: 40px;
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    border: 1px solid #c0c0c0;
 
-      &.over {
-        background-color: blue;
-      }
+    &.over {
+      background-color: blue;
+    }
 
-      &.top {
-        top: 0;
-        left: calc(50% - var(--size) / 2);
-      }
+    &.top {
+      top: 0;
+      left: calc(50% - var(--size) / 2);
+    }
 
-      &.right {
-        right: 0;
-        top: calc(50% - var(--size) / 2);
-      }
+    &.right {
+      right: 0;
+      top: calc(50% - var(--size) / 2);
+    }
 
-      &.bottom {
-        bottom: 0;
-        left: calc(50% - var(--size) / 2);
-      }
+    &.bottom {
+      bottom: 0;
+      left: calc(50% - var(--size) / 2);
+    }
 
-      &.left {
-        top: calc(50% - var(--size) / 2);
-        left: 0;
-      }
+    &.left {
+      top: calc(50% - var(--size) / 2);
+      left: 0;
     }
   }
 }

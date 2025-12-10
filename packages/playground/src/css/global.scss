@@ -37,12 +37,19 @@ body {
 
 .site-header {
   background-color: var(--body-bg);
+
+  a {
+    padding: 0 4px;
+
+    &:hover {
+      background-color: #f6f6f6;
+    }
+  }
 }
 
 .aside {
   flex-shrink: 0;
   border-right: 1px solid #ccc;
-  position: fixed;
   left: 0;
   transition: margin-left 0.2s;
 

@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { RefObject, useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState, useEffectEvent } from 'react'
 import type { SetStateAction } from 'react'
 import { on } from './dom'
 import clsx from 'clsx'
@@ -136,11 +136,11 @@ export const useAnTransition = (config: Animate) => {
     }
   }, [open, isSSR])
 
-  const setDomRef = (el: HTMLElement) => {
+  const setDomRef = useCallback((el: HTMLElement) => {
     domRef.current = el
-  }
+  }, [])
 
-  const show = () => {
+  const show = useEffectEvent(() => {
     if (!domRef.current) {
       return
     }
@@ -148,9 +148,9 @@ export const useAnTransition = (config: Animate) => {
     const _kf = isFunction(keyframes) ? keyframes(domRef.current) : keyframes
     aniRef.current = domRef.current.animate(_kf, { ...kfOptions, fill: 'none' })
     aniRef.current.onfinish = () => {}
-  }
+  })
 
-  const close = (onfinish?: () => void) => {
+  const close = useEffectEvent((onfinish?: () => void) => {
     if (!domRef.current) {
       return
     }
@@ -162,7 +162,7 @@ export const useAnTransition = (config: Animate) => {
     aniRef.current.onfinish = () => {
       onfinish?.()
     }
-  }
+  })
 
   return { shouldMount, setDomRef, aniRef }
 }

@@ -1,7 +1,18 @@
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
+import { NextRequest, NextResponse } from 'next/server'
 
-export default createMiddleware(routing)
+const handleI18nRouting = createMiddleware(routing)
+
+export default async function proxy(request: NextRequest) {
+  const { nextUrl } = request
+
+  if (nextUrl.pathname === '/gta6-v2') {
+  } else {
+    let response = handleI18nRouting(request)
+    return response
+  }
+}
 
 export const config = {
   // Match all pathnames except for

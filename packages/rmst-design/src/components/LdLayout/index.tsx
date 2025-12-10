@@ -1,41 +1,59 @@
 'use client'
 
-import './style.less'
 import { Item } from './Item'
-
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
-import { Fragment, useLayoutEffect, useState } from 'react'
-import { traverse } from './config'
-import { cloneDeep } from 'es-toolkit'
-import clsx from 'clsx'
+import { useLayoutEffect } from 'react'
+import { Total_Grow, traverse } from './config'
 import { PortalContainer } from './PortalContainer'
+
+import './style.less'
 
 export const LdLayout = observer(function LdLayout() {
   useLayoutEffect(() => {
     // 初始化 n 等分
     traverse(ldStore.layout, item => {
+      if (item.isRoot) {
+        item.style ??= { flexGrow: Total_Grow }
+      }
+
       if (item.mode === 'row' || item.mode === 'column') {
         item.children?.forEach(child => {
           child.style ??= {
-            flexGrow: 1 / item.children.length
+            flexGrow: Total_Grow / item.children.length
           }
         })
       }
     })
   }, [])
 
+  const source = ldStore.source as any
+
   return (
     <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
       <Item config={ldStore.layout} />
 
-      <PortalContainer />
+      {/* <PortalContainer /> */}
 
-      {ldStore.source && (
+      {ldStore.overIndicatorRect && (
+        <div
+          style={{
+            transition: 'all 0.1s ease-in-out',
+            position: 'fixed',
+            left: ldStore.overIndicatorRect.left,
+            top: ldStore.overIndicatorRect.top,
+            width: ldStore.overIndicatorRect.width,
+            height: ldStore.overIndicatorRect.height,
+            backgroundColor: 'rgba(0, 0, 255, 0.3)',
+            pointerEvents: 'none',
+            border: '1px solid blue'
+          }}
+        />
+      )}
+
+      {source && (
         <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
-          {ldStore.source.mode === 'tabs'
-            ? `${ldStore.source.children[0].title} 等 ${ldStore.source.children.length} 个`
-            : ldStore.source.title}
+          {source.mode === 'tabs' ? `${source.children[0].title} 等 ${source.children.length} 个` : source.title}
         </div>
       )}
     </div>
