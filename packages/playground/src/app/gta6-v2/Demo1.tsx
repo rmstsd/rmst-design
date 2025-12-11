@@ -54,7 +54,7 @@ export default function Demo1() {
         </div>
       </section>
 
-      <section className="panel pink pinned" style={{ backgroundColor: 'orange' }}>
+      <section className="panel pink pinned " style={{ backgroundColor: 'orange' }}>
         <h2 className="panel__number">1</h2>
       </section>
       <section className="panel purple pinned" style={{ backgroundColor: 'purple' }}>

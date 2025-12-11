@@ -102,12 +102,23 @@ export function fixLayout(layout: IConfig) {
         removeItem(node, layout)
       } else {
         if (node.children.length === 1) {
-          const parent = findParentNode(node.id, layout)
-          const child = node.children[0]
+          const child = node.children[0] as IConfig
 
-          // if (parent && parent.mode === child.mode) {
-          //   removeItem(node, layout)
-          // }
+          node.children = child.children
+          node.mode = child.mode
+        }
+      }
+
+      const parent = findParentNode(node.id, layout)
+
+      if (parent && node.mode === parent.mode) {
+        const index = parent.children.indexOf(node)
+        if (index !== -1) {
+          node.children.forEach(item => {
+            item.style.flexGrow = node.style.flexGrow / 2
+          })
+
+          parent.children.splice(index, 1, ...node.children)
         }
       }
     } else if (node.mode === 'tabs') {

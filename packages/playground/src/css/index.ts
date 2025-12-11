@@ -1,2 +1,2 @@
-import './index.scss'
+import './tailwind.css'
 import './global.scss'
