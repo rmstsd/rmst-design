@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import '@/css'
+import './style.scss'
 
 export const metadata: Metadata = {
   title: 'gta6-v2'

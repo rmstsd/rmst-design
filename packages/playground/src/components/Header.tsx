@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header
-      className="site-header border-b flex items-center px-2 fixed top-0 w-full z-10 gap-2"
+      className="site-header border-b border-gray-200 flex items-center px-2 fixed top-0 w-full z-10 gap-2"
       style={{ height: headerHeight }}
     >
       <Link href="/" className={pathname === '/' ? 'header-link-active' : ''}>

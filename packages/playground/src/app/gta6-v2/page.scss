@@ -1,3 +1,9 @@
+.Gta6-V2 {
+  .panel__number {
+    font-size: 144px;
+  }
+}
+
 .panel.pinned {
   opacity: 0;
   visibility: hidden;
@@ -5,7 +11,25 @@
 
 .description {
   height: 100vh;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
+
 .panel {
   height: 100vh;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.end-pin {
+  position: relative;
+  background-color: pink;
 }

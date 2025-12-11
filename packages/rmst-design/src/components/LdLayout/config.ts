@@ -12,6 +12,10 @@ export type ITabs = {
   }
 }
 
+export const isLayoutNode = (node: IConfig) => {
+  return node.mode === 'row' || node.mode === 'column'
+}
+
 export interface IConfig {
   mode?: 'row' | 'column' | 'tabs'
   id: string
@@ -93,9 +97,18 @@ export function findParentNode(id: string, node: IConfig): IConfig {
 
 export function fixLayout(layout: IConfig) {
   postorderRecursive(layout, (node: IConfig) => {
-    if (node.mode === 'column' || node.mode === 'row') {
+    if (isLayoutNode(node)) {
       if (node.children.length === 0) {
         removeItem(node, layout)
+      } else {
+        if (node.children.length === 1) {
+          const parent = findParentNode(node.id, layout)
+          const child = node.children[0]
+
+          // if (parent && parent.mode === child.mode) {
+          //   removeItem(node, layout)
+          // }
+        }
       }
     } else if (node.mode === 'tabs') {
       // 修正选中项
