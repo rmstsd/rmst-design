@@ -106,6 +106,8 @@ export function fixLayout(layout: IConfig) {
 
           node.children = child.children
           node.mode = child.mode
+
+          node
         }
       }
 
@@ -113,7 +115,9 @@ export function fixLayout(layout: IConfig) {
 
       if (parent && node.mode === parent.mode) {
         const index = parent.children.indexOf(node)
-        if (index !== -1) {
+        if (index === -1) {
+          console.error('-1 bug')
+        } else {
           node.children.forEach(item => {
             item.style.flexGrow = node.style.flexGrow / 2
           })

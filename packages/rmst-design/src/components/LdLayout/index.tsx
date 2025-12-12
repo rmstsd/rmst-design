@@ -4,10 +4,11 @@ import { Item } from './Item'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
 import { useLayoutEffect } from 'react'
-import { Total_Grow, traverse } from './config'
+import { fixLayout, Total_Grow, traverse } from './config'
 import { PortalContainer } from './PortalContainer'
 
 import './style.less'
+import { Button } from '../Button'
 
 export const LdLayout = observer(function LdLayout() {
   useLayoutEffect(() => {
@@ -30,32 +31,38 @@ export const LdLayout = observer(function LdLayout() {
   const source = ldStore.source as any
 
   return (
-    <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
-      <Item config={ldStore.layout} />
+    <div className="test">
+      <Button onClick={() => fixLayout(ldStore.layout)}>fix</Button>
 
-      {/* <PortalContainer /> */}
+      <div style={{ height: 10 }}></div>
 
-      {ldStore.overIndicatorRect && (
-        <div
-          style={{
-            transition: 'all 0.1s ease-in-out',
-            position: 'fixed',
-            left: ldStore.overIndicatorRect.left,
-            top: ldStore.overIndicatorRect.top,
-            width: ldStore.overIndicatorRect.width,
-            height: ldStore.overIndicatorRect.height,
-            backgroundColor: 'rgba(0, 0, 255, 0.3)',
-            pointerEvents: 'none',
-            border: '1px solid blue'
-          }}
-        />
-      )}
+      <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
+        <Item config={ldStore.layout} />
 
-      {source && (
-        <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
-          {source.mode === 'tabs' ? `${source.children[0].title} 等 ${source.children.length} 个` : source.title}
-        </div>
-      )}
+        {/* <PortalContainer /> */}
+
+        {ldStore.overIndicatorRect && (
+          <div
+            style={{
+              transition: 'all 0.1s ease-in-out',
+              position: 'fixed',
+              left: ldStore.overIndicatorRect.left,
+              top: ldStore.overIndicatorRect.top,
+              width: ldStore.overIndicatorRect.width,
+              height: ldStore.overIndicatorRect.height,
+              backgroundColor: 'rgba(0, 0, 255, 0.3)',
+              pointerEvents: 'none',
+              border: '1px solid blue'
+            }}
+          />
+        )}
+
+        {source && (
+          <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
+            {source.mode === 'tabs' ? `${source.children[0].title} 等 ${source.children.length} 个` : source.title}
+          </div>
+        )}
+      </div>
     </div>
   )
 })
