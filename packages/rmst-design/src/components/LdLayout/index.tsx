@@ -4,7 +4,7 @@ import { Item } from './Item'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
 import { useLayoutEffect } from 'react'
-import { fixLayout, Total_Grow, traverse } from './config'
+import { fixLayout, Total_Grow, traverse, validateLayout } from './config'
 import { PortalContainer } from './PortalContainer'
 
 import './style.less'
@@ -32,7 +32,10 @@ export const LdLayout = observer(function LdLayout() {
 
   return (
     <div className="test">
-      <Button onClick={() => fixLayout(ldStore.layout)}>fix</Button>
+      <div className="flex gap-2">
+        <Button onClick={() => fixLayout(ldStore.layout)}>fix</Button>
+        <Button onClick={() => validateLayout(ldStore.layout)}>验证</Button>
+      </div>
 
       <div style={{ height: 10 }}></div>
 

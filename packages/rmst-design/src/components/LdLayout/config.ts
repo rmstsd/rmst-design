@@ -106,8 +106,6 @@ export function fixLayout(layout: IConfig) {
 
           node.children = child.children
           node.mode = child.mode
-
-          node
         }
       }
 
@@ -119,7 +117,8 @@ export function fixLayout(layout: IConfig) {
           console.error('-1 bug')
         } else {
           node.children.forEach(item => {
-            item.style.flexGrow = node.style.flexGrow / 2
+            const ratio = item.style.flexGrow / Total_Grow
+            item.style.flexGrow = ratio * node.style.flexGrow
           })
 
           parent.children.splice(index, 1, ...node.children)
@@ -137,7 +136,7 @@ export function fixLayout(layout: IConfig) {
 
 export function validateLayout(layout: IConfig) {
   traverse(layout, item => {
-    if (item.mode === 'column' || item.mode === 'row') {
+    if (isLayoutNode(item)) {
       const sum = item.children.reduce((pre, cur) => pre + cur.style.flexGrow, 0)
 
       if (isNotEqual(sum)) {
@@ -145,20 +144,16 @@ export function validateLayout(layout: IConfig) {
       }
     }
   })
-}
 
-export function traverse(config: IConfig, traverseFn: (item: IConfig) => void) {
-  dfs(config)
+  postorderRecursive(layout, item => {
+    if (isLayoutNode(item)) {
+      const sum = item.children.reduce((pre, cur) => pre + cur.style.flexGrow, 0)
 
-  function dfs(config: IConfig) {
-    traverseFn(config)
-
-    if (config.children) {
-      for (const item of config.children) {
-        dfs(item)
+      if (isNotEqual(sum)) {
+        console.error(item, 'flexGrow 的和 不对, 是', sum)
       }
     }
-  }
+  })
 }
 
 const isNotEqual = (val: number) => {
@@ -216,4 +211,18 @@ function postorderRecursive(root, fn) {
   }
 
   traverse(root)
+}
+
+export function traverse(config: IConfig, traverseFn: (item: IConfig) => void) {
+  dfs(config)
+
+  function dfs(config: IConfig) {
+    traverseFn(config)
+
+    if (config.children) {
+      for (const item of config.children) {
+        dfs(item)
+      }
+    }
+  }
 }

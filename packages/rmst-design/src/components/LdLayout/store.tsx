@@ -193,9 +193,6 @@ class LdStore {
       return
     }
 
-    console.log('source', cloneDeep(source))
-    console.log('target', cloneDeep(target))
-
     if (target.children.length === 1 && target.children.some(item => item.id === source.id)) {
       console.log('不能 ld 了')
       return
@@ -301,9 +298,6 @@ class LdStore {
     if (!source) {
       return
     }
-
-    console.log('source', source)
-    console.log('target', targetConfig)
 
     const sourceParent = findParentNode(source.id, this.layout)
     const originIndex = sourceParent.children.findIndex(item => item.id === source.id)
