@@ -72,6 +72,7 @@ export const Tabs = observer(({ config }: TabsProps) => {
               <div
                 className={clsx('tab-item-content', { selected: tab.id === config.selected })}
                 onPointerDown={evt => ldStore.onPointerDown(evt, tab)}
+                onDragStart={evt => evt.preventDefault()}
               >
                 {tab.title}
               </div>

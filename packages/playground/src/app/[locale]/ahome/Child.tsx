@@ -18,13 +18,11 @@ export default function Child() {
       >
         click
       </Button>
-
       {show && (
         <ViewTransition default="slow-fade">
           <div>Hi</div>
         </ViewTransition>
       )}
-
       <div>555</div>
     </div>
   )

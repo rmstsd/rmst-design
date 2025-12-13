@@ -112,7 +112,11 @@ class LdStore {
       onDragMove: moveEvt => {
         ldStore.sourcePosition = { x: moveEvt.clientX, y: moveEvt.clientY }
 
-        const target = moveEvt.target as HTMLElement
+        const target = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY) as HTMLElement
+        if (!target) {
+          return
+        }
+
         const tabContentDom = target.closest(`[data-tab-content-id]`)
 
         if (!tabContentDom) {
