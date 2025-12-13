@@ -6,6 +6,8 @@ const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
   // output: 'standalone', // Outputs a Single-Page Application (SPA)
+  distDir: 'dist',
+  cleanDistDir: true,
   reactStrictMode: false,
   turbopack: {
     resolveAlias: {
