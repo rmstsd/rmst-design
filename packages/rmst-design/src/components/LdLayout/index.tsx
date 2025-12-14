@@ -32,7 +32,13 @@ export const LdLayout = observer(function LdLayout() {
 
   return (
     <div className="test">
-      <div className="flex gap-2 bg-amber-200">
+      <div
+        className="flex gap-2 bg-amber-200"
+        draggable
+        onDragEnd={evt => {
+          console.log(evt.dataTransfer.dropEffect)
+        }}
+      >
         <Button onClick={() => fixLayout(ldStore.layout)}>fix</Button>
         <Button onClick={() => validateLayout(ldStore.layout)}>验证</Button>
       </div>

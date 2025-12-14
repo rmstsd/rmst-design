@@ -239,7 +239,13 @@ class LdStore {
           }
         }
       },
-      onDragEnd: upEvt => {
+      onDragEnd: ({ isCanceled }) => {
+        if (isCanceled) {
+          ldStore.overIndicatorRect = null
+          this.source = null
+          return
+        }
+
         if (isOverTabItem) {
           this.onTabItemDrop(this.overTabNode, this.overTabIndex)
         } else if (targetId && overIndicator) {

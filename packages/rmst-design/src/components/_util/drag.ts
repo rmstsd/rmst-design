@@ -1,9 +1,13 @@
 import { isClient } from './is'
 
+interface DragEndData {
+  isCanceled: boolean
+  upEvt: PointerEvent
+}
 interface DragOptions {
   onDragStart?: (downEvt: React.PointerEvent | PointerEvent) => void
   onDragMove?: (moveEvt: PointerEvent) => void
-  onDragEnd?: (upEvt: PointerEvent) => void
+  onDragEnd?: ({ isCanceled, upEvt }: DragEndData) => void
 
   onPointerUp?: (upEvt: PointerEvent) => void // 与 html 类似, 发生了 drag 后, 就不会触发 onPointerUp 事件
 }
@@ -55,22 +59,40 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
     { signal: abCt.signal }
   )
 
-  const cancel = (evt: PointerEvent) => {
-    setTimeout(() => {
-      disableClick = false
-    })
+  let _isCanceled = false
+  const cancel = (dee: DragEndData, isPointerEvent: boolean) => {
+    if (isPointerEvent) {
+      setTimeout(() => {
+        disableClick = false
+      })
+    }
+
+    if (_isCanceled) {
+      return
+    }
+    _isCanceled = true
+
     target.style.cursor = oldCursor
     abCt.abort()
 
     if (isMoved) {
-      onDragEnd?.(evt)
+      onDragEnd?.(dee)
     } else {
-      onPointerUp?.(evt)
+      onPointerUp?.(dee?.upEvt)
     }
   }
 
-  document.addEventListener('pointerup', cancel, { signal: abCt.signal })
-  document.addEventListener('pointercancel', cancel, { signal: abCt.signal })
+  document.addEventListener('pointerup', evt => cancel({ isCanceled: false, upEvt: evt }, true), { signal: abCt.signal })
+  document.addEventListener('pointercancel', evt => cancel({ isCanceled: true, upEvt: evt }, true), { signal: abCt.signal })
+  document.addEventListener(
+    'keydown',
+    evt => {
+      if (evt.key === 'Escape') {
+        cancel({ isCanceled: true, upEvt: null }, false)
+      }
+    },
+    { signal: abCt.signal }
+  )
 }
 
 export function clearWebSelection() {

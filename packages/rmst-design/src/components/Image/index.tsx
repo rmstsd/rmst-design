@@ -134,7 +134,13 @@ export function Image(props: ImageProps) {
 
         setPreviewImageStyle({ ...downStyle, left: (downStyle.left as number) + dx, top: (downStyle.top as number) + dy })
       },
-      onDragEnd(upEvt) {
+      onDragEnd({ isCanceled, upEvt }) {
+        if (isCanceled) {
+          hide()
+
+          return
+        }
+
         if (upEvt.clientY > downEvt.clientY) {
           hide()
         } else {
