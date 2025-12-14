@@ -53,11 +53,11 @@ export const Tabs = observer(({ config }: TabsProps) => {
 
   return (
     <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow }}>
-      <div className="tab-header relative">
+      <div className="tab-header relative" data-tab-header-id={config.id}>
         {config.children?.map((tab, index) => (
           <Fragment key={tab.id}>
-            <div className={clsx('tab-item')} onClick={() => (config.selected = tab.id)}>
-              {index === 0 && (
+            <div className={clsx('tab-item border')} onClick={() => (config.selected = tab.id)} data-tab-item-id={tab.id}>
+              {/* {index === 0 && (
                 <div
                   className={clsx('tab-item-indicator left', { over: overTabIndex === index })}
                   onDragOver={evt => evt.preventDefault()}
@@ -68,7 +68,7 @@ export const Tabs = observer(({ config }: TabsProps) => {
                     setOverTabIndex(-1)
                   }}
                 />
-              )}
+              )} */}
               <div
                 className={clsx('tab-item-content', { selected: tab.id === config.selected })}
                 onPointerDown={evt => ldStore.onPointerDown(evt, tab)}
@@ -77,7 +77,7 @@ export const Tabs = observer(({ config }: TabsProps) => {
                 {tab.title}
               </div>
 
-              <div
+              {/* <div
                 className={clsx('tab-item-indicator', { over: overTabIndex === index + 1 })}
                 onDragOver={evt => evt.preventDefault()}
                 onDragEnter={() => setOverTabIndex(index + 1)}
@@ -86,7 +86,7 @@ export const Tabs = observer(({ config }: TabsProps) => {
                   ldStore.onTabItemDrop(config, index + 1)
                   setOverTabIndex(-1)
                 }}
-              />
+              /> */}
             </div>
           </Fragment>
         ))}

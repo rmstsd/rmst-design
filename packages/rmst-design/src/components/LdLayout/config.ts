@@ -32,7 +32,7 @@ export interface IComponent {
   parent: IConfig
 }
 
-export const getComponentById = (id: string, config: IConfig): IComponent => {
+export const findNodeById = (id: string, config: IConfig): IComponent => {
   return dfs(config, null)
 
   function dfs(config: IConfig, parent: IConfig | null) {

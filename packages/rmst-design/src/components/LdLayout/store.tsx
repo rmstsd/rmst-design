@@ -2,12 +2,13 @@ import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
 import {
   findParentNode,
   fixLayout,
-  getComponentById,
+  findNodeById,
   IComponent,
   IConfig,
   isPointInTriangle,
   Total_Grow,
-  validateLayout
+  validateLayout,
+  ITabs
 } from './config'
 
 import { genId, removeItem } from './config'
@@ -97,6 +98,9 @@ class LdStore {
 
   overIndicatorRect: { left: number; top: number; width: number; height: number } = null
 
+  overTabIndex = -1
+  overTabNode: IConfig
+
   constructor() {
     makeAutoObservable(this)
   }
@@ -105,15 +109,75 @@ class LdStore {
     let overIndicator
     let targetId
 
+    let isOverTabItem = false
+
     startDrag(downEvt, {
       onDragStart: downEvt => {
-        ldStore.source = tab
+        this.source = tab
       },
       onDragMove: moveEvt => {
-        ldStore.sourcePosition = { x: moveEvt.clientX, y: moveEvt.clientY }
+        this.sourcePosition = { x: moveEvt.clientX, y: moveEvt.clientY }
 
         const target = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY) as HTMLElement
         if (!target) {
+          return
+        }
+
+        const tabHeaderDom = target.closest(`[data-tab-header-id`)
+        if (tabHeaderDom) {
+          isOverTabItem = true
+
+          const tabHeaderId = tabHeaderDom.getAttribute('data-tab-header-id')
+          const tabsNode = findNodeById(tabHeaderId, this.layout)
+
+          let min = Infinity
+          let closestNode: ITabs
+          let closestRect: DOMRect
+          tabsNode.config.children.forEach(item => {
+            const rect = document.querySelector(`[data-tab-item-id="${item.id}"]`)?.getBoundingClientRect()
+
+            let distance = Math.min(Math.abs(moveEvt.clientX - rect.left), Math.abs(moveEvt.clientX - rect.right))
+            if (distance < min) {
+              min = distance
+              closestNode = item as ITabs
+              closestRect = rect
+            }
+          })
+
+          const isAfter = Math.abs(moveEvt.clientX - closestRect.left) > Math.abs(moveEvt.clientX - closestRect.right)
+
+          const parentNode = findParentNode(closestNode.id, this.layout)
+          this.overTabNode = parentNode
+          const index = parentNode.children.findIndex(item => item.id === closestNode.id)
+
+          this.overTabIndex = isAfter ? index + 1 : index
+
+          const boundaryOffset = 8
+          let x
+          if (isAfter) {
+            const nextNode = parentNode.children[index + 1]
+            if (nextNode) {
+              const nextRect = document.querySelector(`[data-tab-item-id="${nextNode.id}"]`)?.getBoundingClientRect()
+
+              x = (closestRect.right + nextRect.left) / 2
+            } else {
+              x = closestRect.right + boundaryOffset
+            }
+          } else {
+            const prevNode = parentNode.children[index - 1]
+            if (prevNode) {
+              const prevRect = document.querySelector(`[data-tab-item-id="${prevNode.id}"]`)?.getBoundingClientRect()
+
+              x = (closestRect.left + prevRect.right) / 2
+            } else {
+              x = closestRect.left - boundaryOffset
+            }
+          }
+
+          this.overIndicatorRect = isAfter
+            ? { left: x, top: closestRect.top, width: 0, height: closestRect.height }
+            : { left: x, top: closestRect.top, width: 0, height: closestRect.height }
+
           return
         }
 
@@ -176,8 +240,10 @@ class LdStore {
         }
       },
       onDragEnd: upEvt => {
-        if (targetId && overIndicator) {
-          const { config } = getComponentById(targetId, this.layout)
+        if (isOverTabItem) {
+          this.onTabItemDrop(this.overTabNode, this.overTabIndex)
+        } else if (targetId && overIndicator) {
+          const { config } = findNodeById(targetId, this.layout)
           this.onLayoutDrop(overIndicator, config)
         }
 
