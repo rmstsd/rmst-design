@@ -25,14 +25,14 @@ export const Tabs = observer(({ config }: TabsProps) => {
     const rootLayoutRect = ldStore.rootLayoutEl.getBoundingClientRect()
     const rect = tabContentRef.current.getBoundingClientRect()
 
-    children.forEach(tabItem => {
-      ldStore.tabsSize.set(tabItem.id, {
-        x: rect.x - rootLayoutRect.x,
-        y: rect.y - rootLayoutRect.y,
-        width: rect.width,
-        height: rect.height
-      })
-    })
+    // children.forEach(tabItem => {
+    //   ldStore.tabsSize.set(tabItem.id, {
+    //     x: rect.x - rootLayoutRect.x,
+    //     y: rect.y - rootLayoutRect.y,
+    //     width: rect.width,
+    //     height: rect.height
+    //   })
+    // })
   })
 
   useEffect(() => {
@@ -54,42 +54,23 @@ export const Tabs = observer(({ config }: TabsProps) => {
   return (
     <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow }}>
       <div className="tab-header relative" data-tab-header-id={config.id}>
-        {config.children?.map((tab, index) => (
-          <Fragment key={tab.id}>
-            <div className={clsx('tab-item border')} onClick={() => (config.selected = tab.id)} data-tab-item-id={tab.id}>
-              {/* {index === 0 && (
-                <div
-                  className={clsx('tab-item-indicator left', { over: overTabIndex === index })}
-                  onDragOver={evt => evt.preventDefault()}
-                  onDragEnter={() => setOverTabIndex(index)}
-                  onDragLeave={() => setOverTabIndex(-1)}
-                  onDrop={() => {
-                    ldStore.onTabItemDrop(config, index)
-                    setOverTabIndex(-1)
-                  }}
-                />
-              )} */}
-              <div
-                className={clsx('tab-item-content', { selected: tab.id === config.selected })}
-                onPointerDown={evt => ldStore.onPointerDown(evt, tab)}
-                onDragStart={evt => evt.preventDefault()}
-              >
-                {tab.title}
-              </div>
+        <div className="tab-list-container">
+          {config.children?.map((tab, index) => (
+            <Fragment key={tab.id}>
+              {index !== 0 && <div className="split-line"></div>}
 
-              {/* <div
-                className={clsx('tab-item-indicator', { over: overTabIndex === index + 1 })}
-                onDragOver={evt => evt.preventDefault()}
-                onDragEnter={() => setOverTabIndex(index + 1)}
-                onDragLeave={() => setOverTabIndex(-1)}
-                onDrop={() => {
-                  ldStore.onTabItemDrop(config, index + 1)
-                  setOverTabIndex(-1)
-                }}
-              /> */}
-            </div>
-          </Fragment>
-        ))}
+              <div className={clsx('tab-item ')} onClick={() => (config.selected = tab.id)} data-tab-item-id={tab.id}>
+                <div
+                  className={clsx('tab-item-content', { selected: tab.id === config.selected })}
+                  onPointerDown={evt => ldStore.onPointerDown(evt, tab)}
+                  onDragStart={evt => evt.preventDefault()}
+                >
+                  {tab.title}
+                </div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
 
         <div className="drag-handle" onPointerDown={evt => ldStore.onPointerDown(evt, config)}></div>
       </div>

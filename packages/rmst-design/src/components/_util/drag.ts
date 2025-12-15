@@ -31,8 +31,6 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
   const abCt = new AbortController()
 
   const target = downEvt.target as HTMLElement
-  const oldCursor = target.style.cursor
-
   let isMoved = false
 
   document.addEventListener(
@@ -47,7 +45,6 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
 
         disableClick = true
         clearWebSelection()
-        target.style.cursor = 'move'
         target.setPointerCapture(downEvt.pointerId)
 
         onDragStart?.(downEvt)
@@ -72,7 +69,6 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
     }
     _isCanceled = true
 
-    target.style.cursor = oldCursor
     abCt.abort()
 
     if (isMoved) {

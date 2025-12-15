@@ -7,15 +7,20 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #007bff48;
+    padding: 2px 4px;
+    border: 1px solid #e7e7e7;
+    border-radius: 2px;
     background-color: #fff;
     pointer-events: none;
     transform: translate(-50%, 10px);
+  }
+
+  .over-indicator-rect {
+    position: fixed;
+    background-color: #4444ff31;
+    pointer-events: none;
+    border: 1px solid #7474ff;
+    transition: all 0.2s ease-in-out;
   }
 
   & > * {
@@ -70,50 +75,50 @@
     .tab-header {
       height: 32px;
       display: flex;
-      gap: 22px;
-      padding: 0 8px;
-      border-bottom: 1px solid #ebebeb;
+      padding: 0 2px;
+      background-color: #fafafa;
       flex-shrink: 0;
 
-      .tab-item {
-        position: relative;
+      .tab-list-container {
+        display: flex;
+        gap: 1px;
 
-        .tab-item-content {
-          height: 100%;
+        .tab-item {
+          position: relative;
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 0 16px;
-          border-bottom: 2px solid transparent;
-          cursor: pointer;
+          border-radius: 2px;
 
-          &.selected {
-            color: #5771da;
-            border-bottom-color: #7590ff;
+          &:hover {
+            background-color: #f5f5f5;
+          }
+
+          .tab-item-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+
+            &.selected {
+              color: #5771da;
+              border-bottom-color: #7590ff;
+            }
           }
         }
 
-        .tab-item-indicator {
-          position: absolute;
-          right: -4px;
-          width: 8px;
-          background-color: #aad3ff;
-          top: 0;
-          bottom: 0;
-
-          &.left {
-            left: -4px;
-          }
-
-          &.over {
-            background-color: rgb(142, 142, 255);
-          }
+        .split-line {
+          height: 1em;
+          width: 1px;
+          background-color: rgba(0, 0, 0, 0.08);
+          align-self: center;
         }
       }
 
       .drag-handle {
         flex-grow: 1;
-        background: rgb(248, 233, 236);
         align-self: stretch;
       }
     }
@@ -145,7 +150,7 @@
     border: 1px solid #c0c0c0;
 
     &.over {
-      background-color: blue;
+      background-color: #9393ff;
     }
 
     &.top {

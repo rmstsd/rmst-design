@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import ldStore, { ContentEmMap } from './store'
+import ldStore from './store'
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ITabs, traverse } from './config'
 import clsx from 'clsx'
@@ -69,3 +69,22 @@ const PortalItem = observer(({ tc }: any) => {
     </div>
   )
 })
+
+export const ContentEm = props => {
+  // useEffect(() => {
+  //   console.log('useEffect', props.id)
+  // }, [])
+
+  return <div>{props.id} 的 content</div>
+}
+
+export const ContentEmMap = {
+  '1': <ContentEm id="1" />,
+  '2': <ContentEm id="2" />,
+  '3': <ContentEm id="3" />,
+  '4': <ContentEm id="4" />,
+  '5': <ContentEm id="5" />,
+  '6': <ContentEm id="6" />,
+  '7': <ContentEm id="7" />,
+  '8': <ContentEm id="8" />
+}

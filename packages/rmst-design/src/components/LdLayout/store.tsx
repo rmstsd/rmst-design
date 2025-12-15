@@ -1,21 +1,12 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import {
-  findParentNode,
-  fixLayout,
-  findNodeById,
-  IComponent,
-  IConfig,
-  isPointInTriangle,
-  Total_Grow,
-  validateLayout,
-  ITabs
-} from './config'
+import { findParentNode, fixLayout, findNodeById, IConfig, isPointInTriangle, Total_Grow, validateLayout, ITabs } from './config'
 
 import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
-import { DragEvent, useEffect } from 'react'
+import React from 'react'
 import { startDrag } from '../_util/drag'
+import { getDefaultLayout } from './testData'
 
 configure({ enforceActions: 'never' })
 
@@ -23,71 +14,8 @@ if (isClient) {
   ;(window as any).__jf = () => ({ isObservable, toJS })
 }
 
-export const ContentEm = props => {
-  // useEffect(() => {
-  //   console.log('useEffect', props.id)
-  // }, [])
-
-  return <div>{props.id} 的 content</div>
-}
-
-export const ContentEmMap = {
-  '1': <ContentEm id="1" />,
-  '2': <ContentEm id="2" />,
-  '3': <ContentEm id="3" />,
-  '4': <ContentEm id="4" />,
-  '5': <ContentEm id="5" />,
-  '6': <ContentEm id="6" />,
-  '7': <ContentEm id="7" />,
-  '8': <ContentEm id="8" />
-}
-
 class LdStore {
-  layout: IConfig = {
-    mode: 'row',
-    id: genId(),
-    isRoot: true,
-    children: [
-      {
-        mode: 'tabs',
-        id: genId(),
-        children: [
-          { id: '1', title: '1' },
-          { id: '2', title: '2' }
-        ]
-      },
-      {
-        mode: 'column',
-        id: genId(),
-        children: [
-          {
-            mode: 'tabs',
-            id: genId(),
-            children: [
-              { id: '3', title: '3' },
-              { id: '4', title: '4' }
-            ]
-          },
-          {
-            mode: 'tabs',
-            id: genId(),
-            children: [
-              { id: '5', title: '5' },
-              { id: '6', title: '6' }
-            ]
-          }
-        ]
-      },
-      {
-        mode: 'tabs',
-        id: genId(),
-        children: [
-          { id: '7', title: '7' },
-          { id: '8', title: '8' }
-        ]
-      }
-    ]
-  }
+  layout: IConfig = getDefaultLayout()
 
   tabsSize = new Map()
 
@@ -96,21 +24,28 @@ class LdStore {
   source: IConfig // 一个 tab 项 或 tabs
   sourcePosition = { x: 0, y: 0 }
 
-  overIndicatorRect: { left: number; top: number; width: number; height: number } = null
-
+  overIndicatorRect: React.CSSProperties = null
   overTabIndex = -1
   overTabNode: IConfig
+  isOverTabItem = false
+  overIndicator
+  targetId
 
   constructor() {
     makeAutoObservable(this)
   }
 
+  clearTouch() {
+    this.overTabIndex = -1
+    this.overTabNode = null
+    this.isOverTabItem = false
+    this.overIndicatorRect = null
+
+    this.overIndicator = null
+    this.targetId = null
+  }
+
   onPointerDown(downEvt: React.PointerEvent, tab) {
-    let overIndicator
-    let targetId
-
-    let isOverTabItem = false
-
     startDrag(downEvt, {
       onDragStart: downEvt => {
         this.source = tab
@@ -120,140 +55,175 @@ class LdStore {
 
         const target = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY) as HTMLElement
         if (!target) {
+          this.clearTouch()
           return
         }
 
-        const tabHeaderDom = target.closest(`[data-tab-header-id`)
-        if (tabHeaderDom) {
-          isOverTabItem = true
+        const findClosestNode = () => {
+          const tabHeaderDom = target.closest(`[data-tab-header-id`)
+          const tabContentDom = target.closest(`[data-tab-content-id]`)
 
-          const tabHeaderId = tabHeaderDom.getAttribute('data-tab-header-id')
-          const tabsNode = findNodeById(tabHeaderId, this.layout)
+          const isOver = Boolean(tabHeaderDom) || Boolean(tabContentDom)
+          if (!isOver) {
+            return
+          }
 
-          let min = Infinity
-          let closestNode: ITabs
-          let closestRect: DOMRect
-          tabsNode.config.children.forEach(item => {
-            const rect = document.querySelector(`[data-tab-item-id="${item.id}"]`)?.getBoundingClientRect()
+          this.isOverTabItem = Boolean(tabHeaderDom)
+          if (this.isOverTabItem) {
+            const tabHeaderId = tabHeaderDom.getAttribute('data-tab-header-id')
+            const tabsNode = findNodeById(tabHeaderId, this.layout)
 
-            let distance = Math.min(Math.abs(moveEvt.clientX - rect.left), Math.abs(moveEvt.clientX - rect.right))
-            if (distance < min) {
-              min = distance
-              closestNode = item as ITabs
-              closestRect = rect
+            let min = Infinity
+            let closestNode: ITabs
+            let closestRect: DOMRect
+            tabsNode.config.children.forEach(item => {
+              const rect = document.querySelector(`[data-tab-item-id="${item.id}"]`)?.getBoundingClientRect()
+
+              let distance = Math.min(Math.abs(moveEvt.clientX - rect.left), Math.abs(moveEvt.clientX - rect.right))
+              if (distance < min) {
+                min = distance
+                closestNode = item as ITabs
+                closestRect = rect
+              }
+            })
+
+            const parentNode = findParentNode(closestNode.id, this.layout)
+
+            if (
+              this.source.mode === 'tabs' &&
+              (parentNode.id === this.source.id || parentNode.children.some(item => item.id === this.source.id))
+            ) {
+              this.clearTouch()
+
+              this.overIndicatorRect = document.querySelector(`[data-id="${this.source.id}"]`).getBoundingClientRect().toJSON()
+              return
             }
-          })
 
-          const isAfter = Math.abs(moveEvt.clientX - closestRect.left) > Math.abs(moveEvt.clientX - closestRect.right)
+            this.overTabNode = parentNode
+            const index = parentNode.children.findIndex(item => item.id === closestNode.id)
 
-          const parentNode = findParentNode(closestNode.id, this.layout)
-          this.overTabNode = parentNode
-          const index = parentNode.children.findIndex(item => item.id === closestNode.id)
+            const isAfter = Math.abs(moveEvt.clientX - closestRect.left) > Math.abs(moveEvt.clientX - closestRect.right)
+            this.overTabIndex = isAfter ? index + 1 : index
 
-          this.overTabIndex = isAfter ? index + 1 : index
-
-          const boundaryOffset = 8
-          let x
-          if (isAfter) {
-            const nextNode = parentNode.children[index + 1]
-            if (nextNode) {
-              const nextRect = document.querySelector(`[data-tab-item-id="${nextNode.id}"]`)?.getBoundingClientRect()
-
-              x = (closestRect.right + nextRect.left) / 2
+            const boundaryOffset = 2
+            let x
+            if (isAfter) {
+              const nextNode = parentNode.children[index + 1]
+              if (nextNode) {
+                const nextRect = document.querySelector(`[data-tab-item-id="${nextNode.id}"]`)?.getBoundingClientRect()
+                x = (closestRect.right + nextRect.left) / 2
+              } else {
+                x = closestRect.right + boundaryOffset
+              }
             } else {
-              x = closestRect.right + boundaryOffset
+              const prevNode = parentNode.children[index - 1]
+              if (prevNode) {
+                const prevRect = document.querySelector(`[data-tab-item-id="${prevNode.id}"]`)?.getBoundingClientRect()
+                x = (closestRect.left + prevRect.right) / 2
+              } else {
+                x = closestRect.left - boundaryOffset
+              }
             }
+
+            const height = 14
+            let top = closestRect.top + (closestRect.height - height) / 2
+            this.overIndicatorRect = { left: x - 1, top, width: 2, height }
           } else {
-            const prevNode = parentNode.children[index - 1]
-            if (prevNode) {
-              const prevRect = document.querySelector(`[data-tab-item-id="${prevNode.id}"]`)?.getBoundingClientRect()
+            this.targetId = tabContentDom.getAttribute('data-tab-content-id')
+            const rect = document.querySelector(`[data-id="${this.targetId}"]`)?.getBoundingClientRect()
 
-              x = (closestRect.left + prevRect.right) / 2
-            } else {
-              x = closestRect.left - boundaryOffset
+            if (this.targetId === this.source.id) {
+              this.overIndicatorRect = rect.toJSON()
+              return
+            }
+
+            const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+            const one_of_third_width = rect.width / 4
+            const one_of_third_height = rect.height / 4
+
+            const list = [
+              {
+                indicator: 'center',
+                rect: {
+                  x1: rect.left + one_of_third_width,
+                  y1: rect.top + one_of_third_height,
+                  x2: rect.right - one_of_third_width,
+                  y2: rect.bottom - one_of_third_height
+                },
+                overIndicatorRect: rect.toJSON()
+              },
+              {
+                indicator: 'top',
+                a: { x: rect.left, y: rect.top },
+                b: { x: rect.right, y: rect.top },
+                c: { x: center.x, y: center.y },
+                overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height / 2 }
+              },
+              {
+                indicator: 'right',
+                a: { x: rect.right, y: rect.top },
+                b: { x: rect.right, y: rect.bottom },
+                c: { x: center.x, y: center.y },
+                overIndicatorRect: { left: center.x, top: rect.top, width: rect.width / 2, height: rect.height }
+              },
+              {
+                indicator: 'bottom',
+                a: { x: rect.left, y: rect.bottom },
+                b: { x: rect.right, y: rect.bottom },
+                c: { x: center.x, y: center.y },
+                overIndicatorRect: { left: rect.left, top: center.y, width: rect.width, height: rect.height / 2 }
+              },
+              {
+                indicator: 'left',
+                a: { x: rect.left, y: rect.top },
+                b: { x: rect.left, y: rect.bottom },
+                c: { x: center.x, y: center.y },
+                overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width / 2, height: rect.height }
+              }
+            ]
+
+            for (const item of list) {
+              if (item.indicator === 'center') {
+                if (
+                  moveEvt.clientX >= item.rect.x1 &&
+                  moveEvt.clientX <= item.rect.x2 &&
+                  moveEvt.clientY >= item.rect.y1 &&
+                  moveEvt.clientY <= item.rect.y2
+                ) {
+                  this.overIndicator = item.indicator
+                  this.overIndicatorRect = item.overIndicatorRect
+                  break
+                }
+                continue
+              }
+
+              if (isPointInTriangle({ x: moveEvt.clientX, y: moveEvt.clientY }, item.a, item.b, item.c)) {
+                this.overIndicator = item.indicator
+                this.overIndicatorRect = item.overIndicatorRect
+                break
+              }
             }
           }
-
-          this.overIndicatorRect = isAfter
-            ? { left: x, top: closestRect.top, width: 2, height: closestRect.height }
-            : { left: x, top: closestRect.top, width: 2, height: closestRect.height }
-
-          return
         }
 
-        const tabContentDom = target.closest(`[data-tab-content-id]`)
-
-        if (!tabContentDom) {
-          targetId = ''
-          overIndicator = ''
-          return
-        }
-
-        targetId = tabContentDom.getAttribute('data-tab-content-id')
-        const rect = document.querySelector(`[data-id="${targetId}"]`)?.getBoundingClientRect()
-
-        if (targetId === this.source.id) {
-          this.overIndicatorRect = rect.toJSON()
-          return
-        }
-
-        const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
-
-        const list = [
-          {
-            indicator: 'top',
-            a: { x: rect.left, y: rect.top },
-            b: { x: rect.right, y: rect.top },
-            c: { x: center.x, y: center.y },
-            overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height / 2 }
-          },
-          {
-            indicator: 'right',
-            a: { x: rect.right, y: rect.top },
-            b: { x: rect.right, y: rect.bottom },
-            c: { x: center.x, y: center.y },
-            overIndicatorRect: { left: center.x, top: rect.top, width: rect.width / 2, height: rect.height }
-          },
-          {
-            indicator: 'bottom',
-            a: { x: rect.left, y: rect.bottom },
-            b: { x: rect.right, y: rect.bottom },
-            c: { x: center.x, y: center.y },
-            overIndicatorRect: { left: rect.left, top: center.y, width: rect.width, height: rect.height / 2 }
-          },
-          {
-            indicator: 'left',
-            a: { x: rect.left, y: rect.top },
-            b: { x: rect.left, y: rect.bottom },
-            c: { x: center.x, y: center.y },
-            overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width / 2, height: rect.height }
-          }
-        ]
-
-        for (const item of list) {
-          if (isPointInTriangle({ x: moveEvt.clientX, y: moveEvt.clientY }, item.a, item.b, item.c)) {
-            overIndicator = item.indicator
-
-            this.overIndicatorRect = item.overIndicatorRect
-            break
-          }
-        }
+        findClosestNode()
       },
       onDragEnd: ({ isCanceled }) => {
         if (isCanceled) {
-          ldStore.overIndicatorRect = null
+          this.clearTouch()
           this.source = null
           return
         }
 
-        if (isOverTabItem) {
+        if (this.isOverTabItem) {
           this.onTabItemDrop(this.overTabNode, this.overTabIndex)
-        } else if (targetId && overIndicator) {
-          const { config } = findNodeById(targetId, this.layout)
-          this.onLayoutDrop(overIndicator, config)
+        } else if (this.targetId && this.overIndicator) {
+          const { config } = findNodeById(this.targetId, this.layout)
+          this.onLayoutDrop(this.overIndicator, config)
         }
 
-        ldStore.overIndicatorRect = null
+        this.clearTouch()
+
         this.source = null
       }
     })
@@ -262,7 +232,6 @@ class LdStore {
   // 放在布局块时
   onLayoutDrop(overIndicator, target) {
     let { source } = this
-
     source = toJS(source)
 
     if (!source) {
@@ -297,63 +266,65 @@ class LdStore {
       return
     }
 
-    const isSameDirection =
-      (overIndicator === 'right' && targetParent.mode === 'row') ||
-      (overIndicator === 'left' && targetParent.mode === 'row') ||
-      (overIndicator === 'bottom' && targetParent.mode === 'column') ||
-      (overIndicator === 'top' && targetParent.mode === 'column')
-
-    // 放置的方向 和 target 的 flex 布局方向 相同
-    if (isSameDirection) {
-      let newConfig
-      if (source.mode === 'tabs') {
-        newConfig = source
-      } else {
-        newConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
-      }
-
-      {
-        const average = target.style.flexGrow / 2
-        target.style.flexGrow = average
-        newConfig.style.flexGrow = average
-      }
-
-      if (overIndicator === 'right' || overIndicator === 'bottom') {
-        targetParent.children.splice(index + 1, 0, newConfig)
-      }
-
-      if (overIndicator === 'left' || overIndicator === 'top') {
-        targetParent.children.splice(index, 0, newConfig)
-      }
+    if (overIndicator === 'center') {
+      target.children.push(...source2TabList(source))
     } else {
-      console.log('-- else')
-      // 需要再套一层
-      const newMode = targetParent.mode === 'row' ? 'column' : 'row'
-      let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
-      targetParent.children.splice(index, 1, config)
+      const isSameDirection =
+        (overIndicator === 'right' && targetParent.mode === 'row') ||
+        (overIndicator === 'left' && targetParent.mode === 'row') ||
+        (overIndicator === 'bottom' && targetParent.mode === 'column') ||
+        (overIndicator === 'top' && targetParent.mode === 'column')
 
-      // 获取 mobx 的代理对象, 而不能直接用 config
-      config = targetParent.children[index]
+      // 放置的方向 和 target 的 flex 布局方向 相同
+      if (isSameDirection) {
+        let newConfig
+        if (source.mode === 'tabs') {
+          newConfig = source
+        } else {
+          newConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+        }
 
-      let tabConfig
-      if (source.mode === 'tabs') {
-        tabConfig = source
+        {
+          const average = target.style.flexGrow / 2
+          target.style.flexGrow = average
+          newConfig.style.flexGrow = average
+        }
+
+        if (overIndicator === 'right' || overIndicator === 'bottom') {
+          targetParent.children.splice(index + 1, 0, newConfig)
+        }
+        if (overIndicator === 'left' || overIndicator === 'top') {
+          targetParent.children.splice(index, 0, newConfig)
+        }
       } else {
-        tabConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
-      }
+        console.log('-- else')
+        // 需要再套一层
+        const newMode = targetParent.mode === 'row' ? 'column' : 'row'
+        let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
+        targetParent.children.splice(index, 1, config)
 
-      {
-        // 需要再套一层的时候, 均分
-        target.style.flexGrow = Total_Grow / 2
-        tabConfig.style.flexGrow = Total_Grow / 2
-      }
+        // 获取 mobx 的代理对象, 而不能直接用 config
+        config = targetParent.children[index]
 
-      if (overIndicator === 'right' || overIndicator === 'bottom') {
-        config.children.splice(1, 0, tabConfig)
-      }
+        let tabConfig
+        if (source.mode === 'tabs') {
+          tabConfig = source
+        } else {
+          tabConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+        }
 
-      if (overIndicator === 'left' || overIndicator === 'top') {
-        config.children.splice(0, 0, tabConfig)
+        {
+          // 需要再套一层的时候, 均分
+          target.style.flexGrow = Total_Grow / 2
+          tabConfig.style.flexGrow = Total_Grow / 2
+        }
+
+        if (overIndicator === 'right' || overIndicator === 'bottom') {
+          config.children.splice(1, 0, tabConfig)
+        }
+        if (overIndicator === 'left' || overIndicator === 'top') {
+          config.children.splice(0, 0, tabConfig)
+        }
       }
     }
 
@@ -421,4 +392,12 @@ declare global {
   interface Window {
     [k: string]: any
   }
+}
+
+function source2TabList(source) {
+  if (source.mode === 'tabs') {
+    return source.children
+  }
+
+  return [source]
 }
