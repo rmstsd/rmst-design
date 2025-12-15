@@ -175,8 +175,8 @@ class LdStore {
           }
 
           this.overIndicatorRect = isAfter
-            ? { left: x, top: closestRect.top, width: 0, height: closestRect.height }
-            : { left: x, top: closestRect.top, width: 0, height: closestRect.height }
+            ? { left: x, top: closestRect.top, width: 2, height: closestRect.height }
+            : { left: x, top: closestRect.top, width: 2, height: closestRect.height }
 
           return
         }
