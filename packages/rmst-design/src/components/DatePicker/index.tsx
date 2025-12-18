@@ -129,13 +129,9 @@ export function DatePicker(props: DatePickerProps) {
       <div
         className={clsx(interact.cls, className)}
         style={style}
-        onPointerDown={evt => {
-          requestAnimationFrame(() => {
-            inputRef.current.focus()
-          })
-        }}
         tabIndex={disabled ? undefined : -1}
         onFocus={() => {
+          inputRef.current.focus()
           interact.setIsFocused(true)
         }}
         onBlur={() => {

@@ -37,24 +37,13 @@ export function Input(props: InputProps) {
     }
   }
 
-  const onKeyDownHandler = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-    if (evt.key === 'Tab') {
-      // interact.setIsFocused(false)
-    }
-  }
-
   return (
-    <span
+    <div
       className={interact.cls}
       ref={mergeRefs([interact.domRef, ref])}
-      onPointerDown={() => {
-        if (interact.isDisabledOrReadonly) {
-          return
-        }
-
-        requestAnimationFrame(() => {
-          inputRef.current?.focus()
-        })
+      tabIndex={disabled ? undefined : -1}
+      onFocus={() => {
+        inputRef.current?.focus()
       }}
     >
       <span className="input-content">
@@ -68,7 +57,6 @@ export function Input(props: InputProps) {
           className="rmst-native-input"
           onFocus={() => onFocusChange(true)}
           onBlur={() => onFocusChange(false)}
-          onKeyDown={onKeyDownHandler}
           onChange={evt => onChange?.(evt.target.value)}
           placeholder={placeholder}
         />
@@ -80,11 +68,7 @@ export function Input(props: InputProps) {
         ) : null}
       </span>
 
-      {after && (
-        <span className="after" onPointerDown={evt => evt.preventDefault()}>
-          {after}
-        </span>
-      )}
-    </span>
+      {after && <span className="after">{after}</span>}
+    </div>
   )
 }

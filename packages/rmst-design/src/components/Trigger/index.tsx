@@ -73,7 +73,7 @@ export function Trigger(props: TriggerProps) {
   const dismiss = useDismiss(context, {
     referencePress: trigger !== 'focus',
     referencePressEvent: 'click',
-    outsidePressEvent: 'click'
+    outsidePressEvent: 'pointerdown'
   })
   const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click, focus, hover])
 

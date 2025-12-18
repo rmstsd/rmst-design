@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Locale, NextIntlClientProvider } from 'next-intl'
 import { headers } from 'next/headers'
 import { SelectTheme, ThemeProvider } from '@/components/Theme'
@@ -19,6 +19,14 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
   title: 'rmst-nextjs',
   description: 'nextjs desc'
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false
 }
 
 type RootLayoutProps = {

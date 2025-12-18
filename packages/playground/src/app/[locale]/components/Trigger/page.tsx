@@ -29,15 +29,15 @@ export default function TriggerDd() {
         value
         _debugName="1"
         popup={
-          <div className="border p-3">
+          <div className="border border-slate-200 p-3">
             <div className="mb-2">哈哈哈哈 popup 1</div>
             <Trigger
               value
               _debugName="2"
               popup={
-                <div className="border popup-2 p-3 flex gap-2">
+                <div className="border border-slate-200 popup-2 p-3 flex gap-2">
                   <span>哈哈哈哈哈哈 popup 2</span>
-                  <Trigger value _debugName="2" popup={<div className="border popup-2 p-3">哈哈 popup 3</div>}>
+                  <Trigger value _debugName="2" popup={<div className="border border-slate-200 popup-2 p-3">哈哈 popup 3</div>}>
                     <Button>继续打开</Button>
                   </Trigger>
                 </div>

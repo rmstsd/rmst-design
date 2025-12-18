@@ -4,26 +4,12 @@ import { Suspense, use, useTransition } from 'react'
 import { Button, Modal } from 'rmst-design'
 import { test } from './server'
 
-export default function Client({ p }) {
+export default function Client() {
   const [isPending, startTransition] = useTransition()
 
   return (
     <div>
       <div>Client</div>
-
-      <Button
-        onClick={() => {
-          console.log(test)
-          startTransition(async () => {
-            let ans = await test()
-            console.log(ans)
-          })
-        }}
-      >
-        test
-      </Button>
-
-      <Child p={p} />
     </div>
   )
 }

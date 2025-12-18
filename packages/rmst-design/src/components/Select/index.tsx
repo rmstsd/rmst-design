@@ -124,7 +124,7 @@ export function Select(props: SelectProps) {
   }
 
   const popup = (
-    <Scrollbar className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus}>
+    <Scrollbar className={`${selectPrefixCls}-options-wrapper`} onPointerDown={keepFocus} disabledShadowBottom disabledShadowTop>
       {options.length === 0 && <Empty />}
       {options.map((item, index) => (
         <div
@@ -170,14 +170,10 @@ export function Select(props: SelectProps) {
       <div
         className={clsx(interact.cls, className)}
         style={style}
-        onPointerDown={() => {
-          requestAnimationFrame(() => {
-            inputRef.current.focus()
-          })
-        }}
         tabIndex={disabled ? undefined : -1}
         onKeyDown={onKeyDown}
         onFocus={() => {
+          inputRef.current.focus()
           interact.setIsFocused(true)
         }}
         onBlur={() => {

@@ -79,6 +79,13 @@ export function Image(props: ImageProps) {
     updatePosition()
   }
 
+  const getOriginImageStyle = () => {
+    const objectFit = getComputedStyle(imageRef.current).objectFit
+    const objectPosition = getComputedStyle(imageRef.current).objectPosition
+
+    return { objectFit, objectPosition }
+  }
+
   const show = () => {
     const previewImage = previewImageRef.current
     previewImage.style.removeProperty('opacity')
@@ -86,8 +93,7 @@ export function Image(props: ImageProps) {
     const startRect = imageRef.current.getBoundingClientRect()
     const endRect = previewImage.getBoundingClientRect()
 
-    const objectFit = getComputedStyle(imageRef.current).objectFit
-    const objectPosition = getComputedStyle(imageRef.current).objectPosition
+    const { objectFit, objectPosition } = getOriginImageStyle()
     previewImage.style.objectFit = objectFit
     previewImage.style.objectPosition = objectPosition
 
@@ -95,7 +101,11 @@ export function Image(props: ImageProps) {
       { left: `${startRect.left}px`, top: `${startRect.top}px`, width: `${startRect.width}px`, height: `${startRect.height}px` },
       { left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`, height: `${endRect.height}px` }
     ]
-    previewImage.animate(kfs, kfaOptions)
+    const ani = previewImage.animate(kfs, kfaOptions)
+    ani.onfinish = () => {
+      previewImage.style.removeProperty('object-fit')
+      previewImage.style.removeProperty('object-position')
+    }
   }
 
   const hide = () => {
@@ -104,7 +114,12 @@ export function Image(props: ImageProps) {
     }
 
     setDisplay(false)
+
+    const { objectFit, objectPosition } = getOriginImageStyle()
     const previewImage = previewImageRef.current
+    previewImage.style.objectFit = objectFit
+    previewImage.style.objectPosition = objectPosition
+
     const startRect = previewImage.getBoundingClientRect()
     const endRect = imageRef.current.getBoundingClientRect()
 

@@ -4,6 +4,7 @@ import { Button, Modal } from 'rmst-design'
 import Client from './Client'
 import { useTranslations } from 'next-intl'
 import { useEffectEvent, useState, version } from 'react'
+import { ClientOnly } from '@/components/ClientOnly'
 
 export default function Blog() {
   console.log('Blog render')
@@ -35,6 +36,10 @@ export default function Blog() {
       {/* <Modal>
         <div>Modal content</div>
       </Modal> */}
+
+      <ClientOnly>
+        <Client />
+      </ClientOnly>
     </div>
   )
 }
