@@ -1,14 +1,13 @@
-import Side from '@/components/Side'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, use } from 'react'
+
+import LayoutContent from './layoutContent'
+import { cookies } from 'next/headers'
+import { Side_Open_Key } from './constant'
 
 export default function Layout(props: PropsWithChildren) {
-  return (
-    <>
-      <div className="w-[160px] shrink-0 fixed top-[48px] left-0 bottom-0 z-[10] bg-white">
-        <Side />
-      </div>
+  const cookieStore = use(cookies())
+  const val = cookieStore.get(Side_Open_Key)
+  console.log('server', val)
 
-      <section className="p-2 flex-grow ml-[160px]">{props.children}</section>
-    </>
-  )
+  return <LayoutContent {...props} sideOpen={val?.value} />
 }
