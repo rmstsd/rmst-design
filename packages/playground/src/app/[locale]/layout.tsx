@@ -9,7 +9,6 @@ import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 
 import '@/css'
-import { CookiesProvider } from 'react-cookie'
 
 export function generateStaticParams() {
   const staticParams = routing.locales.map(locale => ({ locale }))
