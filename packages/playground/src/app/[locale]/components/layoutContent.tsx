@@ -6,6 +6,7 @@ import { Button } from 'rmst-design'
 
 import Cookies from 'js-cookie'
 import { Side_Open_Key } from './constant'
+import { updateSideOpen } from '@/actions/updateSideOpen'
 
 const width = 160
 
@@ -14,7 +15,9 @@ interface LayoutContentProps {
 }
 
 export default function LayoutContent(props: PropsWithChildren<LayoutContentProps>) {
-  const [isExpandedState, setIsExpandedState] = useState(props.sideOpen === 'true')
+  // const [isExpandedState, setIsExpandedState] = useState(props.sideOpen === 'true')
+
+  const isExpandedState = props.sideOpen === 'true'
 
   return (
     <>
@@ -29,8 +32,10 @@ export default function LayoutContent(props: PropsWithChildren<LayoutContentProp
             onClick={() => {
               const newVal = !isExpandedState
 
-              setIsExpandedState(newVal)
-              Cookies.set(Side_Open_Key, newVal.toString())
+              updateSideOpen({ sideOpen: newVal.toString() })
+
+              // setIsExpandedState(newVal)
+              // Cookies.set(Side_Open_Key, newVal.toString())
             }}
           >
             {isExpandedState ? '<' : '>'}
