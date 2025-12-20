@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { startDrag } from '../_util/drag'
 import { clamp } from 'es-toolkit'
 import { Tabs } from './Tabs'
+import ldStore from './store'
 
 interface ItemProps {
   config: IConfig
@@ -81,10 +82,16 @@ export const Item = observer(({ config }: ItemProps) => {
       ))}
 
       <div data-root-indicator>
-        <div className="root-indicator top"></div>
-        <div className="root-indicator right"></div>
-        <div className="root-indicator bottom"></div>
-        <div className="root-indicator left"></div>
+        <div className={clsx('root-indicator top', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'top' })}></div>
+        <div
+          className={clsx('root-indicator right', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'right' })}
+        ></div>
+        <div
+          className={clsx('root-indicator bottom', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'bottom' })}
+        ></div>
+        <div
+          className={clsx('root-indicator left', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'left' })}
+        ></div>
       </div>
     </div>
   )

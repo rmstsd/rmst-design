@@ -28,6 +28,7 @@ class LdStore {
   overTabIndex = -1
   overTabNode: IConfig
   isOverTabItem = false
+  isOverRootNode = false
   overIndicator
   targetId
 
@@ -74,7 +75,7 @@ class LdStore {
           const one_of_four_width = rootRect.width / 4
           const one_of_four_height = rootRect.height / 4
 
-          const collisionSize = 4
+          const collisionSize = 8
           const rootIndicators = [
             {
               indicator: 'top',
@@ -138,7 +139,7 @@ class LdStore {
             }
           ]
 
-          let isOverRoot = false
+          this.isOverRootNode = false
           for (const item of rootIndicators) {
             if (
               moveEvt.clientX >= item.rect.x1 &&
@@ -146,14 +147,14 @@ class LdStore {
               moveEvt.clientY >= item.rect.y1 &&
               moveEvt.clientY <= item.rect.y2
             ) {
-              isOverRoot = true
+              this.isOverRootNode = true
               this.overIndicator = item.indicator
               this.overIndicatorRect = item.overIndicatorRect
               break
             }
           }
 
-          if (isOverRoot) {
+          if (this.isOverRootNode) {
             return
           }
 
@@ -304,7 +305,9 @@ class LdStore {
           return
         }
 
-        if (this.isOverTabItem) {
+        if (this.isOverRootNode) {
+          this.onRootLayoutDrop(this.overIndicator)
+        } else if (this.isOverTabItem) {
           this.onTabItemDrop(this.overTabNode, this.overTabIndex)
         } else if (this.targetId && this.overIndicator) {
           const { config } = findNodeById(this.targetId, this.layout)
@@ -316,6 +319,10 @@ class LdStore {
         this.source = null
       }
     })
+  }
+
+  onRootLayoutDrop(overIndicator) {
+    const rootElement = document.querySelector(`[data-is-root]`)
   }
 
   // 放在布局块时
