@@ -57,7 +57,9 @@ export const Item = observer(({ config }: ItemProps) => {
 
   return (
     <div
-      className={clsx('node-item', `${mode}-size-0`, mode)}
+      className={clsx('node-item', `${mode}-size-0`, mode, {
+        'node-item-root': config.isRoot
+      })}
       data-id={config.id}
       data-is-root={config.isRoot}
       style={{ flexGrow: config.style?.flexGrow }}
@@ -77,6 +79,13 @@ export const Item = observer(({ config }: ItemProps) => {
           <Item config={childConfig} />
         </Fragment>
       ))}
+
+      <div data-root-indicator>
+        <div className="root-indicator top"></div>
+        <div className="root-indicator right"></div>
+        <div className="root-indicator bottom"></div>
+        <div className="root-indicator left"></div>
+      </div>
     </div>
   )
 })

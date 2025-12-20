@@ -60,11 +60,100 @@ class LdStore {
         }
 
         const findClosestNode = () => {
-          const tabHeaderDom = target.closest(`[data-tab-header-id`)
+          const rootElement = document.querySelector(`[data-is-root]`)
+          const tabHeaderDom = target.closest(`[data-tab-header-id]`)
           const tabContentDom = target.closest(`[data-tab-content-id]`)
 
           const isOver = Boolean(tabHeaderDom) || Boolean(tabContentDom)
           if (!isOver) {
+            return
+          }
+
+          const rootRect = rootElement?.getBoundingClientRect()
+
+          const one_of_four_width = rootRect.width / 4
+          const one_of_four_height = rootRect.height / 4
+
+          const collisionSize = 4
+          const rootIndicators = [
+            {
+              indicator: 'top',
+              rect: {
+                x1: rootRect.left,
+                y1: rootRect.top,
+                x2: rootRect.right,
+                y2: rootRect.top + collisionSize
+              },
+              overIndicatorRect: {
+                left: rootRect.left,
+                top: rootRect.top,
+                width: rootRect.width,
+                height: one_of_four_height
+              }
+            },
+            {
+              indicator: 'right',
+              rect: {
+                x1: rootRect.right - collisionSize,
+                y1: rootRect.top,
+                x2: rootRect.right,
+                y2: rootRect.bottom
+              },
+              overIndicatorRect: {
+                left: rootRect.right - one_of_four_width,
+                top: rootRect.top,
+                width: one_of_four_width,
+                height: rootRect.height
+              }
+            },
+            {
+              indicator: 'bottom',
+              rect: {
+                x1: rootRect.left,
+                y1: rootRect.bottom - collisionSize,
+                x2: rootRect.right,
+                y2: rootRect.bottom
+              },
+              overIndicatorRect: {
+                left: rootRect.left,
+                top: rootRect.bottom - one_of_four_height,
+                width: rootRect.width,
+                height: one_of_four_height
+              }
+            },
+            {
+              indicator: 'left',
+              rect: {
+                x1: rootRect.left,
+                y1: rootRect.top,
+                x2: rootRect.left + collisionSize,
+                y2: rootRect.bottom
+              },
+              overIndicatorRect: {
+                left: rootRect.left,
+                top: rootRect.top,
+                width: one_of_four_width,
+                height: rootRect.height
+              }
+            }
+          ]
+
+          let isOverRoot = false
+          for (const item of rootIndicators) {
+            if (
+              moveEvt.clientX >= item.rect.x1 &&
+              moveEvt.clientX <= item.rect.x2 &&
+              moveEvt.clientY >= item.rect.y1 &&
+              moveEvt.clientY <= item.rect.y2
+            ) {
+              isOverRoot = true
+              this.overIndicator = item.indicator
+              this.overIndicatorRect = item.overIndicatorRect
+              break
+            }
+          }
+
+          if (isOverRoot) {
             return
           }
 

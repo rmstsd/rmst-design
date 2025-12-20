@@ -32,6 +32,55 @@
     display: flex;
     overflow: hidden;
 
+    &.node-item-root {
+      position: relative;
+
+      .root-indicator {
+        --indicator-size: 200px;
+        --jx-size: 6px;
+        --border-radius-size: 99px;
+        pointer-events: none;
+        position: absolute;
+        background-color: #5e7eff;
+
+        &.top {
+          width: var(--indicator-size);
+          height: var(--jx-size);
+          top: 0;
+          left: 50%;
+          transform: translate(-50%, 0);
+          border-radius: 0 0 var(--border-radius-size) var(--border-radius-size);
+        }
+
+        &.right {
+          width: var(--jx-size);
+          height: var(--indicator-size);
+          top: 50%;
+          right: 0;
+          transform: translate(0, -50%);
+          border-radius: var(--border-radius-size) 0 0 var(--border-radius-size);
+        }
+
+        &.bottom {
+          width: var(--indicator-size);
+          height: var(--jx-size);
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%, 0);
+          border-radius: var(--border-radius-size) var(--border-radius-size) 0 0;
+        }
+
+        &.left {
+          width: var(--jx-size);
+          height: var(--indicator-size);
+          top: 50%;
+          left: 0;
+          transform: translate(0, -50%);
+          border-radius: 0 var(--border-radius-size) var(--border-radius-size) 0;
+        }
+      }
+    }
+
     &.column {
       flex-direction: column;
 
