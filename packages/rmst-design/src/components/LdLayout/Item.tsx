@@ -57,7 +57,7 @@ export const Item = observer(({ config }: ItemProps) => {
   }
 
   const { over } = ldStore
-  const isOverRoot = over?.overType === 'root'
+  const isOverRoot = over?.type === 'root'
 
   return (
     <div
@@ -86,10 +86,10 @@ export const Item = observer(({ config }: ItemProps) => {
 
       {config.isRoot && ldStore.source && over && (
         <div data-root-indicator>
-          <div className={clsx('root-indicator top', { active: isOverRoot && over.overIndicator === 'top' })}></div>
-          <div className={clsx('root-indicator right', { active: isOverRoot && over.overIndicator === 'right' })}></div>
-          <div className={clsx('root-indicator bottom', { active: isOverRoot && over.overIndicator === 'bottom' })}></div>
-          <div className={clsx('root-indicator left', { active: isOverRoot && over.overIndicator === 'left' })}></div>
+          <div className={clsx('root-indicator top', { active: isOverRoot && over.indicator === 'top' })}></div>
+          <div className={clsx('root-indicator right', { active: isOverRoot && over.indicator === 'right' })}></div>
+          <div className={clsx('root-indicator bottom', { active: isOverRoot && over.indicator === 'bottom' })}></div>
+          <div className={clsx('root-indicator left', { active: isOverRoot && over.indicator === 'left' })}></div>
         </div>
       )}
     </div>

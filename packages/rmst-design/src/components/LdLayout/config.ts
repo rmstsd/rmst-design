@@ -2,6 +2,9 @@ import { ReactNode } from 'react'
 
 export const Total_Grow = 100
 
+export const overTabHeight = 14
+export const rootCollisionSize = 8
+
 export type ITabs = {
   id: string
   children: { id: string; title: string; content?: ReactNode }[]
@@ -16,13 +19,15 @@ export type OverIndicator = 'top' | 'bottom' | 'left' | 'right' | 'center'
 export type OverType = 'root' | 'tabItem' | 'tabContent'
 
 export type Over = {
-  overType: OverType
-  overIndicator: OverIndicator
-  overIndicatorRect
+  type: OverType
+  indicator: OverIndicator
+  indicatorRect
 
   //
-  overTabIndex?: number
-  overTabNode?
+  tabIndex?: number
+  node? // tabItem | tabContent
+
+  targetId?
 }
 
 export function source2TabList(source) {

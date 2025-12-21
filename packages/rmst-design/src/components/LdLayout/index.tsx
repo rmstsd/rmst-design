@@ -49,10 +49,10 @@ export const LdLayout = observer(function LdLayout() {
           <div
             className="over-indicator-rect"
             style={{
-              left: over.overIndicatorRect.left,
-              top: over.overIndicatorRect.top,
-              width: over.overIndicatorRect.width,
-              height: over.overIndicatorRect.height
+              left: over.indicatorRect.left,
+              top: over.indicatorRect.top,
+              width: over.indicatorRect.width,
+              height: over.indicatorRect.height
             }}
           />
         )}
