@@ -306,12 +306,12 @@ class LdStore {
         }
 
         if (this.isOverRootNode) {
-          this.onRootLayoutDrop(this.overIndicator)
+          this.onLayoutRootDrop(this.overIndicator)
         } else if (this.isOverTabItem) {
           this.onTabItemDrop(this.overTabNode, this.overTabIndex)
         } else if (this.targetId && this.overIndicator) {
           const { config } = findNodeById(this.targetId, this.layout)
-          this.onLayoutDrop(this.overIndicator, config)
+          this.onLayoutDrop(this.overIndicator, config as ITabs)
         }
 
         this.clearTouch()
@@ -321,12 +321,76 @@ class LdStore {
     })
   }
 
-  onRootLayoutDrop(overIndicator) {
-    const rootElement = document.querySelector(`[data-is-root]`)
+  // RootDrop
+  onLayoutRootDrop(overIndicator) {
+    const rootNode = this.layout
+    const source = toJS(this.source)
+
+    const sourceParent = findParentNode(source.id, this.layout)
+    sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
+    if (source.mode === 'tabs') {
+      const average = source.style.flexGrow / sourceParent.children.length
+      sourceParent.children.forEach(child => {
+        child.style.flexGrow += average
+      })
+    }
+
+    if (sourceParent.children.length === 0) {
+      removeItem(sourceParent, this.layout)
+    }
+
+    const isSameDirection =
+      (overIndicator === 'right' && rootNode.mode === 'row') ||
+      (overIndicator === 'left' && rootNode.mode === 'row') ||
+      (overIndicator === 'bottom' && rootNode.mode === 'column') ||
+      (overIndicator === 'top' && rootNode.mode === 'column')
+
+    let newConfig
+    if (source.mode === 'tabs') {
+      newConfig = source
+    } else {
+      newConfig = { id: genId(), mode: 'tabs', children: [source], style: {} }
+    }
+
+    newConfig.style.flexGrow = 20
+
+    if (isSameDirection) {
+      const average = newConfig.style.flexGrow / rootNode.children.length
+      rootNode.children.forEach(item => {
+        item.style.flexGrow -= average
+      })
+
+      if (overIndicator === 'right' || overIndicator === 'bottom') {
+        rootNode.children.push(newConfig)
+      } else {
+        rootNode.children.unshift(newConfig)
+      }
+    } else {
+      const newMode = rootNode.mode === 'row' ? 'column' : 'row'
+      let config: IConfig = {
+        id: genId(),
+        mode: newMode,
+        isRoot: true,
+        children: [{ ...rootNode, isRoot: false, style: { flexGrow: 80 } }]
+      }
+
+      if (overIndicator === 'right' || overIndicator === 'bottom') {
+        config.children.push(newConfig)
+      } else {
+        config.children.unshift(newConfig)
+      }
+
+      this.layout = cloneDeep(config)
+    }
+
+    fixLayout(this.layout)
+    console.log('this.layout', this.layout)
+
+    validateLayout(this.layout)
   }
 
   // 放在布局块时
-  onLayoutDrop(overIndicator, target) {
+  onLayoutDrop(overIndicator, target: ITabs) {
     let { source } = this
     source = toJS(source)
 
@@ -354,9 +418,9 @@ class LdStore {
     }
 
     const targetParent = findParentNode(target.id, this.layout)
-
     const index = targetParent.children.findIndex(item => item.id === target.id)
 
+    // debug
     if (index === -1) {
       console.log('意外等于 -1 了; 理论上不会出现')
       return

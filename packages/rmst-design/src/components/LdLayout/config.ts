@@ -135,7 +135,16 @@ export function fixLayout(layout: IConfig) {
 }
 
 export function validateLayout(layout: IConfig) {
+  if (!layout.isRoot) {
+    console.error('根节点的 isRoot 应是 true')
+  }
+
+  let rootCount = 0
   traverse(layout, item => {
+    if (item.isRoot) {
+      rootCount++
+    }
+
     if (isLayoutNode(item)) {
       const sum = item.children.reduce((pre, cur) => pre + cur.style.flexGrow, 0)
 
@@ -144,8 +153,15 @@ export function validateLayout(layout: IConfig) {
       }
     }
   })
+  if (rootCount !== 1) {
+    console.error('布局中只能有一个根节点')
+  }
 
+  rootCount = 0
   postorderRecursive(layout, item => {
+    if (item.isRoot) {
+      rootCount++
+    }
     if (isLayoutNode(item)) {
       const sum = item.children.reduce((pre, cur) => pre + cur.style.flexGrow, 0)
 
@@ -154,6 +170,10 @@ export function validateLayout(layout: IConfig) {
       }
     }
   })
+
+  if (rootCount !== 1) {
+    console.error('布局中只能有一个根节点')
+  }
 }
 
 const isNotEqual = (val: number) => {
