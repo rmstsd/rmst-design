@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 export const Total_Grow = 100
 
@@ -10,6 +10,27 @@ export type ITabs = {
     flexGrow?: number
     rect?: { x: number; y: number; width: number; height: number }
   }
+}
+
+export type OverIndicator = 'top' | 'bottom' | 'left' | 'right' | 'center'
+export type OverType = 'root' | 'tabItem' | 'tabContent'
+
+export type Over = {
+  overType: OverType
+  overIndicator: OverIndicator
+  overIndicatorRect
+
+  //
+  overTabIndex?: number
+  overTabNode?
+}
+
+export function source2TabList(source) {
+  if (source.mode === 'tabs') {
+    return source.children
+  }
+
+  return [source]
 }
 
 export const isLayoutNode = (node: IConfig) => {
@@ -30,6 +51,31 @@ export interface IConfig {
 export interface IComponent {
   config: IConfig
   parent: IConfig
+}
+
+export const removeItem = (config: IConfig, rootTree: IConfig) => {
+  const parent = findParentNode(config.id, rootTree)
+
+  const index = parent.children.findIndex(item => item.id === config.id)
+  if (index === -1) {
+    console.error('removeItem error')
+    return
+  }
+  parent.children.splice(index, 1)
+
+  // 只对 mode 是 tabs 和 layout 节点生效
+  if (config.mode) {
+    // 删除后, 均分给其他子项
+    const average = config.style.flexGrow / parent.children.length
+    parent.children.forEach(item => {
+      item.style.flexGrow += average
+    })
+  }
+
+  // 处理删除 tabItem 后
+  if (parent.children.length === 0) {
+    removeItem(parent, rootTree)
+  }
 }
 
 export const findNodeById = (id: string, config: IConfig): IComponent => {
@@ -54,30 +100,6 @@ export const findNodeById = (id: string, config: IConfig): IComponent => {
   }
 }
 
-export const removeItem = (config: IConfig, rootTree: IConfig) => {
-  const parent = findParentNode(config.id, rootTree)
-
-  const index = parent.children.indexOf(config)
-  if (index === -1) {
-    console.error('removeItem error')
-
-    return
-  }
-  parent.children.splice(index, 1)
-
-  // 删除后, 均分给其他子项
-  const average = config.style.flexGrow / parent.children.length
-  parent.children.forEach(item => {
-    item.style.flexGrow += average
-  })
-
-  return index
-}
-
-export const genId = () => {
-  return Math.random().toString().slice(2, 6)
-}
-
 export function findParentNode(id: string, node: IConfig): IConfig {
   return dfs(node)
 
@@ -93,6 +115,10 @@ export function findParentNode(id: string, node: IConfig): IConfig {
       }
     }
   }
+}
+
+export const genId = () => {
+  return Math.random().toString().slice(2, 6)
 }
 
 export function fixLayout(layout: IConfig) {

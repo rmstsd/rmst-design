@@ -29,6 +29,7 @@ export const LdLayout = observer(function LdLayout() {
   }, [])
 
   const source = ldStore.source as any
+  const { over } = ldStore
 
   return (
     <div className="test">
@@ -44,14 +45,14 @@ export const LdLayout = observer(function LdLayout() {
 
         {/* <PortalContainer /> */}
 
-        {ldStore.overIndicatorRect && (
+        {over && (
           <div
             className="over-indicator-rect"
             style={{
-              left: ldStore.overIndicatorRect.left,
-              top: ldStore.overIndicatorRect.top,
-              width: ldStore.overIndicatorRect.width,
-              height: ldStore.overIndicatorRect.height
+              left: over.overIndicatorRect.left,
+              top: over.overIndicatorRect.top,
+              width: over.overIndicatorRect.width,
+              height: over.overIndicatorRect.height
             }}
           />
         )}

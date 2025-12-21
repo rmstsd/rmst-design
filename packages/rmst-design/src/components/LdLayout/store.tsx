@@ -1,7 +1,19 @@
 import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
-import { findParentNode, fixLayout, findNodeById, IConfig, isPointInTriangle, Total_Grow, validateLayout, ITabs } from './config'
+import {
+  findParentNode,
+  fixLayout,
+  findNodeById,
+  IConfig,
+  isPointInTriangle,
+  Total_Grow,
+  validateLayout,
+  ITabs,
+  source2TabList,
+  genId,
+  removeItem,
+  Over
+} from './config'
 
-import { genId, removeItem } from './config'
 import { isClient } from '../_util/is'
 import { cloneDeep } from 'es-toolkit'
 import React from 'react'
@@ -24,25 +36,16 @@ class LdStore {
   source: IConfig // 一个 tab 项 或 tabs
   sourcePosition = { x: 0, y: 0 }
 
-  overIndicatorRect: React.CSSProperties = null
-  overTabIndex = -1
-  overTabNode: IConfig
-  isOverTabItem = false
-  isOverRootNode = false
-  overIndicator
-  targetId
+  over: Over
+
+  targetId // todo： 合并 over 与 target 的语义
 
   constructor() {
     makeAutoObservable(this)
   }
 
   clearTouch() {
-    this.overTabIndex = -1
-    this.overTabNode = null
-    this.isOverTabItem = false
-    this.overIndicatorRect = null
-
-    this.overIndicator = null
+    this.over = null
     this.targetId = null
   }
 
@@ -137,9 +140,9 @@ class LdStore {
                 height: rootRect.height
               }
             }
-          ]
+          ] as const
 
-          this.isOverRootNode = false
+          let isOverRoot = false
           for (const item of rootIndicators) {
             if (
               moveEvt.clientX >= item.rect.x1 &&
@@ -147,19 +150,20 @@ class LdStore {
               moveEvt.clientY >= item.rect.y1 &&
               moveEvt.clientY <= item.rect.y2
             ) {
-              this.isOverRootNode = true
-              this.overIndicator = item.indicator
-              this.overIndicatorRect = item.overIndicatorRect
+              isOverRoot = true
+              this.over = { overType: 'root', overIndicator: item.indicator, overIndicatorRect: item.overIndicatorRect }
               break
             }
           }
 
-          if (this.isOverRootNode) {
+          if (isOverRoot) {
             return
           }
 
-          this.isOverTabItem = Boolean(tabHeaderDom)
-          if (this.isOverTabItem) {
+          const isOverTabItem = Boolean(tabHeaderDom)
+          if (isOverTabItem) {
+            this.over = { overType: 'tabItem', overIndicator: null, overIndicatorRect: new DOMRect() }
+
             const tabHeaderId = tabHeaderDom.getAttribute('data-tab-header-id')
             const tabsNode = findNodeById(tabHeaderId, this.layout)
 
@@ -183,17 +187,18 @@ class LdStore {
               this.source.mode === 'tabs' &&
               (parentNode.id === this.source.id || parentNode.children.some(item => item.id === this.source.id))
             ) {
-              this.clearTouch()
-
-              this.overIndicatorRect = document.querySelector(`[data-id="${this.source.id}"]`).getBoundingClientRect().toJSON()
+              this.over.overIndicatorRect = document
+                .querySelector(`[data-id="${this.source.id}"]`)
+                .getBoundingClientRect()
+                .toJSON()
               return
             }
 
-            this.overTabNode = parentNode
+            this.over.overTabNode = parentNode
             const index = parentNode.children.findIndex(item => item.id === closestNode.id)
 
             const isAfter = Math.abs(moveEvt.clientX - closestRect.left) > Math.abs(moveEvt.clientX - closestRect.right)
-            this.overTabIndex = isAfter ? index + 1 : index
+            this.over.overTabIndex = isAfter ? index + 1 : index
 
             const boundaryOffset = 2
             let x
@@ -217,13 +222,15 @@ class LdStore {
 
             const height = 14
             let top = closestRect.top + (closestRect.height - height) / 2
-            this.overIndicatorRect = { left: x - 1, top, width: 2, height }
+            this.over.overIndicatorRect = { left: x - 1, top, width: 2, height }
           } else {
+            this.over = { overType: 'tabContent', overIndicator: null, overIndicatorRect: new DOMRect() }
+
             this.targetId = tabContentDom.getAttribute('data-tab-content-id')
             const rect = document.querySelector(`[data-id="${this.targetId}"]`)?.getBoundingClientRect()
 
             if (this.targetId === this.source.id) {
-              this.overIndicatorRect = rect.toJSON()
+              this.over.overIndicatorRect = rect.toJSON()
               return
             }
 
@@ -270,7 +277,7 @@ class LdStore {
                 c: { x: center.x, y: center.y },
                 overIndicatorRect: { left: rect.left, top: rect.top, width: rect.width / 2, height: rect.height }
               }
-            ]
+            ] as const
 
             for (const item of list) {
               if (item.indicator === 'center') {
@@ -280,16 +287,16 @@ class LdStore {
                   moveEvt.clientY >= item.rect.y1 &&
                   moveEvt.clientY <= item.rect.y2
                 ) {
-                  this.overIndicator = item.indicator
-                  this.overIndicatorRect = item.overIndicatorRect
+                  this.over.overIndicator = item.indicator
+                  this.over.overIndicatorRect = item.overIndicatorRect
                   break
                 }
                 continue
               }
 
               if (isPointInTriangle({ x: moveEvt.clientX, y: moveEvt.clientY }, item.a, item.b, item.c)) {
-                this.overIndicator = item.indicator
-                this.overIndicatorRect = item.overIndicatorRect
+                this.over.overIndicator = item.indicator
+                this.over.overIndicatorRect = item.overIndicatorRect
                 break
               }
             }
@@ -305,13 +312,26 @@ class LdStore {
           return
         }
 
-        if (this.isOverRootNode) {
-          this.onLayoutRootDrop(this.overIndicator)
-        } else if (this.isOverTabItem) {
-          this.onTabItemDrop(this.overTabNode, this.overTabIndex)
-        } else if (this.targetId && this.overIndicator) {
-          const { config } = findNodeById(this.targetId, this.layout)
-          this.onLayoutDrop(this.overIndicator, config as ITabs)
+        const over = this.over
+
+        if (!over) {
+          return
+        }
+
+        switch (over.overType) {
+          case 'root': {
+            this.onLayoutRootDrop()
+            break
+          }
+          case 'tabItem': {
+            this.onTabItemDrop()
+            break
+          }
+          case 'tabContent': {
+            const { config } = findNodeById(this.targetId, this.layout)
+            this.onLayoutDrop(config as ITabs)
+            break
+          }
         }
 
         this.clearTouch()
@@ -322,22 +342,12 @@ class LdStore {
   }
 
   // RootDrop
-  onLayoutRootDrop(overIndicator) {
+  onLayoutRootDrop() {
     const rootNode = this.layout
     const source = toJS(this.source)
+    const { overIndicator } = this.over
 
-    const sourceParent = findParentNode(source.id, this.layout)
-    sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
-    if (source.mode === 'tabs') {
-      const average = source.style.flexGrow / sourceParent.children.length
-      sourceParent.children.forEach(child => {
-        child.style.flexGrow += average
-      })
-    }
-
-    if (sourceParent.children.length === 0) {
-      removeItem(sourceParent, this.layout)
-    }
+    removeItem(source, rootNode)
 
     const isSameDirection =
       (overIndicator === 'right' && rootNode.mode === 'row') ||
@@ -390,11 +400,18 @@ class LdStore {
   }
 
   // 放在布局块时
-  onLayoutDrop(overIndicator, target: ITabs) {
+  onLayoutDrop(target: ITabs) {
     let { source } = this
     source = toJS(source)
 
+    const { overIndicator } = this.over
+
     if (!source) {
+      return
+    }
+
+    if (source.id === target.id) {
+      console.log('不能 ld 了 0')
       return
     }
 
@@ -403,19 +420,7 @@ class LdStore {
       return
     }
 
-    const sourceParent = findParentNode(source.id, this.layout)
-    sourceParent.children = sourceParent.children.filter(item => item.id !== source.id)
-
-    if (source.mode === 'tabs') {
-      const average = source.style.flexGrow / sourceParent.children.length
-      sourceParent.children.forEach(child => {
-        child.style.flexGrow += average
-      })
-    }
-
-    if (sourceParent.children.length === 0) {
-      removeItem(sourceParent, this.layout)
-    }
+    removeItem(source, this.layout)
 
     const targetParent = findParentNode(target.id, this.layout)
     const index = targetParent.children.findIndex(item => item.id === target.id)
@@ -498,8 +503,8 @@ class LdStore {
   }
 
   // 放在 tab 项时
-  onTabItemDrop(targetConfig, index) {
-    let { source } = this
+  onTabItemDrop() {
+    let { source, over } = this
     source = toJS(source)
 
     if (!source) {
@@ -509,26 +514,16 @@ class LdStore {
     const sourceParent = findParentNode(source.id, this.layout)
     const originIndex = sourceParent.children.findIndex(item => item.id === source.id)
 
+    let index = over.overTabIndex
     // 在同一个数组内移动, 索引需要调整
-    if (sourceParent.id === targetConfig.id) {
+    if (sourceParent.id === over.overTabNode.id) {
       if (index > originIndex) {
         index = index - 1
       }
     }
 
-    sourceParent.children.splice(originIndex, 1)
-    targetConfig.children.splice(index, 0, ...[].concat(source.mode === 'tabs' ? source.children : [source]))
-
-    if (source.mode === 'tabs') {
-      const average = source.style.flexGrow / sourceParent.children.length
-      sourceParent.children.forEach(item => {
-        item.style.flexGrow += average
-      })
-    }
-
-    if (sourceParent.children.length === 0) {
-      removeItem(sourceParent, this.layout)
-    }
+    removeItem(source, this.layout)
+    over.overTabNode.children.splice(index, 0, ...source2TabList(source))
 
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
@@ -552,12 +547,4 @@ declare global {
   interface Window {
     [k: string]: any
   }
-}
-
-function source2TabList(source) {
-  if (source.mode === 'tabs') {
-    return source.children
-  }
-
-  return [source]
 }

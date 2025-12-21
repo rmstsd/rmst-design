@@ -41,7 +41,7 @@ const PortalItem = observer(({ tc }: any) => {
 
   const onDrop = overIndicator => {
     setOverIndicator('')
-    ldStore.onLayoutDrop(overIndicator, tc.config)
+    ldStore.onLayoutDrop(tc.config)
   }
 
   const rect = ldStore.tabsSize.get(tc.id)

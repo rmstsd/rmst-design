@@ -56,6 +56,9 @@ export const Item = observer(({ config }: ItemProps) => {
     })
   }
 
+  const { over } = ldStore
+  const isOverRoot = over?.overType === 'root'
+
   return (
     <div
       className={clsx('node-item', `${mode}-size-0`, mode, {
@@ -81,18 +84,14 @@ export const Item = observer(({ config }: ItemProps) => {
         </Fragment>
       ))}
 
-      <div data-root-indicator>
-        <div className={clsx('root-indicator top', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'top' })}></div>
-        <div
-          className={clsx('root-indicator right', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'right' })}
-        ></div>
-        <div
-          className={clsx('root-indicator bottom', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'bottom' })}
-        ></div>
-        <div
-          className={clsx('root-indicator left', { active: ldStore.isOverRootNode && ldStore.overIndicator === 'left' })}
-        ></div>
-      </div>
+      {config.isRoot && ldStore.source && over && (
+        <div data-root-indicator>
+          <div className={clsx('root-indicator top', { active: isOverRoot && over.overIndicator === 'top' })}></div>
+          <div className={clsx('root-indicator right', { active: isOverRoot && over.overIndicator === 'right' })}></div>
+          <div className={clsx('root-indicator bottom', { active: isOverRoot && over.overIndicator === 'bottom' })}></div>
+          <div className={clsx('root-indicator left', { active: isOverRoot && over.overIndicator === 'left' })}></div>
+        </div>
+      )}
     </div>
   )
 })

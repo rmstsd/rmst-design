@@ -16,7 +16,9 @@ export default defineConfig({
     }
   ],
   output: {
-    target: 'web'
+    target: 'web',
+    sourceMap: true
   },
+
   plugins: [pluginReact(), pluginLess()]
 })
