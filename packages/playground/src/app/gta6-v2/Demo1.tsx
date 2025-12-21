@@ -2,16 +2,14 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
+gsap.registerPlugin(ScrollTrigger)
 
 export default function Demo1() {
   const container = useRef(null)
 
   useGSAP(
     () => {
-      gsap.registerPlugin(ScrollTrigger)
-
       const pinnedPanels = gsap.utils.toArray('.panel.pinned') as HTMLElement[]
-
       gsap.set(pinnedPanels[0], { autoAlpha: 1 })
 
       pinnedPanels.forEach((panel, i) => {
