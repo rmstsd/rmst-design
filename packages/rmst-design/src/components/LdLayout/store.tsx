@@ -33,6 +33,16 @@ class LdStore {
 
   tabsSize = new Map()
 
+  ContentEmMap = new Map<string, { reactElement?; div? }>()
+
+  ContentEmMapSet(id, k: 'reactElement' | 'div', v) {
+    if (!this.ContentEmMap.has(id)) {
+      this.ContentEmMap.set(id, {})
+    }
+
+    this.ContentEmMap.get(id)[k] = v
+  }
+
   rootLayoutEl: HTMLDivElement
 
   source: IConfig // 一个 tab 项 或 tabs
@@ -41,7 +51,10 @@ class LdStore {
   over: Over
 
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this, {
+      ContentEmMap: false,
+      ContentEmMapSet: false
+    })
   }
 
   clearTouch() {
@@ -488,6 +501,10 @@ class LdStore {
   onTabItemDrop() {
     let { source, over } = this
     source = toJS(source)
+
+    if (!over.node) {
+      return
+    }
 
     const sourceParent = findParentNode(source.id, this.layout)
     const originIndex = sourceParent.children.findIndex(item => item.id === source.id)

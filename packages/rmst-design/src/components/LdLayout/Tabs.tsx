@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Fragment, useEffect, useEffectEvent, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { ITabs } from './config'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
@@ -15,41 +15,13 @@ export const Tabs = observer(({ config }: TabsProps) => {
     config.selected = children[0].id
   }
 
-  const [overTabIndex, setOverTabIndex] = useState(-1)
   const tabContentRef = useRef<HTMLDivElement>(null)
 
-  const onResize = useEffectEvent(() => {
-    if (!ldStore.rootLayoutEl || !tabContentRef.current) {
-      return
-    }
-    const rootLayoutRect = ldStore.rootLayoutEl.getBoundingClientRect()
-    const rect = tabContentRef.current.getBoundingClientRect()
-
-    // children.forEach(tabItem => {
-    //   ldStore.tabsSize.set(tabItem.id, {
-    //     x: rect.x - rootLayoutRect.x,
-    //     y: rect.y - rootLayoutRect.y,
-    //     width: rect.width,
-    //     height: rect.height
-    //   })
-    // })
-  })
-
   useEffect(() => {
-    onResize()
+    tabContentRef.current.innerHTML = ''
+    const em = ldStore.ContentEmMap.get(config.selected)
+    tabContentRef.current.appendChild(em.div)
   }, [config.selected])
-
-  useEffect(() => {
-    if (!tabContentRef.current) {
-      return
-    }
-    const observer = new ResizeObserver(() => {
-      onResize()
-    })
-
-    observer.observe(tabContentRef.current)
-    return () => observer.disconnect()
-  }, [tabContentRef.current])
 
   return (
     <div className="tabs" data-id={config.id} style={{ flexGrow: config.style?.flexGrow }}>
@@ -76,7 +48,7 @@ export const Tabs = observer(({ config }: TabsProps) => {
       </div>
 
       <div className="tab-content" data-tab-content-id={config.id} ref={tabContentRef}>
-        {config.selected}
+        {/* {config.selected} */}
       </div>
     </div>
   )

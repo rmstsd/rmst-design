@@ -3,14 +3,18 @@
 import { Item } from './Item'
 import { observer } from 'mobx-react-lite'
 import ldStore from './store'
-import { useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { fixLayout, Total_Grow, traverse, validateLayout } from './config'
-import { PortalContainer } from './PortalContainer'
 
 import './style.less'
 import { Button } from '../Button'
+import { createPortal } from 'react-dom'
+import { LdContext } from './context'
+import { ContentEmMap } from './PortalContainer'
 
 export const LdLayout = observer(function LdLayout() {
+  const [portals, setPortals] = useState([])
+
   useLayoutEffect(() => {
     // 初始化 n 等分
     traverse(ldStore.layout, item => {
@@ -26,10 +30,42 @@ export const LdLayout = observer(function LdLayout() {
         })
       }
     })
+
+    rerender()
   }, [])
+
+  const rerender = () => {
+    let portals = []
+
+    traverse(ldStore.layout, item => {
+      if (item.mode === 'tabs') {
+        item.children.forEach(tabItem => {
+          const dd = ldStore.ContentEmMap.get(tabItem.id)
+
+          if (!dd) {
+            const div = document.createElement('div')
+            div.className = 'portal-item'
+            ldStore.ContentEmMapSet(tabItem.id, 'div', div)
+
+            const contentElement = ContentEmMap[tabItem.id]
+            ldStore.ContentEmMapSet(tabItem.id, 'reactElement', contentElement)
+          }
+
+          portals.push(
+            createPortal(<>{ldStore.ContentEmMap.get(tabItem.id)?.reactElement}</>, ldStore.ContentEmMap.get(tabItem.id)?.div)
+          )
+        })
+      }
+    })
+    setPortals(portals)
+  }
 
   const source = ldStore.source as any
   const { over } = ldStore
+
+  const [item, setItem] = useState(null)
+
+  let itemRef = useRef(null)
 
   return (
     <div className="test">
@@ -41,9 +77,11 @@ export const LdLayout = observer(function LdLayout() {
       <div style={{ height: 10 }}></div>
 
       <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
-        <Item config={ldStore.layout} />
+        <LdContext value={{ rerender }}>
+          <Item config={ldStore.layout} />
+        </LdContext>
 
-        {/* <PortalContainer /> */}
+        {portals}
 
         {over && (
           <div
@@ -63,6 +101,31 @@ export const LdLayout = observer(function LdLayout() {
           </div>
         )}
       </div>
+
+      <Button
+        onClick={() => {
+          if (!itemRef.current) {
+            itemRef.current = document.createElement('div')
+            itemRef.current.classList.add('portal-item-tt')
+          }
+
+          setItem(createPortal(<Test />, itemRef.current))
+        }}
+      >
+        Insert
+      </Button>
+      {item}
     </div>
   )
 })
+
+function Test() {
+  useEffect(() => {
+    console.log('useEffect')
+
+    return () => {
+      console.log('useEffect return')
+    }
+  }, [])
+  return <div>Test</div>
+}

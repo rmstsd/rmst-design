@@ -37,58 +37,6 @@ export default function Home() {
     }))
   )
   const refList = useRef<HTMLDivElement[]>([])
-  const prevPos = useRef<Record<string, { left: number; top: number }>>({})
-
-  const dRef = useRef(false)
-
-  // 原理探索
-  // useLayoutEffect(() => {
-  //   if (Object.keys(prevPos.current).length) {
-  //     dRef.current = true
-  //     const newPos: Record<string, { left: number; top: number }> = {}
-  //     refList.current.forEach(el => {
-  //       newPos[el.id] = { left: el.offsetLeft, top: el.offsetTop }
-  //     })
-
-  //     refList.current.forEach(el => {
-  //       const prev = prevPos.current[el.id]
-  //       const cur = newPos[el.id]
-
-  //       if (!prev || !cur) {
-  //         return
-  //       }
-
-  //       // 如果在运动过程中, 让其立刻到终点
-  //       el.style.transition = ''
-  //       document.body.offsetHeight
-
-  //       const dx = prev.left - cur.left
-  //       const dy = prev.top - cur.top
-
-  //       if (dx || dy) {
-  //         el.style.transform = `translate(${dx}px, ${dy}px)`
-  //         document.body.offsetHeight
-
-  //         el.style.transition = 'transform 2s'
-  //         el.style.transform = ''
-
-  //         el.addEventListener(
-  //           'transitionend',
-  //           () => {
-  //             el.style.transition = ''
-  //             el.style.transform = ''
-  //             dRef.current = false
-  //           },
-  //           { once: true }
-  //         )
-  //       }
-  //     })
-  //   }
-
-  //   refList.current.forEach(el => {
-  //     prevPos.current[el.id] = { left: el.offsetLeft, top: el.offsetTop }
-  //   })
-  // }, [list])
 
   const [a, setA] = useState(false)
 
@@ -97,34 +45,7 @@ export default function Home() {
 
   let oldRef = useRef(0)
 
-  const dong = () => {
-    const t2 = domRef.current
-    const newLeft = domRef.current.offsetLeft
-
-    t2.style.transition = ''
-
-    t2.offsetTop
-
-    t2.style.transform = `translateX(${oldRef.current - newLeft}px)`
-
-    t2.offsetTop
-
-    t2.style.transition = 'all 1s'
-    t2.style.transform = 'translateX(0)'
-
-    abCtRef.current = new AbortController()
-
-    t2.addEventListener(
-      'transitionend',
-      () => {
-        t2.style.transition = ''
-        t2.style.transform = ''
-
-        abCtRef.current.abort()
-      },
-      { signal: abCtRef.current.signal }
-    )
-  }
+  const dong = () => {}
 
   const [count, setCount] = useState(1)
 

@@ -71,11 +71,11 @@ const PortalItem = observer(({ tc }: any) => {
 })
 
 export const ContentEm = props => {
-  // useEffect(() => {
-  //   console.log('useEffect', props.id)
-  // }, [])
+  useEffect(() => {
+    console.log('useEffect', props.id)
+  }, [])
 
-  return <div>{props.id} 的 content</div>
+  return <div className="content-em">{props.id} 的 content</div>
 }
 
 export const ContentEmMap = {

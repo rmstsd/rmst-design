@@ -226,3 +226,11 @@ export function useControllableValue<T = any>(defaultProps: Props, options: Opti
 
   return [stateRef.current, useEventCallback(setState)] as const
 }
+
+export function useRerender() {
+  const [_, ss] = useState([])
+
+  return useCallback(() => {
+    ss([])
+  }, [])
+}
