@@ -83,26 +83,52 @@ export const removeItem = (config: IConfig, rootTree: IConfig) => {
   }
 }
 
-export const findNodeById = (id: string, config: IConfig): IComponent => {
-  return dfs(config, null)
+// 打包后有 bug, 是 nextjs 的 bug 概率比较大
+// export const findNodeById = (id: string, config: IConfig): IComponent => {
+//   return dfs(config, null)
 
-  function dfs(config: IConfig, parent: IConfig | null) {
-    if (config.id === id) {
-      return { config, parent }
-    } else {
-      if (config.children) {
-        for (const item of config.children) {
-          const ans = dfs(item, config)
+//   function dfs(config: IConfig, parent: IConfig | null) {
+//     if (config.id === id) {
+//       return { config, parent }
+//     } else {
+//       if (config.children) {
+//         for (const item of config.children) {
+//           const ans = dfs(item, config)
 
-          if (ans) {
-            return ans
-          }
-        }
-      }
+//           if (ans) {
+//             return ans
+//           }
+//         }
+//       }
+//     }
+
+//     return null
+//   }
+// }
+
+export const findNodeById = (id: string, config: IConfig): IComponent | null => {
+  // 使用栈来模拟递归，每个栈元素包含当前节点和其父节点
+  const stack: Array<{ node: IConfig; parent: IConfig | null }> = [{ node: config, parent: null }]
+
+  while (stack.length > 0) {
+    const { node, parent } = stack.pop()!
+
+    // 找到目标节点，直接返回
+    if (node.id === id) {
+      return { config: node, parent }
     }
 
-    return null
+    // 有子节点则逆序入栈（保持DFS顺序）
+    if (node.children && node.children.length > 0) {
+      // 逆序入栈保证遍历顺序和原递归版本一致
+      for (let i = node.children.length - 1; i >= 0; i--) {
+        stack.push({ node: node.children[i], parent: node })
+      }
+    }
   }
+
+  // 未找到返回null
+  return null
 }
 
 export function findParentNode(id: string, node: IConfig): IConfig {
