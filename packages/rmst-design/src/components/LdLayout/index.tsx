@@ -1,33 +1,62 @@
 'use client'
 
 import { Item } from './Item'
-import { observer } from 'mobx-react-lite'
-import ldStore from './store'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { fixLayout, Total_Grow, traverse, validateLayout } from './config'
 
-import './style.less'
+import { useLayoutEffect, useMemo, useState } from 'react'
+import { fixLayout, IConfig, isLayoutNode, TabsNode, Total_Grow, traverse, validateLayout } from './config'
+
 import { Button } from '../Button'
 import { createPortal } from 'react-dom'
 import { LdContext } from './context'
-import { ContentEmMap } from './PortalContainer'
+import { LdStore } from './store'
+import { useUpdate } from '../_util/hooks'
 
-export const LdLayout = observer(function LdLayout() {
+import './style.less'
+import { Portal } from '../Portal'
+
+interface LdLayoutProps {
+  layout: IConfig
+}
+
+export const LdLayout = function LdLayout(props: LdLayoutProps) {
+  const { layout } = props
+
+  const update = useUpdate()
+
   const [portals, setPortals] = useState([])
+  const ldStore = useMemo(() => {
+    const store = new LdStore()
+
+    store.setLayout(layout)
+    return store
+  }, [])
+
+  useLayoutEffect(() => {
+    ldStore.onLayoutChange = () => {
+      update()
+    }
+  }, [ldStore])
 
   useLayoutEffect(() => {
     // 初始化 n 等分
     traverse(ldStore.layout, item => {
-      if (item.isRoot) {
-        item.style ??= { flexGrow: Total_Grow }
+      if (isLayoutNode(item)) {
+        if (item.isRoot) {
+          item.style ??= { flexGrow: Total_Grow }
+        }
       }
 
-      if (item.mode === 'row' || item.mode === 'column') {
+      if (isLayoutNode(item)) {
         item.children?.forEach(child => {
           child.style ??= {
             flexGrow: Total_Grow / item.children.length
           }
         })
+      } else if (item.mode === 'tabs') {
+        const _item = item as TabsNode
+        if (!_item.selected) {
+          _item.selected = _item.children[0]?.id
+        }
       }
     })
 
@@ -40,15 +69,14 @@ export const LdLayout = observer(function LdLayout() {
     traverse(ldStore.layout, item => {
       if (item.mode === 'tabs') {
         item.children.forEach(tabItem => {
-          const dd = ldStore.ContentEmMap.get(tabItem.id)
+          const cache = ldStore.ContentEmMap.get(tabItem.id)
 
-          if (!dd) {
+          if (!cache) {
             const div = document.createElement('div')
             div.className = 'portal-item'
             ldStore.ContentEmMapSet(tabItem.id, 'div', div)
 
-            const contentElement = ContentEmMap[tabItem.id]
-            ldStore.ContentEmMapSet(tabItem.id, 'reactElement', contentElement)
+            ldStore.ContentEmMapSet(tabItem.id, 'reactElement', tabItem.content)
           }
 
           portals.push(
@@ -63,29 +91,18 @@ export const LdLayout = observer(function LdLayout() {
   const source = ldStore.source as any
   const { over } = ldStore
 
-  const [item, setItem] = useState(null)
-
-  let itemRef = useRef(null)
-
   return (
-    <div className="test">
-      <div className="flex gap-2 bg-amber-200">
-        <Button onClick={() => fixLayout(ldStore.layout)}>fix</Button>
-        <Button onClick={() => validateLayout(ldStore.layout)}>验证</Button>
-      </div>
+    <div className="rmst-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
+      <LdContext value={{ rerender, ldStore }}>
+        <Item config={ldStore.layout} />
+      </LdContext>
 
-      <div style={{ height: 10 }}></div>
+      {portals}
 
-      <div className="rt-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
-        <LdContext value={{ rerender }}>
-          <Item config={ldStore.layout} />
-        </LdContext>
-
-        {portals}
-
-        {over && (
+      {over && (
+        <Portal>
           <div
-            className="over-indicator-rect"
+            className="rmst-ld-layout-over-indicator-rect"
             style={{
               left: over.indicatorRect.left,
               top: over.indicatorRect.top,
@@ -93,39 +110,19 @@ export const LdLayout = observer(function LdLayout() {
               height: over.indicatorRect.height
             }}
           />
-        )}
+        </Portal>
+      )}
 
-        {source && (
-          <div className="source-indicator" style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}>
+      {source && (
+        <Portal>
+          <div
+            className="rmst-ld-layout-source-indicator"
+            style={{ left: ldStore.sourcePosition.x, top: ldStore.sourcePosition.y }}
+          >
             {source.mode === 'tabs' ? `${source.children[0].title} 等 ${source.children.length} 个 tab` : source.title}
           </div>
-        )}
-      </div>
-
-      <Button
-        onClick={() => {
-          if (!itemRef.current) {
-            itemRef.current = document.createElement('div')
-            itemRef.current.classList.add('portal-item-tt')
-          }
-
-          setItem(createPortal(<Test />, itemRef.current))
-        }}
-      >
-        Insert
-      </Button>
-      {item}
+        </Portal>
+      )}
     </div>
   )
-})
-
-function Test() {
-  useEffect(() => {
-    console.log('useEffect')
-
-    return () => {
-      console.log('useEffect return')
-    }
-  }, [])
-  return <div>Test</div>
 }

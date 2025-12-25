@@ -234,3 +234,11 @@ export function useRerender() {
     ss([])
   }, [])
 }
+
+export function useUpdate() {
+  const [_, update] = useState([])
+
+  return useCallback(() => {
+    update([])
+  }, [])
+}

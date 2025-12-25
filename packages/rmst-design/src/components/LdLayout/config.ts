@@ -5,14 +5,37 @@ export const Total_Grow = 100
 export const overTabHeight = 14
 export const rootCollisionSize = 8
 
-export type ITabs = {
+interface TabNode {
   id: string
-  children: { id: string; title: string; content?: ReactNode }[]
+  title: string
+  content?: ReactNode
+}
+
+export interface TabsNode {
+  id: string
+  mode?: 'tabs'
+  children: TabNode[]
   selected?: string
   style?: {
     flexGrow?: number
-    rect?: { x: number; y: number; width: number; height: number }
   }
+}
+export interface LayoutNode {
+  mode?: 'row' | 'column'
+  id: string
+  isRoot?: boolean
+  children?: (LayoutNode | TabsNode)[]
+
+  style?: {
+    flexGrow?: number
+  }
+}
+
+export type IConfig = LayoutNode | TabsNode
+
+interface IComponent {
+  config: IConfig
+  parent: IConfig
 }
 
 export type OverIndicator = 'top' | 'bottom' | 'left' | 'right' | 'center'
@@ -38,24 +61,12 @@ export function source2TabList(source) {
   return [source]
 }
 
-export const isLayoutNode = (node: IConfig) => {
+export const isLayoutNode = (node: IConfig): node is LayoutNode => {
   return node.mode === 'row' || node.mode === 'column'
 }
 
-export interface IConfig {
-  mode?: 'row' | 'column' | 'tabs'
-  id: string
-  isRoot?: boolean
-  children?: (IConfig | ITabs)[]
-
-  style?: {
-    flexGrow?: number
-  }
-}
-
-export interface IComponent {
-  config: IConfig
-  parent: IConfig
+export const isTabsNode = (node: IConfig): node is TabsNode => {
+  return node.mode === 'tabs'
 }
 
 export const removeItem = (config: IConfig, rootTree: IConfig) => {
@@ -82,29 +93,6 @@ export const removeItem = (config: IConfig, rootTree: IConfig) => {
     removeItem(parent, rootTree)
   }
 }
-
-// 打包后有 bug, 是 nextjs 的 bug 概率比较大
-// export const findNodeById = (id: string, config: IConfig): IComponent => {
-//   return dfs(config, null)
-
-//   function dfs(config: IConfig, parent: IConfig | null) {
-//     if (config.id === id) {
-//       return { config, parent }
-//     } else {
-//       if (config.children) {
-//         for (const item of config.children) {
-//           const ans = dfs(item, config)
-
-//           if (ans) {
-//             return ans
-//           }
-//         }
-//       }
-//     }
-
-//     return null
-//   }
-// }
 
 export const findNodeById = (id: string, config: IConfig): IComponent | null => {
   // 使用栈来模拟递归，每个栈元素包含当前节点和其父节点
@@ -159,7 +147,7 @@ export function fixLayout(layout: IConfig) {
         removeItem(node, layout)
       } else {
         if (node.children.length === 1) {
-          const child = node.children[0] as IConfig
+          const child = node.children[0] as LayoutNode
 
           node.children = child.children
           node.mode = child.mode
@@ -183,7 +171,7 @@ export function fixLayout(layout: IConfig) {
       }
     } else if (node.mode === 'tabs') {
       // 修正选中项
-      const tabsConfig = node as ITabs
+      const tabsConfig = node as TabsNode
       if (!tabsConfig.children.map(child => child.id).includes(tabsConfig.selected)) {
         tabsConfig.selected = tabsConfig.children[0].id
       }
@@ -192,14 +180,22 @@ export function fixLayout(layout: IConfig) {
 }
 
 export function validateLayout(layout: IConfig) {
+  if (!isLayoutNode(layout)) {
+    console.error('根节点的必须是 row 或 column 节点')
+
+    return
+  }
+
   if (!layout.isRoot) {
     console.error('根节点的 isRoot 应是 true')
   }
 
   let rootCount = 0
   traverse(layout, item => {
-    if (item.isRoot) {
-      rootCount++
+    if (isLayoutNode(item)) {
+      if (item.isRoot) {
+        rootCount++
+      }
     }
 
     if (isLayoutNode(item)) {
@@ -227,9 +223,19 @@ export function validateLayout(layout: IConfig) {
       }
     }
   })
-
   if (rootCount !== 1) {
     console.error('布局中只能有一个根节点')
+  }
+
+  {
+    const idsSet = new Set()
+    traverse(layout, item => {
+      if (idsSet.has(item.id)) {
+        console.error('布局中存在重复 id')
+      }
+
+      idsSet.add(item.id)
+    })
   }
 }
 
@@ -237,14 +243,6 @@ const isNotEqual = (val: number) => {
   return Math.abs(val - 100) > 0.001
 }
 
-/**
- * 判断点是否在三角形内（含边线）
- * @param {Object} p - 待判断点 {x, y}
- * @param {Object} a - 三角形顶点A {x, y}
- * @param {Object} b - 三角形顶点B {x, y}
- * @param {Object} c - 三角形顶点C {x, y}
- * @returns {Boolean} true=在内部/边上，false=在外部
- */
 export function isPointInTriangle(p, a, b, c) {
   // 计算叉乘：向量 ab × 向量 ap
   const crossAB = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x)
@@ -268,8 +266,7 @@ export function isPointInTriangle(p, a, b, c) {
 //     c: { x: 2, y: 3 }
 // };
 
-// // 测试点1：三角形内部 (2,1) → 应返回 true
-// console.log(isPointInTriangle({x:2, y:1}, triangle.a, triangle.b, triangle.c)); // true
+// console.log(isPointInTriangle({x:2, y:1}, triangle.a, triangle.b, triangle.c))
 
 // N 叉树后序遍历
 function postorderRecursive(root, fn) {

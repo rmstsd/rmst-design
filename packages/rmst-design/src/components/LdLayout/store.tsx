@@ -1,4 +1,3 @@
-import { configure, isObservable, makeAutoObservable, toJS } from 'mobx'
 import {
   findParentNode,
   fixLayout,
@@ -7,29 +6,28 @@ import {
   isPointInTriangle,
   Total_Grow,
   validateLayout,
-  ITabs,
   source2TabList,
   genId,
   removeItem,
   Over,
   overTabHeight,
-  rootCollisionSize
+  rootCollisionSize,
+  LayoutNode,
+  TabsNode
 } from './config'
 
-import { isClient } from '../_util/is'
-import { cloneDeep } from 'es-toolkit'
+import { cloneDeep, noop } from 'es-toolkit'
 import React from 'react'
 import { startDrag } from '../_util/drag'
 import { getDefaultLayout } from './testData'
 
-configure({ enforceActions: 'never' })
-
-if (isClient) {
-  ;(window as any).__jf = () => ({ isObservable, toJS })
-}
-
-class LdStore {
+export class LdStore {
   layout: IConfig = getDefaultLayout()
+
+  onLayoutChange = noop
+  setLayout(layout: IConfig) {
+    this.layout = layout
+  }
 
   tabsSize = new Map()
 
@@ -50,12 +48,7 @@ class LdStore {
 
   over: Over
 
-  constructor() {
-    makeAutoObservable(this, {
-      ContentEmMap: false,
-      ContentEmMapSet: false
-    })
-  }
+  constructor() {}
 
   clearTouch() {
     this.over = null
@@ -72,6 +65,7 @@ class LdStore {
         const target = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY) as HTMLElement
         if (!target) {
           this.clearTouch()
+          this.onLayoutChange()
           return
         }
 
@@ -175,7 +169,7 @@ class LdStore {
             const tabsNode = findNodeById(tabHeaderId, this.layout)
 
             let min = Infinity
-            let closestNode: ITabs
+            let closestNode: TabsNode
             let closestRect: DOMRect
             tabsNode.config.children.forEach(item => {
               const rect = document.querySelector(`[data-tab-item-id="${item.id}"]`)?.getBoundingClientRect()
@@ -183,7 +177,7 @@ class LdStore {
               let distance = Math.min(Math.abs(moveEvt.clientX - rect.left), Math.abs(moveEvt.clientX - rect.right))
               if (distance < min) {
                 min = distance
-                closestNode = item as ITabs
+                closestNode = item as TabsNode
                 closestRect = rect
               }
             })
@@ -306,38 +300,33 @@ class LdStore {
         }
 
         findClosestNode()
+
+        this.onLayoutChange()
       },
       onDragEnd: ({ isCanceled }) => {
-        if (isCanceled) {
-          this.clearTouch()
-          this.source = null
-          return
-        }
-
         const { source, over } = this
-        if (!source || !over) {
-          this.clearTouch()
-          this.source = null
-          return
-        }
-
-        switch (over.type) {
-          case 'root': {
-            this.onLayoutRootDrop()
-            break
-          }
-          case 'tabItem': {
-            this.onTabItemDrop()
-            break
-          }
-          case 'tabContent': {
-            this.onLayoutDrop()
-            break
+        const _cancel = isCanceled || !source || !over
+        if (!_cancel) {
+          switch (over.type) {
+            case 'root': {
+              this.onLayoutRootDrop()
+              break
+            }
+            case 'tabItem': {
+              this.onTabItemDrop()
+              break
+            }
+            case 'tabContent': {
+              this.onLayoutDrop()
+              break
+            }
           }
         }
 
         this.clearTouch()
         this.source = null
+
+        this.onLayoutChange()
       }
     })
   }
@@ -345,7 +334,7 @@ class LdStore {
   // RootDrop
   onLayoutRootDrop() {
     const rootNode = this.layout
-    const source = toJS(this.source)
+    const source = this.source
     const { indicator: overIndicator } = this.over
 
     removeItem(source, rootNode)
@@ -382,7 +371,7 @@ class LdStore {
         id: genId(),
         mode: newMode,
         isRoot: true,
-        children: [{ ...rootNode, isRoot: false, style: { flexGrow: 80 } }]
+        children: [{ ...rootNode, isRoot: false, style: { flexGrow: 80 } } as LayoutNode]
       }
 
       if (overIndicator === 'right' || overIndicator === 'bottom') {
@@ -395,7 +384,6 @@ class LdStore {
     }
 
     fixLayout(this.layout)
-    console.log('this.layout', this.layout)
 
     validateLayout(this.layout)
   }
@@ -408,12 +396,10 @@ class LdStore {
     const { config: target } = findNodeById(over.targetId, this.layout)
 
     if (source.id === target.id) {
-      console.log('不能 ld 了 0')
       return
     }
 
     if (target.children.length === 1 && target.children.some(item => item.id === source.id)) {
-      console.log('不能 ld 了')
       return
     }
 
@@ -458,7 +444,6 @@ class LdStore {
           targetParent.children.splice(index, 0, newConfig)
         }
       } else {
-        console.log('-- 需要再套一层')
         const newMode = targetParent.mode === 'row' ? 'column' : 'row'
         let config: IConfig = { id: genId(), mode: newMode, children: [target], style: { flexGrow: target.style.flexGrow } }
         targetParent.children.splice(index, 1, config)
@@ -490,7 +475,6 @@ class LdStore {
 
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
-    console.log('layout', toJS(this.layout))
 
     validateLayout(this.layout)
 
@@ -500,7 +484,6 @@ class LdStore {
   // 放在 tab 项时
   onTabItemDrop() {
     let { source, over } = this
-    source = toJS(source)
 
     if (!over.node) {
       return
@@ -528,24 +511,9 @@ class LdStore {
 
     fixLayout(this.layout)
     this.layout = cloneDeep(this.layout)
-    console.log('layout', toJS(this.layout))
 
     validateLayout(this.layout)
 
     this.source = null
-  }
-}
-
-const ldStore = new LdStore()
-
-export default ldStore
-
-if (isClient) {
-  window.ldStore = ldStore
-}
-
-declare global {
-  interface Window {
-    [k: string]: any
   }
 }

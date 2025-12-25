@@ -1,34 +1,37 @@
 import clsx from 'clsx'
 import { Fragment, PointerEvent, useRef } from 'react'
-import { IConfig, Total_Grow } from './config'
-import { observer } from 'mobx-react-lite'
+import { IConfig, isTabsNode, Total_Grow } from './config'
 import { startDrag } from '../_util/drag'
 import { clamp } from 'es-toolkit'
 import { Tabs } from './Tabs'
-import ldStore from './store'
+import { useLd } from './context'
 
 interface ItemProps {
   config: IConfig
   parentConfig?: IConfig
 }
 
-export const Item = observer(({ config }: ItemProps) => {
+export const Item = ({ config }: ItemProps) => {
+  const { ldStore } = useLd()
+
   const { mode, children = [] } = config
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  if (mode === 'tabs') {
-    return <Tabs config={config as any} />
+  if (isTabsNode(config)) {
+    return <Tabs config={config} />
   }
 
-  const onPointerDown = (downEvt: PointerEvent, childConfig: IConfig, index: number) => {
+  const onPointerDown = (downEvt: PointerEvent, index: number) => {
     downEvt.preventDefault()
+
+    const { mode } = config
 
     const container = containerRef.current
     const containerRect = container.getBoundingClientRect()
 
-    const prev = children[index - 1]
-    const next = children[index]
+    const prev = config.children[index - 1]
+    const next = config.children[index]
 
     let downSnap = { prev: prev.style.flexGrow, next: next.style.flexGrow }
 
@@ -52,6 +55,8 @@ export const Item = observer(({ config }: ItemProps) => {
 
         prev.style.flexGrow = clamp(downSnap.prev + delta, min, max)
         next.style.flexGrow = clamp(downSnap.next - delta, min, max)
+
+        ldStore.onLayoutChange()
       }
     })
   }
@@ -74,7 +79,7 @@ export const Item = observer(({ config }: ItemProps) => {
           {index !== 0 && (
             <div
               className="node-item-divider"
-              onPointerDown={evt => onPointerDown(evt, childConfig, index)}
+              onPointerDown={evt => onPointerDown(evt, index)}
               style={{ cursor: mode === 'row' ? 'ew-resize' : 'ns-resize' }}
             >
               <div className="line"></div>
@@ -94,4 +99,4 @@ export const Item = observer(({ config }: ItemProps) => {
       )}
     </div>
   )
-})
+}
