@@ -1,13 +1,10 @@
 'use client'
 
-import { Item } from './Item'
-
 import { useLayoutEffect, useMemo, useState } from 'react'
-import { fixLayout, IConfig, isLayoutNode, TabsNode, Total_Grow, traverse, validateLayout } from './config'
-
-import { Button } from '../Button'
 import { createPortal } from 'react-dom'
+import { Item } from './Item'
 import { LdContext } from './context'
+import { IConfig } from './config'
 import { LdStore } from './store'
 import { useUpdate } from '../_util/hooks'
 
@@ -28,63 +25,26 @@ export const LdLayout = function LdLayout(props: LdLayoutProps) {
     const store = new LdStore()
 
     store.setLayout(layout)
+    store.nAverage()
     return store
   }, [])
 
   useLayoutEffect(() => {
     ldStore.onLayoutChange = () => {
+      rerender()
       update()
     }
-  }, [ldStore])
-
-  useLayoutEffect(() => {
-    // 初始化 n 等分
-    traverse(ldStore.layout, item => {
-      if (isLayoutNode(item)) {
-        if (item.isRoot) {
-          item.style ??= { flexGrow: Total_Grow }
-        }
-      }
-
-      if (isLayoutNode(item)) {
-        item.children?.forEach(child => {
-          child.style ??= {
-            flexGrow: Total_Grow / item.children.length
-          }
-        })
-      } else if (item.mode === 'tabs') {
-        const _item = item as TabsNode
-        if (!_item.selected) {
-          _item.selected = _item.children[0]?.id
-        }
-      }
-    })
 
     rerender()
-  }, [])
+  }, [ldStore])
 
   const rerender = () => {
     let portals = []
 
-    traverse(ldStore.layout, item => {
-      if (item.mode === 'tabs') {
-        item.children.forEach(tabItem => {
-          const cache = ldStore.ContentEmMap.get(tabItem.id)
+    for (const [k, value] of ldStore.ContentEmMap) {
+      portals.push(createPortal(<>{value.reactElement}</>, value.div))
+    }
 
-          if (!cache) {
-            const div = document.createElement('div')
-            div.className = 'portal-item'
-            ldStore.ContentEmMapSet(tabItem.id, 'div', div)
-
-            ldStore.ContentEmMapSet(tabItem.id, 'reactElement', tabItem.content)
-          }
-
-          portals.push(
-            createPortal(<>{ldStore.ContentEmMap.get(tabItem.id)?.reactElement}</>, ldStore.ContentEmMap.get(tabItem.id)?.div)
-          )
-        })
-      }
-    })
     setPortals(portals)
   }
 

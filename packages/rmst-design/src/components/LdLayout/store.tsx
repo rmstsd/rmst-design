@@ -13,7 +13,9 @@ import {
   overTabHeight,
   rootCollisionSize,
   LayoutNode,
-  TabsNode
+  TabsNode,
+  traverse,
+  isLayoutNode
 } from './config'
 
 import { cloneDeep, noop } from 'es-toolkit'
@@ -31,7 +33,7 @@ export class LdStore {
 
   tabsSize = new Map()
 
-  ContentEmMap = new Map<string, { reactElement?; div? }>()
+  ContentEmMap = new Map<string, { reactElement?; div?: HTMLDivElement }>()
 
   ContentEmMapSet(id, k: 'reactElement' | 'div', v) {
     if (!this.ContentEmMap.has(id)) {
@@ -515,5 +517,29 @@ export class LdStore {
     validateLayout(this.layout)
 
     this.source = null
+  }
+
+  nAverage() {
+    // 初始化 n 等分
+    traverse(this.layout, item => {
+      if (isLayoutNode(item)) {
+        if (item.isRoot) {
+          item.style ??= { flexGrow: Total_Grow }
+        }
+      }
+
+      if (isLayoutNode(item)) {
+        item.children?.forEach(child => {
+          child.style ??= {
+            flexGrow: Total_Grow / item.children.length
+          }
+        })
+      } else if (item.mode === 'tabs') {
+        const _item = item as TabsNode
+        if (!_item.selected) {
+          _item.selected = _item.children[0]?.id
+        }
+      }
+    })
   }
 }

@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Fragment, useEffect, useRef } from 'react'
+import { Fragment, useLayoutEffect, useRef } from 'react'
 import { TabsNode } from './config'
 import { useLd } from './context'
 
@@ -12,10 +12,25 @@ export const Tabs = ({ config }: TabsProps) => {
 
   const tabContentRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    tabContentRef.current.innerHTML = ''
-    const em = ldStore.ContentEmMap.get(config.selected)
-    tabContentRef.current.appendChild(em.div)
+  useLayoutEffect(() => {
+    config.children?.forEach(tab => {
+      const isCache = ldStore.ContentEmMap.has(tab.id)
+      if (!isCache) {
+        const div = document.createElement('div')
+        div.classList.add('portal-item')
+        ldStore.ContentEmMap.set(tab.id, { div })
+      }
+
+      const cache = ldStore.ContentEmMap.get(tab.id)
+      cache.reactElement = tab.content
+    })
+
+    const selectedCache = ldStore.ContentEmMap.get(config.selected)
+    tabContentRef.current.appendChild(selectedCache.div)
+
+    return () => {
+      selectedCache.div?.remove()
+    }
   }, [config.selected])
 
   return (
