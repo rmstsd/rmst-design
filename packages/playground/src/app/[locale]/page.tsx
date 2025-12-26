@@ -6,6 +6,7 @@ import { shuffle } from 'es-toolkit/array'
 
 import './home.css'
 import TransitionGroup from '@/components/TransitionGroup'
+import Test from '@/components/Test'
 
 let bIndex = 0
 const bgColors = [
@@ -65,6 +66,7 @@ export default function Home() {
 
   return (
     <div>
+      <Test />
       <button ref={ttRef} onClick={() => setCount(count + 1)}>
         qq {count}
       </button>

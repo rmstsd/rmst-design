@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import Child from './Child'
+import dynamic from 'next/dynamic'
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   const { locale } = await params

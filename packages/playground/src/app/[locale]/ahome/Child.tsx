@@ -4,28 +4,39 @@ import { startTransition, useEffect, useRef, useState, ViewTransition } from 're
 import { Button } from 'rmst-design'
 
 import './child.scss'
+import dynamic from 'next/dynamic'
+
+// ✅ 告诉框架：这个组件只在客户端加载, 不要在服务端渲染
+const Test = dynamic(() => import('@/components/Test'), {
+  ssr: false,
+  loading: () => <p>Loading Map...</p> // 可选：加载占位符
+})
+
+function B() {
+  return null
+}
+
+function A(props) {
+  return props.children
+}
 
 export default function Child() {
   const [show, setShow] = useState(false)
-
   const [state, setState] = useRefState([])
-
-  useEffect(() => {
-    setInterval(() => {
-      console.log(state)
-    }, 1000)
-  }, [])
 
   return (
     <div className="p-10">
+      <A>
+        <B />
+      </A>
+
+      {/* <Test />
+
       <Button
         onClick={() => {
           setState(state => {
             state.push('a')
           })
-          // startTransition(() => {
-          //   setShow(!show)
-          // })
         }}
       >
         click {state.toString()}
@@ -35,7 +46,7 @@ export default function Child() {
           <div>Hi</div>
         </ViewTransition>
       )}
-      <div>555</div>
+      <div>555</div> */}
     </div>
   )
 }
