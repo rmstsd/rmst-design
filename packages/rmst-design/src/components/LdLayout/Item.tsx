@@ -37,7 +37,7 @@ export const Item = (props: ItemProps) => {
 
     let downSnap = { prev: prev.style.flexGrow, next: next.style.flexGrow }
 
-    const min = 0.001
+    const min = 0.000000001
     const max = downSnap.next + downSnap.prev
 
     startDrag(downEvt, {
@@ -98,7 +98,7 @@ export const Item = (props: ItemProps) => {
           const container = document.querySelector(`[data-id="${config.id}"]`)
           const containerRect = container.getBoundingClientRect()
 
-          const min = 0.001
+          const min = 0.000001
           const max = nextFlexGrow + prevFlexGrow
 
           if (mode === 'row') {
