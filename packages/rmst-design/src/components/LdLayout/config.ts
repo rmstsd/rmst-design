@@ -169,11 +169,11 @@ export function fixLayout(layout: IConfig) {
           parent.children.splice(index, 1, ...node.children)
         }
       }
-    } else if (node.mode === 'tabs') {
-      // 修正选中项
-      const tabsConfig = node as TabsNode
-      if (!tabsConfig.children.map(child => child.id).includes(tabsConfig.selected)) {
-        tabsConfig.selected = tabsConfig.children[0].id
+    }
+
+    if (isTabsNode(node)) {
+      if (!node.children.map(child => child.id).includes(node.selected)) {
+        node.selected = node.children[0].id
       }
     }
   })

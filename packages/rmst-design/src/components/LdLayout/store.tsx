@@ -18,7 +18,7 @@ import {
   isLayoutNode
 } from './config'
 
-import { cloneDeep, noop } from 'es-toolkit'
+import { noop } from 'es-toolkit'
 import React from 'react'
 import { startDrag } from '../_util/drag'
 import { getDefaultLayout } from './testData'
@@ -382,7 +382,7 @@ export class LdStore {
         config.children.unshift(newConfig)
       }
 
-      this.layout = cloneDeep(config)
+      this.layout = config
     }
 
     fixLayout(this.layout)
@@ -476,7 +476,6 @@ export class LdStore {
     }
 
     fixLayout(this.layout)
-    this.layout = cloneDeep(this.layout)
 
     validateLayout(this.layout)
 
@@ -512,7 +511,6 @@ export class LdStore {
     over.node.children.splice(index, 0, ...source2TabList(source))
 
     fixLayout(this.layout)
-    this.layout = cloneDeep(this.layout)
 
     validateLayout(this.layout)
 

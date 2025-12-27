@@ -66,9 +66,7 @@ export const Item = ({ config }: ItemProps) => {
 
   return (
     <div
-      className={clsx('node-item', `${mode}-size-0`, mode, {
-        'node-item-root': config.isRoot
-      })}
+      className={clsx('node-item', mode, { 'node-item-root': config.isRoot })}
       data-id={config.id}
       data-is-root={config.isRoot}
       style={{ flexGrow: config.style?.flexGrow }}

@@ -21,13 +21,13 @@ export const LdLayout = function LdLayout(props: LdLayoutProps) {
   const update = useUpdate()
 
   const [portals, setPortals] = useState([])
-  const ldStore = useMemo(() => {
+  const [ldStore] = useState(() => {
     const store = new LdStore()
 
     store.setLayout(layout)
     store.nAverage()
     return store
-  }, [])
+  })
 
   useLayoutEffect(() => {
     ldStore.onLayoutChange = () => {
@@ -36,7 +36,7 @@ export const LdLayout = function LdLayout(props: LdLayoutProps) {
     }
 
     rerender()
-  }, [ldStore])
+  }, [])
 
   const rerender = () => {
     let portals = []

@@ -65,11 +65,21 @@
       }
     }
 
+    &.row {
+      & > * {
+        width: 0;
+      }
+    }
+
     &.column {
       flex-direction: column;
 
       & > .node-item-divider {
         flex-direction: column;
+      }
+
+      & > * {
+        height: 0;
       }
     }
 
@@ -125,6 +135,7 @@
         }
 
         .split-line {
+          flex-shrink: 0;
           height: 1em;
           width: 1px;
           background-color: rgba(0, 0, 0, 0.08);
@@ -142,6 +153,8 @@
       padding: 8px;
       flex-grow: 1;
       position: relative;
+      overflow: auto;
+      scrollbar-width: thin;
     }
   }
 
