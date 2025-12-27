@@ -29,10 +29,6 @@ export default function Header() {
         blog
       </Link>
 
-      <Link href="/gta6" className={pathname === '/gta6' ? 'header-link-active' : ''}>
-        gta6
-      </Link>
-
       <SelectTheme />
     </header>
   )
