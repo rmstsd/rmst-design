@@ -25,6 +25,7 @@ import { getDefaultLayout } from './testData'
 
 export class LdStore {
   layout: IConfig = getDefaultLayout()
+  activeLines = []
 
   onLayoutChange = noop
   setLayout(layout: IConfig) {
@@ -539,5 +540,9 @@ export class LdStore {
         }
       }
     })
+  }
+
+  validate() {
+    validateLayout(this.layout)
   }
 }

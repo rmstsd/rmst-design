@@ -1,22 +1,24 @@
 import clsx from 'clsx'
 import { Fragment, PointerEvent, useRef } from 'react'
-import { IConfig, isTabsNode, Total_Grow } from './config'
+import { findNodeById, IConfig, isTabsNode, LayoutNode, Total_Grow } from './config'
 import { startDrag } from '../_util/drag'
-import { clamp } from 'es-toolkit'
+import { clamp, cloneDeep } from 'es-toolkit'
 import { Tabs } from './Tabs'
 import { useLd } from './context'
 
 interface ItemProps {
   config: IConfig
+  configIndex?: number
   parentConfig?: IConfig
 }
 
-export const Item = ({ config }: ItemProps) => {
-  const { ldStore } = useLd()
+export const Item = (props: ItemProps) => {
+  const { config, configIndex, parentConfig } = props
+  const isLastConfigIndex = parentConfig && configIndex === parentConfig.children.length - 1
 
   const { mode, children = [] } = config
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const { ldStore } = useLd()
 
   if (isTabsNode(config)) {
     return <Tabs config={config} />
@@ -27,7 +29,7 @@ export const Item = ({ config }: ItemProps) => {
 
     const { mode } = config
 
-    const container = containerRef.current
+    const container = document.querySelector('.rmst-ld-layout')
     const containerRect = container.getBoundingClientRect()
 
     const prev = config.children[index - 1]
@@ -61,6 +63,65 @@ export const Item = ({ config }: ItemProps) => {
     })
   }
 
+  const onPointerDownV2 = (downEvt: PointerEvent, activeLines: string[]) => {
+    downEvt.preventDefault()
+
+    const downSnap = {} as Record<string, any>
+    activeLines.forEach(item => {
+      const [configId, index] = item.split('::')
+      const indexNumber = Number(index)
+
+      const config = findNodeById(configId, ldStore.layout).config as LayoutNode
+
+      const prev = config.children[indexNumber - 1]
+      const next = config.children[indexNumber]
+
+      downSnap[item] = {
+        config,
+        prevNode: prev,
+        nextNode: next,
+        prevFlexGrow: prev.style.flexGrow,
+        nextFlexGrow: next.style.flexGrow
+      }
+    })
+
+    startDrag(downEvt, {
+      distanceThreshold: 4,
+      onDragMove: moveEvt => {
+        let distance = 0
+        let size = 0
+
+        Object.values(downSnap).forEach(item => {
+          const { config, prevNode, nextNode, prevFlexGrow, nextFlexGrow } = item
+          const { mode } = config
+
+          const container = document.querySelector(`[data-id="${config.id}"]`)
+          const containerRect = container.getBoundingClientRect()
+
+          const min = 0.001
+          const max = nextFlexGrow + prevFlexGrow
+
+          if (mode === 'row') {
+            distance = moveEvt.clientX - downEvt.clientX
+            size = containerRect.width
+          } else if (mode === 'column') {
+            distance = moveEvt.clientY - downEvt.clientY
+            size = containerRect.height
+          }
+
+          const delta = (distance / size) * Total_Grow
+
+          prevNode.style.flexGrow = clamp(prevFlexGrow + delta, min, max)
+          nextNode.style.flexGrow = clamp(nextFlexGrow - delta, min, max)
+        })
+
+        ldStore.validate()
+
+        ldStore.onLayoutChange()
+      }
+    })
+  }
+
   const { over } = ldStore
   const isOverRoot = over?.type === 'root'
 
@@ -70,22 +131,68 @@ export const Item = ({ config }: ItemProps) => {
       data-id={config.id}
       data-is-root={config.isRoot}
       style={{ flexGrow: config.style?.flexGrow }}
-      ref={containerRef}
     >
-      {children.map((childConfig, index) => (
-        <Fragment key={index}>
-          {index !== 0 && (
-            <div
-              className="node-item-divider"
-              onPointerDown={evt => onPointerDown(evt, index)}
-              style={{ cursor: mode === 'row' ? 'ew-resize' : 'ns-resize' }}
-            >
-              <div className="line"></div>
-            </div>
-          )}
-          <Item config={childConfig} />
-        </Fragment>
-      ))}
+      {children.map((childConfig, index) => {
+        const lineId = `${config.id}::${index}`
+
+        return (
+          <Fragment key={index}>
+            {index !== 0 && (
+              <div className="node-item-divider">
+                <div
+                  className={clsx('line', { active: ldStore.activeLines.includes(lineId) })}
+                  style={{ cursor: mode === 'row' ? 'ew-resize' : 'ns-resize' }}
+                  onPointerEnter={() => {
+                    ldStore.activeLines = [lineId]
+                    ldStore.onLayoutChange()
+                  }}
+                  onPointerLeave={() => {
+                    ldStore.activeLines = []
+                    ldStore.onLayoutChange()
+                  }}
+                  onPointerDown={evt => onPointerDownV2(evt, cloneDeep(ldStore.activeLines))}
+                ></div>
+
+                {!config.isRoot && (
+                  <>
+                    {configIndex !== 0 && (
+                      <div
+                        className={clsx('multi-handel', mode === 'row' ? 'top' : 'left')}
+                        onPointerEnter={() => {
+                          const parentLineId = `${parentConfig.id}::${configIndex}`
+                          ldStore.activeLines = [lineId, parentLineId]
+                          ldStore.onLayoutChange()
+                        }}
+                        onPointerLeave={() => {
+                          ldStore.activeLines = []
+                          ldStore.onLayoutChange()
+                        }}
+                        onPointerDown={evt => onPointerDownV2(evt, cloneDeep(ldStore.activeLines))}
+                      ></div>
+                    )}
+                    {!isLastConfigIndex && (
+                      <div
+                        className={clsx('multi-handel', mode === 'row' ? 'bottom' : 'right')}
+                        onPointerEnter={() => {
+                          const parentLineId = `${parentConfig.id}::${configIndex + 1}`
+                          ldStore.activeLines = [lineId, parentLineId]
+                          ldStore.onLayoutChange()
+                        }}
+                        onPointerLeave={() => {
+                          ldStore.activeLines = []
+                          ldStore.onLayoutChange()
+                        }}
+                        onPointerDown={evt => onPointerDownV2(evt, cloneDeep(ldStore.activeLines))}
+                      ></div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            <Item config={childConfig} configIndex={index} parentConfig={config} />
+          </Fragment>
+        )
+      })}
 
       {config.isRoot && ldStore.source && over && (
         <div data-root-indicator>
