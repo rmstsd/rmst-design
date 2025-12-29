@@ -1,6 +1,7 @@
+@import '../../style/var.less';
+
 .rmst-ld-layout {
   position: relative;
-  height: 500px;
   display: flex;
 
   & > * {
@@ -10,7 +11,6 @@
 
   .node-item {
     display: flex;
-    overflow: hidden;
 
     &.node-item-root {
       position: relative;
@@ -93,7 +93,6 @@
     display: flex;
     flex-direction: column;
     border: 1px solid #ebebeb;
-    overflow: hidden;
 
     .tab-header {
       height: 32px;
@@ -159,21 +158,47 @@
   }
 
   .node-item-divider {
-    flex-basis: 8px;
+    flex-basis: 4px;
     flex-shrink: 0;
     flex-grow: 0;
-    cursor: move;
     user-select: none;
     display: flex;
     justify-content: center;
+    position: relative;
 
     .line {
-      flex-basis: 2px;
+      flex-basis: 4px;
+      .propertyTransition(background-color);
+
+      &.active {
+        background-color: #3575e5;
+      }
     }
 
-    &:hover {
-      .line {
-        background-color: #3575e5;
+    .multi-handel {
+      --handel-radius-size: 8px;
+      --half-handel-size: calc(var(--handel-radius-size) / 2);
+      width: var(--handel-radius-size);
+      height: var(--handel-radius-size);
+      // background-color: rgba(0, 0, 255, 0.4);
+      position: absolute;
+      z-index: 5;
+      cursor: move;
+
+      &.left {
+        left: calc(var(--half-handel-size) * -1);
+      }
+
+      &.right {
+        right: calc(var(--half-handel-size) * -1);
+      }
+
+      &.top {
+        top: calc(var(--half-handel-size) * -1);
+      }
+
+      &.bottom {
+        bottom: calc(var(--half-handel-size) * -1);
       }
     }
   }
@@ -197,5 +222,5 @@
   background-color: #4444ff31;
   pointer-events: none;
   border: 1px solid #7474ff;
-  transition: all 0.2s ease-in-out;
+  .propertyTransition(all);
 }

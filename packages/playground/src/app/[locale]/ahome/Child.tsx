@@ -1,65 +1,88 @@
 'use client'
 
-import { startTransition, useEffect, useRef, useState, ViewTransition } from 'react'
-import { Button } from 'rmst-design'
+import { Fragment, PointerEvent, useEffectEvent, useState, ViewTransition } from 'react'
 
 import './child.scss'
-import dynamic from 'next/dynamic'
-
-// ✅ 告诉框架：这个组件只在客户端加载, 不要在服务端渲染
-const Test = dynamic(() => import('@/components/Test'), {
-  ssr: false,
-  loading: () => <p>Loading Map...</p> // 可选：加载占位符
-})
-
-function B() {
-  return null
-}
-
-function A(props) {
-  return props.children
-}
+import { startDrag } from '../../../../../rmst-design/src/components/_util/drag'
+import { clamp } from 'es-toolkit'
 
 export default function Child() {
-  const [show, setShow] = useState(false)
-  const [state, setState] = useRefState([])
+  const [widths, setWidths] = useState([20, 20, 20, 20, 20])
+
+  const validate = useEffectEvent(() => {
+    const total = widths.reduce((acc, item) => acc + item, 0)
+
+    if (total !== 100) {
+      console.log('error')
+    }
+  })
+
+  const onPointerDown = (downEvt: PointerEvent, index: number) => {
+    console.log(index)
+    downEvt.preventDefault()
+
+    const container = document.querySelector('.att-container') as HTMLDivElement
+    const containerRect = container.getBoundingClientRect()
+
+    const total = 100
+    const min = 5
+    const snapWidths = [...widths]
+
+    startDrag(downEvt, {
+      onDragMove: moveEvt => {
+        if (moveEvt.clientX < downEvt.clientX) {
+          let distance = Math.abs(moveEvt.clientX - downEvt.clientX)
+          let delta = (distance / containerRect.width) * total
+
+          const newWidths = [...snapWidths]
+
+          let availableLeftShrink = 0
+          for (let i = index; i >= 0; i--) {
+            availableLeftShrink += Math.max(0, newWidths[i] - min)
+          }
+          const actualDelta = Math.min(delta, availableLeftShrink)
+
+          // 2. Shrink left columns cascadingly (starting from immediate left neighbor)
+          let toShrink = actualDelta
+          for (let i = index; i >= 0 && toShrink > 0; i--) {
+            const currentShrink = Math.min(toShrink, newWidths[i] - min)
+            newWidths[i] -= currentShrink
+            toShrink -= currentShrink
+          }
+
+          // newWidths[index] -= actualDelta
+          newWidths[index + 1] += actualDelta
+
+          if (newWidths[index] < 0) {
+            newWidths[index] = 0
+          }
+
+          setWidths(newWidths)
+
+          validate()
+        }
+      }
+    })
+  }
 
   return (
     <div className="p-10">
-      <A>
-        <B />
-      </A>
+      <div className="att-container flex items-center border">
+        {widths.map((item, index) => (
+          <Fragment key={index}>
+            <div className="p-1 shrink-0 min-w-0 w-0" style={{ flexGrow: item }}>
+              {item.toFixed(2)}
+            </div>
 
-      {/* <Test />
-
-      <Button
-        onClick={() => {
-          setState(state => {
-            state.push('a')
-          })
-        }}
-      >
-        click {state.toString()}
-      </Button>
-      {show && (
-        <ViewTransition default="slow-fade">
-          <div>Hi</div>
-        </ViewTransition>
-      )}
-      <div>555</div> */}
+            {index !== widths.length - 1 && (
+              <div
+                className="shrink-0 bg-amber-400 cursor-w-resize w-1 self-stretch"
+                onPointerDown={evt => onPointerDown(evt, index)}
+              ></div>
+            )}
+          </Fragment>
+        ))}
+      </div>
     </div>
   )
-}
-
-const useRefState = <T,>(stateValue: T) => {
-  const [_, update] = useState([])
-
-  const ref = useRef(stateValue)
-  const set = (fn: (state: T) => void) => {
-    fn(ref.current)
-
-    update([])
-  }
-
-  return [ref.current, set] as const
 }

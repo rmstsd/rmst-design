@@ -10,6 +10,8 @@ interface DragOptions {
   onDragEnd?: ({ isCanceled, upEvt }: DragEndData) => void
 
   onPointerUp?: (upEvt: PointerEvent) => void // 与 html 类似, 发生了 drag 后, 就不会触发 onPointerUp 事件
+
+  distanceThreshold?: number
 }
 
 let disableClick = false
@@ -26,7 +28,7 @@ if (isClient) {
 }
 
 export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: DragOptions) => {
-  const { onDragStart, onDragMove, onDragEnd, onPointerUp } = options
+  const { onDragStart, onDragMove, onDragEnd, onPointerUp, distanceThreshold = 10 } = options
 
   const abCt = new AbortController()
 
@@ -39,7 +41,7 @@ export const startDrag = (downEvt: React.PointerEvent | PointerEvent, options: D
       const dis = Math.hypot(moveEvt.clientX - downEvt.clientX, moveEvt.clientY - downEvt.clientY)
 
       if (!isMoved) {
-        if (dis < 10) {
+        if (dis < distanceThreshold) {
           return
         }
 

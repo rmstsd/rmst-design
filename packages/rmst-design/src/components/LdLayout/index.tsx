@@ -10,13 +10,16 @@ import { useUpdate } from '../_util/hooks'
 
 import './style.less'
 import { Portal } from '../Portal'
+import clsx from 'clsx'
 
 interface LdLayoutProps {
   layout: IConfig
+  className?: string
+  style?: React.CSSProperties
 }
 
 export const LdLayout = function LdLayout(props: LdLayoutProps) {
-  const { layout } = props
+  const { layout, className, style } = props
 
   const update = useUpdate()
 
@@ -52,7 +55,7 @@ export const LdLayout = function LdLayout(props: LdLayoutProps) {
   const { over } = ldStore
 
   return (
-    <div className="rmst-ld-layout" ref={el => void (ldStore.rootLayoutEl = el)}>
+    <div className={clsx('rmst-ld-layout', className)} ref={el => void (ldStore.rootLayoutEl = el)} style={style}>
       <LdContext value={{ rerender, ldStore }}>
         <Item config={ldStore.layout} />
       </LdContext>

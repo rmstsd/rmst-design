@@ -89,7 +89,7 @@ export default function LdLayoutDd() {
   return (
     <ClientOnly>
       <div>
-        <LdLayout layout={layout as any} />
+        <LdLayout layout={layout as any} className="demo-ld-layout" style={{ height: '700px' }} />
       </div>
     </ClientOnly>
   )
