@@ -9,7 +9,7 @@ interface TextEllipsisProps extends PropsWithChildren {
 }
 
 export function TextEllipsis(props: TextEllipsisProps) {
-  const { rows, children } = props
+  const { rows = 1, children } = props
   const [open, setOpen] = useState(false)
   const [isOverflow, setIsOverflow] = useState(false)
 
@@ -17,19 +17,20 @@ export function TextEllipsis(props: TextEllipsisProps) {
 
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const [lineHeight, setLineHeight] = useState(21)
+  const [lineHeight, setLineHeight] = useState(0)
 
   useLayoutEffect(() => {
-    const { fontSize, lineHeight } = getComputedStyle(contentRef.current)
-
-    if (lineHeight === 'normal') {
-      setLineHeight(parseFloat(fontSize) * 1.2)
-    } else {
-      setLineHeight(parseFloat(lineHeight))
-    }
-
     const onResize = () => {
       setIsOverflow(contentRef.current.scrollHeight > contentRef.current.clientHeight)
+
+      const { fontSize, lineHeight } = getComputedStyle(contentRef.current)
+      if (lineHeight) {
+        if (lineHeight === 'normal') {
+          setLineHeight(parseFloat(fontSize) * 1.2)
+        } else {
+          setLineHeight(parseFloat(lineHeight))
+        }
+      }
     }
 
     onResize()
@@ -98,7 +99,7 @@ export function TextEllipsis(props: TextEllipsisProps) {
         style={{ WebkitLineClamp: rows, overflow: 'hidden' }}
         ref={domRef}
       >
-        {!open && <span className="plc" style={{ height: `calc(100% - ${lineHeight}px)` }}></span>}
+        {!open && <span className="plc" style={{ marginTop: lineHeight * (rows - 1) }}></span>}
         {!open && renderAction()}
         {children}
         {open && renderAction()}
