@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Locale, NextIntlClientProvider } from 'next-intl'
-import { headers } from 'next/headers'
-import { SelectTheme, ThemeProvider } from '@/components/Theme'
-
-import { Link } from '@/i18n/navigation'
+import { ThemeProvider } from '@/components/Theme'
 import Header, { headerHeight } from '@/components/Header'
 import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'

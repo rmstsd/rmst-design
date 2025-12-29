@@ -17,7 +17,7 @@ export default function Header() {
         首页
       </Link>
 
-      <Link href="/components/Button" className={pathname.startsWith('/components/') ? 'header-link-active' : ''}>
+      <Link href="/components/LdLayout" className={pathname.startsWith('/components/') ? 'header-link-active' : ''}>
         组件
       </Link>
 

@@ -52,7 +52,7 @@ export const SelectTheme = () => {
   const { theme, setTheme } = use(ThemeContext)
 
   return (
-    <div className="ml-4 flex gap-4">
+    <div className="flex gap-4 ml-auto">
       <div
         className={clsx('dark-icon cursor-pointer')}
         onClick={() => {

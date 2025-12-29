@@ -6,12 +6,21 @@ import { Scrollbar } from 'rmst-design'
 
 const componentsConfig = [
   {
-    group: '基础',
+    group: '布局',
     components: [
       {
         label: 'LdLayout',
         path: '/LdLayout'
-      },
+      }
+      // {
+      //   label: 'Grid',
+      //   path: '/Grid'
+      // }
+    ]
+  },
+  {
+    group: '基础',
+    components: [
       {
         label: 'Button',
         path: '/Button'
@@ -19,15 +28,6 @@ const componentsConfig = [
       {
         label: 'TextEllipsis',
         path: '/TextEllipsis'
-      }
-    ]
-  },
-  {
-    group: '布局',
-    components: [
-      {
-        label: 'Grid',
-        path: '/Grid'
       }
     ]
   },

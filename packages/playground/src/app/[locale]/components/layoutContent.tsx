@@ -15,9 +15,9 @@ interface LayoutContentProps {
 }
 
 export default function LayoutContent(props: PropsWithChildren<LayoutContentProps>) {
-  // const [isExpandedState, setIsExpandedState] = useState(props.sideOpen === 'true')
+  const [isExpandedState, setIsExpandedState] = useState(() => (props.sideOpen ? props.sideOpen === 'true' : true))
 
-  const isExpandedState = props.sideOpen === 'true'
+  // const isExpandedState = props.sideOpen === 'true'
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function LayoutContent(props: PropsWithChildren<LayoutContentProp
 
               updateSideOpen({ sideOpen: newVal.toString() })
 
-              // setIsExpandedState(newVal)
+              setIsExpandedState(newVal)
               // Cookies.set(Side_Open_Key, newVal.toString())
             }}
           >

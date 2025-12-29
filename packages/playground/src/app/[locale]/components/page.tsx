@@ -1,5 +1,11 @@
-'use client'
+import { redirect } from '@/i18n/navigation'
+import { permanentRedirect } from 'next/navigation'
+import { use } from 'react'
 
-export default function Home() {
-  return <div className="p-4">/components</div>
+export default function Home(props: PageProps<`/[locale]`>) {
+  const { locale } = use(props.params)
+
+  return permanentRedirect(`/${locale}/components/LdLayout`)
+
+  return redirect({ href: '/components/LdLayout', locale })
 }
