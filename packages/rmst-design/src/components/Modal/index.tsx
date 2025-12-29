@@ -1,4 +1,4 @@
-import { PropsWithChildren, useRef } from 'react'
+import { PropsWithChildren, useLayoutEffect, useRef } from 'react'
 import { Mask } from '../Mask'
 import { Portal } from '../Portal'
 import { useAnTransition } from '../_util/hooks'
@@ -7,6 +7,7 @@ import { Button } from '../Button'
 import { X } from 'lucide-react'
 
 import './style.less'
+import useOverflowHidden from '../_util/useOverflowHidden'
 
 interface ModalProps {
   open?: boolean
@@ -18,6 +19,8 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
 
   const pointerDownDomRef = useRef(null)
   const isClickMaskRef = useRef(false)
+
+  useOverflowHidden({ hidden: open })
 
   const onClickMask = () => {
     onCancel?.()

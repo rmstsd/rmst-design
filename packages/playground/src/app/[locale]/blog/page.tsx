@@ -1,45 +1,16 @@
-'use client'
+import { blogList } from '@/db'
+import { Link } from '@/i18n/navigation'
 
-import { Button, Modal } from 'rmst-design'
-import Client from './Client'
-import { useTranslations } from 'next-intl'
-import { useEffectEvent, useState, version } from 'react'
-import { ClientOnly } from '@/components/ClientOnly'
-
-export default function Blog() {
-  console.log('Blog render')
-
-  // const p = fetch('http://localhost:1400/test', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ delay: 10, name: '接口' })
-  // }).then(res => res.json())
-
-  // const t = useTranslations('HomePage')
-
-  const [count, setCount] = useState(0)
-
-  console.log('--', useEffectEvent, version)
-
-  // useEffectEvent(() => {
-  //   console.log('Blog useEffectEvent')
-  // })
-
+export default function Page() {
   return (
-    <div className="">
-      <Button onClick={() => setCount(count + 1)}>{count}</Button>
+    <div className="p-3">
+      {blogList.map(item => (
+        <div key={item.id} className="mb-3">
+          <Link href={`/blog-d/${item.id}`}>{item.title}</Link>
 
-      {/* <div>{t('title')}</div> */}
-
-      {/* <Client p={p} /> */}
-
-      {/* <Modal>
-        <div>Modal content</div>
-      </Modal> */}
-
-      <ClientOnly>
-        <Client />
-      </ClientOnly>
+          <p className="text-gray-500">{item.content}</p>
+        </div>
+      ))}
     </div>
   )
 }
