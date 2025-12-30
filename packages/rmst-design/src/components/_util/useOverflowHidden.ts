@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 
 interface Option {
   hidden: boolean
@@ -19,7 +19,7 @@ export default function useOverflowHidden({ getContainer, hidden }: Option) {
       : element.offsetWidth - element.clientWidth
   }
 
-  const setContainerStyle = () => {
+  const setContainerStyle = useEffectEvent(() => {
     const container = getContainer()
     if (container && container.style.overflow !== 'hidden') {
       const originStyle = container.style
@@ -36,9 +36,9 @@ export default function useOverflowHidden({ getContainer, hidden }: Option) {
       originContainerStyle.current.overflow = originStyle.overflow
       container.style.overflow = 'hidden'
     }
-  }
+  })
 
-  const resetContainerStyle = () => {
+  const resetContainerStyle = useEffectEvent(() => {
     if (needResetContainerStyle.current && getContainer()) {
       const container = getContainer()
       const originStyle = originContainerStyle.current
@@ -46,7 +46,7 @@ export default function useOverflowHidden({ getContainer, hidden }: Option) {
     }
     needResetContainerStyle.current = false
     originContainerStyle.current = {}
-  }
+  })
 
   useEffect(() => {
     hidden ? setContainerStyle() : resetContainerStyle()

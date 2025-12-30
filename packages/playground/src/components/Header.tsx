@@ -8,6 +8,8 @@ export const headerHeight = 48
 export default function Header() {
   const pathname = usePathname()
 
+  const [rootPathSegment] = pathname.split('/').filter(Boolean)
+
   return (
     <header
       className="site-header border-b border-gray-200 flex items-center px-2 fixed top-0 w-full z-10 gap-2"
@@ -25,8 +27,11 @@ export default function Header() {
         ahome
       </Link>
 
-      <Link href="/blog" className={pathname === '/blog' ? 'header-link-active' : ''}>
+      <Link href="/blog" className={rootPathSegment === 'blog' ? 'header-link-active' : ''}>
         blog
+      </Link>
+      <Link href="/blog-2" className={rootPathSegment === 'blog-2' ? 'header-link-active' : ''}>
+        blog-2
       </Link>
 
       <SelectTheme />

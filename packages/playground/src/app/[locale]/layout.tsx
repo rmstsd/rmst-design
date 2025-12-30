@@ -27,16 +27,12 @@ export const viewport: Viewport = {
 }
 
 type RootLayoutProps = {
-  children: React.ReactNode
   params: Promise<{ locale: Locale }>
-  modal: React.ReactNode
+  children: React.ReactNode
 }
 
 export default async function RootLayout(props: Readonly<RootLayoutProps>) {
-  const { children, params, modal } = props
-
-  // 调用 headers 会使 static render 失效
-  // const header = Object.fromEntries((await headers()).entries())
+  const { children, params } = props
 
   const { locale } = await params
 
@@ -51,8 +47,6 @@ export default async function RootLayout(props: Readonly<RootLayoutProps>) {
           <ThemeProvider>
             <div id="rmst-root">
               <Header />
-
-              {modal}
 
               <div style={{ paddingTop: headerHeight }}>{children}</div>
             </div>
