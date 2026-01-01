@@ -23,7 +23,7 @@ export default function Header() {
         组件
       </Link>
 
-      <Link href="/ahome" className={pathname === '/ahome' ? 'header-link-active' : ''}>
+      <Link href="/ahome" className={rootPathSegment === 'ahome' ? 'header-link-active' : ''}>
         ahome
       </Link>
 

@@ -5,7 +5,9 @@ export default function page() {
     <div>
       <h1>List</h1>
 
-      <Link href="/blog-2/photo/123">Photo 123</Link>
+      <Link href="/blog-2/photo/123" className="text-blue-500">
+        Photo 123
+      </Link>
     </div>
   )
 }
