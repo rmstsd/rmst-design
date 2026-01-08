@@ -1,4 +1,6 @@
 import { Image } from 'rmst-design'
+import starSky from './assets/starSky.png'
+import wallpaper_7 from './assets/wallpaper_7.png'
 
 export default function ImageDd() {
   return (
@@ -15,6 +17,10 @@ export default function ImageDd() {
         <Image className="bg-gray-100" src="/qwe.jpg" style={{ width: 100, height: 200, objectFit: 'scale-down' }} />
       </div>
 
+      <div className="flex gap-2 items-start">
+        <Image src={starSky.src} style={{ width: 400, objectFit: 'cover' }}></Image>
+        <Image src={wallpaper_7.src} style={{ width: 200, objectFit: 'cover' }}></Image>
+      </div>
       <div className="flex gap-2">
         <Image
           src="https://dummyimage.com/600x400/8896b8/ffffff.png"

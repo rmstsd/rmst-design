@@ -10,6 +10,7 @@ import './style.less'
 import { Button } from '../Button'
 import { kfOptions, useAnTransition } from '../_util/hooks'
 import { startDrag } from '../_util/drag'
+import useOverflowHidden from '../_util/useOverflowHidden'
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   kfaOptions?: KeyframeAnimationOptions
