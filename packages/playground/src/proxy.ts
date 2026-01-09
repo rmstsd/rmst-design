@@ -7,7 +7,8 @@ const handleI18nRouting = createMiddleware(routing)
 export default async function proxy(request: NextRequest) {
   const { nextUrl } = request
 
-  if (nextUrl.pathname === '/gta6-v2') {
+  // not locale
+  if (nextUrl.pathname.startsWith('/nl')) {
   } else {
     let response = handleI18nRouting(request)
     return response

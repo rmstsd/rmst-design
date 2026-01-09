@@ -3,7 +3,7 @@ import '@/css'
 import './style.scss'
 
 export const metadata: Metadata = {
-  title: 'gta6-v2'
+  title: 'nl'
 }
 
 type RootLayoutProps = {

@@ -59,7 +59,7 @@ export default function Client() {
           pin: true,
           pinSpacing: false,
           onEnter: () => gsap.to(panel, { autoAlpha: 1, duration: 0.35 }),
-          onLeaveBack: () => i && gsap.to(panel, { autoAlpha: 0 }),
+          // onLeaveBack: () => i && gsap.to(panel, { autoAlpha: 0 }),
           markers: {
             indent: 150 * i,
             startColor: 'white',
