@@ -41,35 +41,27 @@ export default function Client() {
 
   useGSAP(
     () => {
-      const pinnedPanels = Array.from([
-        '.banner-container',
-        '.fs-text',
-        '.ze-text',
-        '.vi-1'
-        // '.vi-1-content'
-      ]).map(selector => document.querySelector(selector))
-      gsap.set(pinnedPanels[0], { autoAlpha: 1 })
-
-      pinnedPanels.forEach((panel, i) => {
-        ScrollTrigger.create({
-          trigger: panel,
-          start: 'top top',
-          endTrigger: '.end-pin',
-          end: 'top top',
-          pin: true,
-          pinSpacing: false,
-          onEnter: () => gsap.to(panel, { autoAlpha: 1, duration: 0.35 }),
-          // onLeaveBack: () => i && gsap.to(panel, { autoAlpha: 0 }),
-          markers: {
-            indent: 150 * i,
-            startColor: 'white',
-            endColor: 'white'
-          }
-          // id: (i + 1).toString()
-        })
+      let tl = gsap.timeline({
+        defaults: { duration: 2 }
+        // scrollTrigger: {
+        //   trigger: '.banner-container',
+        //   start: 'bottom-=60vh bottom',
+        //   end: 'bottom top',
+        //   pin: true,
+        //   scrub: true,
+        //   markers: true
+        // }
       })
+
+      tl.to('.banner-inner', {
+        width: '100vw',
+        height: '100vh',
+        marginTop: '0',
+        marginLeft: '0'
+      })
+      tl.to('.logo-head', { opacity: '0', duration: 1 }, '<')
     },
-    { scope: container }
+    { scope: container.current }
   )
 
   return (
@@ -86,12 +78,12 @@ export default function Client() {
           }
         >
           <div className="banner-inner ">
-            <Image src={firstBanner} alt="" className="first-banner object-cover absolute top-0" />
+            <Image src={firstBanner} alt="" className="first-banner object-cover" />
             <Image src={gtaLogoHHead} alt="" className="logo-head object-cover absolute top-0" />
           </div>
         </div>
 
-        <main className="fs-text  h-screen w-full bg-gray-900 flow-root">
+        {/* <main className="fs-text  h-screen w-full bg-gray-900 flow-root">
           <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 80, width: 'auto', marginTop: 200 }} />
           <div className="text-white text-center font-bold" style={{ fontSize: 88, lineHeight: 1.2 }}>
             2026年 <br /> 11月19日 <br /> 敬请期待
@@ -112,10 +104,10 @@ export default function Client() {
               杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
             </div>
           </div>
-        </main>
+        </main> */}
       </div>
 
-      <main className="bg-gray-900 relative z-10">
+      {/* <main className="bg-gray-900 relative z-10">
         <Image src={videoImage_1} alt="" className="vi-1 w-full h-screen sticky top-0 object-cover" />
 
         <section className="vi-1-content flex gap-10 relative" style={{ padding: '10vh 15vw' }}>
@@ -167,7 +159,7 @@ export default function Client() {
         </section>
 
         <Image src={videoImage_3} alt="" className="w-full h-auto" />
-      </main>
+      </main> */}
 
       <div style={{ height: 1000 }}></div>
     </div>

@@ -1,0 +1,162 @@
+.s-plc {
+  height: 200px;
+}
+
+.demo2 {
+  .wrapper {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .slider {
+    width: 300px;
+    height: 300px;
+    position: relative;
+    perspective: 500px;
+  }
+
+  .slider:after {
+    position: absolute;
+    content: '';
+    top: -1rem;
+    bottom: -1rem;
+    right: -1rem;
+    left: -1rem;
+    outline: 1.5px dashed var(--light);
+    border-radius: 10px;
+  }
+
+  .slide {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1.5rem;
+    backface-visibility: hidden;
+  }
+
+  .panel {
+    height: 50vh;
+  }
+
+  .spacer {
+    height: 50vh;
+  }
+}
+
+.demo3 {
+  .keyhole {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: rgb(255, 232, 187);
+    clip-path: polygon(0% 0%, 0% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%, 100% 100%, 100% 0%);
+    z-index: 1;
+  }
+  .arrow {
+    position: absolute;
+    top: 72.5vh;
+    left: 50%;
+    z-index: 2;
+    animation: float 1s ease-in-out infinite alternate both;
+
+    svg {
+      transform: rotate(90deg);
+      stroke: black;
+      width: 4rem;
+      margin-left: -2rem;
+      height: auto;
+    }
+  }
+}
+
+.demo6 {
+  section {
+    position: relative;
+    background: linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+  }
+
+  .sticky-statement {
+    min-height: 100vh;
+  }
+
+  h1 {
+    position: sticky;
+    top: 47.5vh;
+    color: white;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: 28px;
+  }
+}
+
+body:has(.demo6) {
+  overflow-x: hidden;
+
+  .full-screen {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #masthead {
+    position: fixed;
+    display: flex;
+    z-index: 9999;
+  }
+  #masthead a {
+    padding: 1rem 2rem;
+  }
+
+  #panels #panels-container {
+    height: 100vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    padding: 0;
+    overflow: hidden;
+  }
+  #panels #panels-container .panel {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    text-align: left;
+  }
+  #panels-container .panel .panels-navigation {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+  }
+  #panels #panels-container .panel .anchor-panel,
+  #panels #panels-container .panel .nav-panel {
+    margin-right: 2rem;
+  }
+  #panels #panels-container .panels-navigation {
+    position: absolute;
+    width: 100%;
+    bottom: 2rem;
+    right: 2rem;
+  }
+
+  #panel-6 {
+    height: 80vh;
+  }
+}
