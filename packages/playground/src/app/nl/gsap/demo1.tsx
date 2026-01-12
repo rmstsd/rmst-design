@@ -14,9 +14,8 @@ export default function Demo1(props) {
       let tl = gsap.timeline({
         scrollTrigger: {
           trigger: '.box_1',
-          start: 'top center',
-          end: 'bottom 200px',
-          endTrigger: '.box_2',
+          start: 'bottom bottom',
+          end: 'bottom top',
           pin: true,
           // pinSpacing: false,
           scrub: true,
