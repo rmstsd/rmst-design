@@ -20,9 +20,11 @@ import Demo7 from './demo7'
 import Demo8 from './demo8'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import clsx from 'clsx'
+import Demo0 from './demo0'
 
-const demoList = [Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8]
+import { cn } from '@/utils/cn'
+
+const demoList = [Demo0, Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8]
 
 export default function Page(props) {
   const query = useSearchParams()
@@ -35,8 +37,8 @@ export default function Page(props) {
       <div className="sticky z-50 top-0 w-max">
         {demoList.map((demo, index) => (
           <div
-            className={clsx('demo-item cursor-pointer px-2 py-1 hover:bg-gray-200', {
-              'bg-gray-200': demo.name === demoName
+            className={cn('demo-item cursor-pointer px-2 py-1 bg-slate-200 hover:bg-slate-300', {
+              'bg-slate-300': demo.name === demoName
             })}
             key={index}
             onClick={() => router.replace('/nl/gsap?demo=' + demo.name)}

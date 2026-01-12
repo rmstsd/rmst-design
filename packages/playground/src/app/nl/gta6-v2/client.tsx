@@ -7,7 +7,6 @@ import { useRef } from 'react'
 import { Button } from 'rmst-design'
 
 import './page.scss'
-import Demo1 from './Demo1'
 
 import Image from 'next/image'
 import firstBanner from './assets/firstBanner.webp'
@@ -41,30 +40,81 @@ export default function Client() {
 
   useGSAP(
     () => {
-      let tl = gsap.timeline({
-        defaults: { duration: 2 },
-        scrollTrigger: {
-          trigger: '.playground-1',
-          start: 'bottom bottom',
-          end: 'bottom top',
-          pin: true,
-          // pinSpacing: false,
-          toggleActions: 'restart pause resume reset',
-          scrub: true,
-          id: 'fs_text',
-          markers: true
-        }
-      })
+      p_1()
 
-      gsap.set('.plg-1', { width: '130vw', height: '130vh', marginTop: '-15vh', marginLeft: '-15vw' })
-      gsap.set('.fs-text-wrap', { opacity: 0 })
+      function p_1() {
+        let tl = gsap.timeline({
+          defaults: { duration: 2 },
+          scrollTrigger: {
+            trigger: '.playground-1',
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            // pinSpacing: false,
+            toggleActions: 'restart pause resume reset',
+            scrub: true
+          }
+        })
 
-      tl.to(['.plg-1'], { width: '100vw', height: '100vh', marginTop: '0', marginLeft: '0' })
-      tl.to('.logo-head', { opacity: 0 }, '<')
+        gsap.set('.plg-1', { width: '130vw', height: '130vh', marginTop: '-15vh', marginLeft: '-15vw' })
+        gsap.set('.fs-text-wrap', { opacity: 0 })
 
-      tl.fromTo('.fs-text-wrap', { opacity: 0 }, { opacity: 1 })
+        tl.to(['.plg-1'], { width: '100vw', height: '100vh', marginTop: '0', marginLeft: '0' })
+        tl.to('.logo-head', { opacity: 0 }, '<')
+
+        tl.fromTo('.fs-text-wrap', { opacity: 0 }, { opacity: 1 })
+      }
+
+      {
+        let tl = gsap.timeline({
+          defaults: { duration: 2 },
+          scrollTrigger: {
+            trigger: '.playground-2',
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            toggleActions: 'restart pause resume reset',
+            scrub: true,
+            markers: true,
+            id: 'p2'
+          }
+        })
+
+        gsap.set('.playground-2', { marginTop: '-100vh' })
+        tl.fromTo('.mgzec', { opacity: 0 }, { opacity: 1 })
+      }
     },
     { scope: container.current }
+  )
+
+  let p_1 = (
+    <section className="playground-1 bg-gray-900 h-screen flow-root overflow-clip">
+      <div className="plg-1 relative flow-root h-screen  ">
+        {/* 第一屏 */}
+        <div
+          className="banner-container overflow-clip h-full"
+          style={
+            {
+              // maskImage: `url(${gtaLogo.src})`
+            }
+          }
+        >
+          <div className="banner-inner h-full">
+            <Image src={firstBanner} alt="" className="first-banner object-cover" />
+            <Image src={gtaLogoHHead} alt="" className="logo-head object-cover absolute top-0" />
+          </div>
+        </div>
+
+        {/* 第二屏 */}
+        <main className="fs-text-wrap h-full bg-gray-900 flow-root absolute inset-0 ">
+          <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 140, width: 'auto', marginTop: 200 }} />
+
+          <div className="text-white text-center font-bold" style={{ fontSize: 88, lineHeight: 1.2 }}>
+            2026年 <br /> 11月19日 <br /> 敬请期待
+          </div>
+        </main>
+      </div>
+    </section>
   )
 
   return (
@@ -74,50 +124,23 @@ export default function Client() {
       <div className="h-screen"></div>
 
       {/* 第一部分 */}
-      <section className="playground-1 bg-gray-900 h-screen flow-root overflow-clip">
-        <div className="plg-1 relative flow-root h-screen  ">
-          {/* 第一屏 */}
-          <div
-            className="banner-container overflow-clip h-full"
-            style={
-              {
-                // maskImage: `url(${gtaLogo.src})`
-              }
-            }
-          >
-            <div className="banner-inner h-full">
-              <Image src={firstBanner} alt="" className="first-banner object-cover" />
-              <Image src={gtaLogoHHead} alt="" className="logo-head object-cover absolute top-0" />
-            </div>
+      {p_1}
+
+      <section className="playground-2 ze-text h-screen w-full bg-gray-900 flow-root" style={{ padding: '20vh' }}>
+        <div
+          className="mgzec bg-clip-text font-bold"
+          style={{
+            color: 'transparent',
+            backgroundImage:
+              'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
+          }}
+        >
+          <div style={{ fontSize: 77 }}>美国罪恶城</div>
+          <div style={{ fontSize: 26 }}>
+            杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
           </div>
-
-          {/* 第二屏 */}
-          <main className="fs-text-wrap h-full bg-gray-900 flow-root absolute inset-0 ">
-            <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 140, width: 'auto', marginTop: 200 }} />
-
-            <div className="text-white text-center font-bold" style={{ fontSize: 88, lineHeight: 1.2 }}>
-              2026年 <br /> 11月19日 <br /> 敬请期待
-            </div>
-          </main>
         </div>
       </section>
-
-      {/* <main className="ze-text h-screen w-full bg-gray-900 flow-root" style={{ padding: '20vh' }}>
-          <div
-            className="bg-clip-text font-bold"
-            style={{
-              color: 'transparent',
-              backgroundImage:
-                'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
-            }}
-          >
-            <div style={{ fontSize: 77 }}>美国罪恶城</div>
-            <div style={{ fontSize: 26 }}>
-              杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
-            </div>
-          </div>
-        </main>
-       */}
 
       {/* <main className="bg-gray-900 relative z-10">
         <Image src={videoImage_1} alt="" className="vi-1 w-full h-screen sticky top-0 object-cover" />

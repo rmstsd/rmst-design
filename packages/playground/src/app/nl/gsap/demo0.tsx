@@ -4,13 +4,16 @@ import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
 gsap.registerPlugin(ScrollTrigger)
 
-export default function Demo1() {
+export default function Demo0() {
   const container = useRef(null)
 
   useGSAP(
     () => {
       const pinnedPanels = gsap.utils.toArray('.panel.pinned') as HTMLElement[]
-      gsap.set(pinnedPanels[0], { autoAlpha: 1 })
+
+      // pinnedPanels.forEach((panel, i) => {
+      //   gsap.set(panel, { autoAlpha: i === 0 ? 1 : 0 })
+      // })
 
       pinnedPanels.forEach((panel, i) => {
         ScrollTrigger.create({
@@ -20,8 +23,8 @@ export default function Demo1() {
           end: 'top top',
           pin: true,
           pinSpacing: false,
-          onEnter: () => gsap.to(panel, { autoAlpha: 1, duration: 0.35 }),
-          onLeaveBack: () => i && gsap.to(panel, { autoAlpha: 0 }),
+          // onEnter: () => gsap.to(panel, { autoAlpha: 1, duration: 0.35 }),
+          // onLeaveBack: () => i && gsap.to(panel, { autoAlpha: 0 }),
           markers: {
             indent: 150 * i,
             startColor: 'white',
@@ -34,7 +37,7 @@ export default function Demo1() {
     { scope: container }
   )
   return (
-    <div ref={container}>
+    <div ref={container} className="demo0">
       <div className="description panel hr-bottom">
         <div>
           <h1>Layered pinning</h1>

@@ -9,19 +9,17 @@ export default function Demo8(props) {
 
   useGSAP(
     () => {
-      const st = ScrollTrigger.create({
-        trigger: '.plg',
-        start: 'bottom bottom-=100px',
-        end: 'bottom 100px',
-        scrub: true,
-        pin: true,
-        toggleActions: 'restart none none reset',
-        markers: true
-      })
-
       let tl = gsap.timeline({
         defaults: { duration: 1 },
-        scrollTrigger: st
+        scrollTrigger: {
+          trigger: '.plg',
+          start: 'bottom bottom-=100px',
+          end: 'bottom 100px',
+          scrub: true,
+          pin: true,
+          toggleActions: 'restart none none reset',
+          markers: true
+        }
       })
 
       tl.fromTo('.plg', { backgroundColor: 'red' }, { backgroundColor: 'green' })
