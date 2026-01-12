@@ -8,7 +8,8 @@
   .banner-container {
     background-repeat: no-repeat;
     mask-repeat: no-repeat;
-    mask-position: center 15vh;
+    mask-position: center 210px;
+    mask-origin: content-box;
 
     .banner-inner {
       position: relative;

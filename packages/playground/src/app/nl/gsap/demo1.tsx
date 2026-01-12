@@ -3,6 +3,7 @@
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
+import { GSDevTools } from 'gsap/GSDevTools'
 
 export default function Demo1(props) {
   const containerRef = useRef(null)
@@ -35,6 +36,8 @@ export default function Demo1(props) {
           markers: true
         }
       })
+
+      GSDevTools.create({ animation: tl })
 
       // tl.to('.box_1', { x: 100, duration: 2, repeat: 2, yoyo: true })
       // tl.to('.box_2', { x: 100, duration: 1 }, '<')

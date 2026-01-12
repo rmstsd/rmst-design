@@ -2,6 +2,7 @@ import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { GSDevTools } from 'gsap/GSDevTools'
 
 export default function Demo2(props) {
   const containerRef = useRef(null)
@@ -25,6 +26,7 @@ export default function Demo2(props) {
         }
       })
 
+      GSDevTools.create({ animation: tl })
       gsap.set(slides, {
         zIndex: i => slides.length - i
       })
