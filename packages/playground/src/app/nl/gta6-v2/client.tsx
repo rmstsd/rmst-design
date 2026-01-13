@@ -61,14 +61,42 @@ export default function Client() {
         GSDevTools.create({ animation: tl })
 
         // gsap.set('.plg-1', { width: '130vw', height: '130vh', marginTop: '-15vh', marginLeft: '-15vw' })
-        gsap.set('.fs-text-wrap', { opacity: 0 })
 
         // tl.to(['.plg-1'], { width: '100vw', height: '100vh', marginTop: '0', marginLeft: '0' })
         tl.to('.logo-head', { opacity: 0 }, '<')
 
-        // tl.to('.banner-container', { maskSize: '140px' })
+        gsap.set('.banner-container', { backgroundColor: 'white', maskPosition: 'center 50%', maskSize: '3400vh' })
+        tl.to('.banner-container', { maskPosition: 'center 20%', maskSize: 'auto 140px' })
+        tl.to('.banner-inner', { autoAlpha: 0 }, '<')
 
-        tl.fromTo('.fs-text-wrap', { opacity: 0 }, { opacity: 1 })
+        gsap.set('.plg-1', {
+          maskImage: 'radial-gradient(circle at 50% 18.7395vh, rgb(0, 0, 0) 100.696vh, rgba(0, 0, 0, 0) 113.565vh)'
+        })
+
+        gsap.set('.colourful-logo', {
+          autoAlpha: 0,
+          maskImage: 'radial-gradient(circle at 50% 200%, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%)'
+        })
+        tl.to('.colourful-logo', {
+          autoAlpha: 1,
+          maskImage: 'radial-gradient(circle at 50% 50%, rgb(0, 0, 0) 100%, rgba(0, 0, 0, 0) 100%)'
+        })
+
+        tl.to('.banner-container', { opacity: 0 }, '<')
+        tl.to('.plg-1', { maskImage: 'radial-gradient(circle at 50% -40vh, rgb(0, 0, 0) 0vh, rgba(0, 0, 0, 0) 50vh)' }, '<')
+
+        gsap.set('.fs-text', {
+          opacity: 0,
+          backgroundImage: `radial-gradient(circle at 50% 150vh, rgb(255, 210, 123) 0vh, rgb(223, 58, 147) 50vh, rgb(92, 22, 99) 90vh, rgba(32, 31, 66, 0) 100vh)`
+        })
+        tl.to(
+          '.fs-text',
+          {
+            opacity: 1,
+            backgroundImage: `radial-gradient(circle at 50% -30vh, rgb(255, 214, 135) 0px, rgb(252, 82, 67) 50vh, rgb(157, 47, 106) 90vh, rgba(32, 31, 66, 0) 150vh)`
+          },
+          '<'
+        )
       }
 
       function p2() {
@@ -95,23 +123,24 @@ export default function Client() {
 
   let p_1 = (
     <section className="playground-1 bg-gray-900 h-screen flow-root overflow-clip">
-      <div className="plg-1 relative flow-root h-screen  ">
+      <div className="plg-1 relative flow-root h-screen">
         {/* 第一屏 */}
-        <div
-          className="banner-container overflow-clip h-full"
-          style={{ maskImage: `url(${gtaLogo.src})`, maskSize: 'auto 140px' }}
-        >
+        <div className="banner-container overflow-clip h-full" style={{ maskImage: `url(${gtaLogo.src})` }}>
           <div className="banner-inner h-full">
             <Image src={firstBanner} alt="" className="first-banner object-cover" />
             <Image src={gtaLogoHHead} alt="" className="logo-head object-cover absolute top-0" />
           </div>
         </div>
 
-        {/* 第二屏 */}
-        <main className="fs-text-wrap h-full bg-gray-900 flow-root absolute inset-0 ">
-          <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 140, width: 'auto', marginTop: 200 }} />
+        <div className="colourful-logo absolute inset-0 h-full">
+          <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 140, width: 'auto', marginTop: '20%' }} />
+        </div>
 
-          <div className="text-white text-center font-bold" style={{ fontSize: 88, lineHeight: 1.2 }}>
+        {/* 第二屏 */}
+        <main className="fs-text-wrap h-full flow-root absolute inset-0  ">
+          <Image src={gtaVi} alt="" className="mx-auto invisible" style={{ height: 140, width: 'auto', marginTop: '20%' }} />
+
+          <div className="fs-text text-center font-bold bg-clip-text" style={{ fontSize: 88, lineHeight: 1.2 }}>
             2026年 <br /> 11月19日 <br /> 敬请期待
           </div>
         </main>
@@ -141,7 +170,9 @@ export default function Client() {
     <div ref={container} className="Gta6-V2">
       {/* <Demo1 /> */}
 
-      <div className="h-screen"></div>
+      <div className=""></div>
+
+      <Image src={gtaLogo} alt=""></Image>
 
       {/* 第一部分 */}
       {p_1}

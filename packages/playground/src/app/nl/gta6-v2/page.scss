@@ -6,10 +6,9 @@
   }
 
   .banner-container {
-    background-repeat: no-repeat;
     mask-repeat: no-repeat;
-    mask-position: center 210px;
-    mask-origin: content-box;
+    // mask-position: center 210px;
+    // mask-origin: content-box;
 
     .banner-inner {
       position: relative;
@@ -21,9 +20,9 @@
         height: 100%;
       }
     }
-
-    .fs-text {
-    }
+  }
+  .fs-text {
+    -webkit-text-fill-color: transparent;
   }
 }
 
