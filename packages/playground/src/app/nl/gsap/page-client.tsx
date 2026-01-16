@@ -18,6 +18,7 @@ import Demo8 from './demo8'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import Demo0 from './demo0'
+import Demo9 from './demo9'
 
 import { cn } from '@/utils/cn'
 import { GSDevTools } from 'gsap/GSDevTools'
@@ -26,7 +27,7 @@ gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
 gsap.registerPlugin(GSDevTools)
 
-const demoList = [Demo0, Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8]
+const demoList = [Demo0, Demo1, Demo2, Demo3, Demo4, Demo5, Demo6, Demo7, Demo8, Demo9]
 
 export default function PageClient(props) {
   const query = useSearchParams()
@@ -36,11 +37,11 @@ export default function PageClient(props) {
 
   return (
     <div className="gasp-page">
-      <div className="sticky z-50 top-0 w-max">
+      <div className="absolute z-50 top-0 w-max">
         {demoList.map((demo, index) => (
           <div
             className={cn('demo-item cursor-pointer px-2 py-1 bg-slate-200 hover:bg-slate-300', {
-              'bg-slate-300': demo.name === demoName
+              'bg-slate-500 text-white': demo.name === demoName
             })}
             key={index}
             onClick={() => router.replace('/nl/gsap?demo=' + demo.name)}
