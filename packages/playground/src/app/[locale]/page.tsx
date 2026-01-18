@@ -7,6 +7,9 @@ import { shuffle } from 'es-toolkit/array'
 import './home.css'
 import TransitionGroup from '@/components/TransitionGroup'
 import Test from '@/components/Test'
+import Image from 'next/image'
+
+import lyy from '@/assets/lyy.jpg'
 
 let bIndex = 0
 const bgColors = [
@@ -65,7 +68,11 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="p-2 bg-pink-100">
+      <div className="ms-gg">
+        <Image src={lyy} alt=""></Image>
+      </div>
+
       <Test />
       <button ref={ttRef} onClick={() => setCount(count + 1)}>
         qq {count}
