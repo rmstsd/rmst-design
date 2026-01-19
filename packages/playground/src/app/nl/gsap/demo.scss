@@ -1,5 +1,7 @@
 .s-plc {
   height: 200px;
+  text-align: center;
+  align-content: center;
 }
 
 .demo0 {
@@ -219,5 +221,6 @@ body:has(.demo6) {
   .bt-cards-item {
     border-radius: 6px;
     background: #e4ecf4;
+    // background-color: rgba(255, 0, 0, 0.5);
   }
 }

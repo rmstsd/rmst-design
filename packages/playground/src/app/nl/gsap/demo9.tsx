@@ -10,6 +10,8 @@ export default function Demo9(props) {
 
   useGSAP(
     () => {
+      const nhDom = document.querySelector('.nh')
+
       {
         const tl = gsap.timeline({
           defaults: { duration: 1 },
@@ -19,63 +21,67 @@ export default function Demo9(props) {
             pinSpacing: false,
             start: 'top top',
             endTrigger: '.end-trigger-1',
-            end: 'top bottom-=100px',
+            end: `top center-=${nhDom.clientHeight / 2}`,
+            scrub: true,
+            markers: true
+          }
+        })
+        tl.pause()
+
+        tl.to('.f-p', { opacity: 0, filter: 'blur(10px)' })
+
+        tl.from(['.col-item.index-0 .a-rect', '.col-item.index-6 .a-rect'], { y: 300 }, '<')
+        tl.from(['.col-item.index-1 .a-rect', '.col-item.index-5 .a-rect'], { y: 200 }, '<')
+        tl.from(['.col-item.index-2 .a-rect', '.col-item.index-4 .a-rect'], { y: 100 }, '<')
+
+        tl.from('.col-item.index-3 .a-rect', { y: 100 }, '<')
+      }
+
+      {
+        return
+        const tl = gsap.timeline({
+          defaults: { duration: 1 },
+          scrollTrigger: {
+            trigger: '.three-big-container',
+            pin: true,
+            // pinSpacing: false,
+            start: `top center-=${nhDom.clientHeight / 2}`,
+            endTrigger: '.end-trigger-2',
+            end: `top center-=${nhDom.clientHeight / 2}`,
             markers: true,
             scrub: true
           }
         })
-        tl.pause()
-        // GSDevTools.create({ animation: tl })
-
-        tl.to('.f-p', { opacity: 0, filter: 'blur(10px)' })
-
-        tl.to(['.col-item.index-0', '.col-item.index-6'], { y: -300 }, '<')
-        tl.to(['.col-item.index-1', '.col-item.index-5'], { y: -200 }, '<')
-        tl.to(['.col-item.index-2', '.col-item.index-4'], { y: -100 }, '<')
-
-        tl.to('.col-item.index-3', { y: 100 }, '<')
 
         gsap.set('.b-rect', {
-          width: () => document.querySelector('.nh').clientWidth,
-          height: () => document.querySelector('.nh').clientHeight
-        })
-      }
-
-      {
-        const tl = gsap.timeline({
-          defaults: { duration: 1 },
-          scrollTrigger: {
-            trigger: '.end-trigger-1',
-            pin: true,
-            pinSpacing: false,
-            start: 'top bottom-=100px',
-            endTrigger: '.end-trigger-2',
-            end: 'top bottom-=100px',
-            id: 'end_2',
-            markers: {
-              indent: 120
-            },
-            scrub: true
+          width: () => {
+            return nhDom.clientWidth
+          },
+          height: () => {
+            const height = nhDom.clientHeight
+            return height
           }
         })
+        gsap.set('.b-rect', {
+          y: (_, target) => {
+            const index = target.getAttribute('data-index')
+            const tt = document.querySelector(`.nh-w-${index}`)
 
-        tl.set('.b-rect', {
-          y: (index, target) => {
-            const nhs = document.querySelectorAll('.nh')
-            const nh = nhs[index]
-            let value = -(target.getBoundingClientRect().top - nh.getBoundingClientRect().top)
+            const nhRect = tt.getBoundingClientRect()
+            let value = -(target.getBoundingClientRect().top - nhRect.top)
             return value
           }
         })
         tl.fromTo('.nh', { visibility: 'visible' }, { visibility: 'hidden' })
+        tl.fromTo('.b-rect', { visibility: 'hidden' }, { visibility: 'visible' }, '<')
         tl.to('.b-rect', { y: 0 }, '<')
-        tl.to('.b-rect.index-1', { width: 500 })
+        tl.to('.b-rect[data-index="1"]', { width: 500 })
       }
     },
     { scope: containerRef }
   )
 
-  const grads = 100
+  const grads = 160
 
   const list = [
     {
@@ -87,16 +93,16 @@ export default function Demo9(props) {
       children: [{ className: 'rectangle' }, {}, { className: 'rectangle' }]
     },
     {
-      style: { marginTop: grads * 3 },
-      children: [{}, { className: 'nh rectangle' }]
-    },
-    {
-      style: { marginTop: grads * 1.4 },
-      children: [{}, { className: 'nh rectangle' }]
+      style: { marginTop: grads * 2 },
+      children: [{}, { wrapClassName: 'nh-w-0', className: 'nh index-0 rectangle' }]
     },
     {
       style: { marginTop: grads * 3 },
-      children: [{}, { className: 'nh rectangle' }]
+      children: [{}, { wrapClassName: 'nh-w-1', className: 'nh index-1 rectangle' }]
+    },
+    {
+      style: { marginTop: grads * 2 },
+      children: [{}, { wrapClassName: 'nh-w-2', className: 'nh index-2 rectangle' }]
     },
     {
       style: { marginTop: grads },
@@ -109,11 +115,13 @@ export default function Demo9(props) {
   ]
 
   return (
-    <div ref={containerRef} className="demo9 flow-root text-6xl">
-      <div className="s-plc bg-slate-100"></div>
+    <div ref={containerRef} className="demo9 flow-root">
+      <div className="s-plc bg-slate-100">Placeholder</div>
       <div className="f-p cc" style={{ height: 400, fontSize: 55 }}>
         <div>Able to work</div>
-        <div className="o-text-gradient mt-2">with hundreds of tools</div>
+        <div className="o-text-gradient" style={{ lineHeight: '1' }}>
+          with hundreds of tools
+        </div>
         <div className="mt-8" style={{ fontSize: 23 }}>
           Devin connects to your favorite MCP servers, from Asana to Zapier
         </div>
@@ -123,27 +131,37 @@ export default function Demo9(props) {
         {list.map((item, index) => (
           <div className={clsx('col-item', `index-${index}`)} key={index} style={{ ...item.style }}>
             {item.children.map((child, index) => (
-              <div className={clsx('a-rect card-item', child.className)} key={index}></div>
+              <div className={clsx('plc-rect', child.wrapClassName)} key={index}>
+                <div className={clsx('a-rect card-item', child.className)}></div>
+              </div>
             ))}
           </div>
         ))}
       </div>
 
-      <div className="end-trigger-1 bg-red-400 h-1"></div>
+      <div className="end-trigger-1 h-1"></div>
 
-      <div className="flex gap-4 justify-center mt-2">
-        <div className="b-rect bt-cards-item cc">1</div>
-        <div className="b-rect index-1 bt-cards-item cc">2</div>
-        <div className="b-rect bt-cards-item cc">3</div>
+      <div className="three-big-container flex gap-4 justify-center mt-2 ">
+        <div data-index="0" className="b-rect bt-cards-item cc">
+          1
+        </div>
+        <div data-index="1" className="b-rect bt-cards-item cc">
+          2
+        </div>
+        <div data-index="2" className="b-rect bt-cards-item cc">
+          3
+        </div>
       </div>
 
-      <div className="end-trigger-2 bg-blue-400 h-1"></div>
+      <div className="end-trigger-2 h-1 bg-pink-400"></div>
 
-      <div className="s-plc"></div>
-      <div className="s-plc"></div>
-      <div className="s-plc"></div>
-      <div className="s-plc"></div>
-      <div className="s-plc"></div>
+      <div className="s-plc">Placeholder</div>
+      <div className="s-plc">Placeholder</div>
+      <div className="s-plc">Placeholder</div>
+      <div className="s-plc">Placeholder</div>
+      <div className="s-plc" style={{ height: 500 }}>
+        Placeholder
+      </div>
     </div>
   )
 }
