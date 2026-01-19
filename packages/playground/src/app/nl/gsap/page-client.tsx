@@ -51,7 +51,9 @@ export default function PageClient(props) {
         ))}
       </div>
 
-      <div>{demoName && demoList.map((Demo, index) => (Demo.name === demoName ? <Demo key={index} /> : null))}</div>
+      <ClientOnly>
+        <div>{demoName && demoList.map((Demo, index) => (Demo.name === demoName ? <Demo key={index} /> : null))}</div>
+      </ClientOnly>
     </div>
   )
 }

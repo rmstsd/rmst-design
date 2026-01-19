@@ -1,0 +1,33 @@
+@property --radius {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 100%;
+}
+
+@property --y {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 100%;
+}
+
+.gg-wrap {
+  resize: both;
+  height: 400px;
+  overflow: auto;
+}
+
+.ms-gg {
+  --radius_outer: calc(var(--radius) * 2);
+
+  mask-image: radial-gradient(ellipse at center var(--y), black, black var(--radius), transparent var(--radius_outer));
+  mask-repeat: no-repeat;
+  height: 100%;
+  transition-duration: 0.5s;
+  transition-property: --y, --radius;
+  mask-repeat: no-repeat;
+
+  &:hover {
+    --radius: 0%;
+    --y: 0%;
+  }
+}

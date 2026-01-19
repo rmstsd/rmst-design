@@ -4,7 +4,7 @@ import { startTransition, useEffect, useInsertionEffect, useLayoutEffect, useRef
 import { Button, useIsSSR } from 'rmst-design'
 import { shuffle } from 'es-toolkit/array'
 
-import './home.css'
+import './home.scss'
 import TransitionGroup from '@/components/TransitionGroup'
 import Test from '@/components/Test'
 import Image from 'next/image'
@@ -68,9 +68,11 @@ export default function Home() {
   }
 
   return (
-    <div className="p-2 bg-pink-100">
-      <div className="ms-gg">
-        <Image src={lyy} alt=""></Image>
+    <div className="p-2 ">
+      <div className="gg-wrap bg-slate-600">
+        <div className="ms-gg">
+          <Image src={lyy} alt="" className=" h-full w-full"></Image>
+        </div>
       </div>
 
       <Test />
