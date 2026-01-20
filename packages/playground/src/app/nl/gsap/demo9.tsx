@@ -7,10 +7,12 @@ import { useRef, useState } from 'react'
 
 export default function Demo9(props) {
   const containerRef = useRef(null)
+  const [endHeight, setEndHeight] = useState(0)
 
   useGSAP(
     () => {
       const nhDom = document.querySelector('.nh')
+      const endHeight = nhDom.clientHeight + 200
 
       {
         const tl = gsap.timeline({
@@ -19,9 +21,9 @@ export default function Demo9(props) {
             trigger: '.f-p',
             pin: true,
             pinSpacing: false,
-            start: 'top top',
+            start: `top top`,
             endTrigger: '.end-trigger-1',
-            end: `top center-=${nhDom.clientHeight / 2}`,
+            end: `top center`,
             scrub: true,
             markers: true
           }
@@ -35,47 +37,48 @@ export default function Demo9(props) {
         tl.from(['.col-item.index-2 .a-rect', '.col-item.index-4 .a-rect'], { y: 100 }, '<')
 
         tl.from('.col-item.index-3 .a-rect', { y: 100 }, '<')
+
+        gsap.set('.b-rect', { width: () => nhDom.clientWidth, height: () => nhDom.clientHeight })
+        tl.fromTo('.nh', { visibility: 'visible' }, { visibility: 'hidden' })
+        tl.fromTo('.b-rect', { visibility: 'hidden' }, { visibility: 'visible' }, '<')
+        tl.from(
+          '.b-rect',
+          {
+            y: (_, target) => {
+              const index = target.getAttribute('data-index')
+              const tt = document.querySelector(`.nh-w-${index}`)
+
+              const nhRect = tt.getBoundingClientRect()
+              let value = -(target.getBoundingClientRect().top - nhRect.top)
+              return value
+            }
+          },
+          '<'
+        )
       }
 
       {
-        return
         const tl = gsap.timeline({
           defaults: { duration: 1 },
           scrollTrigger: {
-            trigger: '.three-big-container',
-            pin: true,
+            trigger: '.end-trigger-1',
+            pin: '.three-big-container',
             // pinSpacing: false,
-            start: `top center-=${nhDom.clientHeight / 2}`,
-            endTrigger: '.end-trigger-2',
-            end: `top center-=${nhDom.clientHeight / 2}`,
-            markers: true,
+            start: `top center`,
+            end: `bottom+=700 center`,
+            id: '2',
+            markers: {
+              indent: 200
+            },
             scrub: true
           }
         })
 
-        gsap.set('.b-rect', {
-          width: () => {
-            return nhDom.clientWidth
-          },
-          height: () => {
-            const height = nhDom.clientHeight
-            return height
-          }
-        })
-        gsap.set('.b-rect', {
-          y: (_, target) => {
-            const index = target.getAttribute('data-index')
-            const tt = document.querySelector(`.nh-w-${index}`)
+        tl.to('.b-rect', { height: endHeight })
+        tl.to('.b-rect[data-index="1"]', { width: 500 }, '<')
+        tl.to({}, { duration: 1 }) // 停顿
 
-            const nhRect = tt.getBoundingClientRect()
-            let value = -(target.getBoundingClientRect().top - nhRect.top)
-            return value
-          }
-        })
-        tl.fromTo('.nh', { visibility: 'visible' }, { visibility: 'hidden' })
-        tl.fromTo('.b-rect', { visibility: 'hidden' }, { visibility: 'visible' }, '<')
-        tl.to('.b-rect', { y: 0 }, '<')
-        tl.to('.b-rect[data-index="1"]', { width: 500 })
+        setEndHeight(endHeight)
       }
     },
     { scope: containerRef }
@@ -139,21 +142,21 @@ export default function Demo9(props) {
         ))}
       </div>
 
-      <div className="end-trigger-1 h-1"></div>
+      <div className="end-trigger-1 h-1 bg-pink-300"></div>
 
-      <div className="three-big-container flex gap-4 justify-center mt-2 ">
-        <div data-index="0" className="b-rect bt-cards-item cc">
-          1
-        </div>
-        <div data-index="1" className="b-rect bt-cards-item cc">
-          2
-        </div>
-        <div data-index="2" className="b-rect bt-cards-item cc">
-          3
+      <div className="three-big-container flex gap-4 justify-center ">
+        <div className="flex gap-4 justify-center items-center border" style={{ height: endHeight, marginTop: -200 }}>
+          <div data-index="0" className="b-rect bt-cards-item cc">
+            1
+          </div>
+          <div data-index="1" className="b-rect bt-cards-item cc">
+            2
+          </div>
+          <div data-index="2" className="b-rect bt-cards-item cc">
+            3
+          </div>
         </div>
       </div>
-
-      <div className="end-trigger-2 h-1 bg-pink-400"></div>
 
       <div className="s-plc">Placeholder</div>
       <div className="s-plc">Placeholder</div>
