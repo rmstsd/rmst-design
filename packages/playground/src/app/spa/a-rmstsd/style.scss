@@ -1,0 +1,24 @@
+.rmstsd {
+  .content {
+    background-color: rgb(255, 220, 226);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .overlay {
+    position: fixed;
+    border: 1px solid red;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 255, 0.4);
+    pointer-events: none;
+  }
+
+  img {
+    width: 100px;
+  }
+
+  .sgcontent {
+    background-color: pink;
+  }
+}

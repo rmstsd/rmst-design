@@ -10,6 +10,17 @@
     "experimental-analyze": " next experimental-analyze --output"
   },
   "dependencies": {
+    "@leafer-in/viewport": "^1.12.4",
+    "leafer-ui": "^1.12.4",
+    "react-reconciler": "^0.33.0",
+    "scheduler": "^0.27.0",
+    "yoga-layout": "^3.2.1",
+    "pixi.js": "^8.15.0",
+    "randomcolor": "^0.6.2",
+    "immer": "^11.1.3",
+    "its-fine": "^2.0.0",
+    "mobx": "^6.15.0",
+    "mobx-react-lite": "^4.1.1",
     "@formatjs/intl-localematcher": "^0.6.2",
     "@gsap/react": "^2.1.2",
     "cross-env": "^10.1.0",

@@ -4,11 +4,13 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const handleI18nRouting = createMiddleware(routing)
 
+// not locale
+const notLocale = ['/nl', '/spa']
+
 export default async function proxy(request: NextRequest) {
   const { nextUrl } = request
 
-  // not locale
-  if (nextUrl.pathname.startsWith('/nl')) {
+  if (notLocale.some(item => nextUrl.pathname.startsWith(item))) {
   } else {
     let response = handleI18nRouting(request)
     return response

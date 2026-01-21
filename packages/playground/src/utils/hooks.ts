@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { useIsSSR } from 'rmst-design'
 
 export function useSsrState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>] {
