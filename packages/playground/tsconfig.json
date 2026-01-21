@@ -13,14 +13,10 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "rmst-design": ["./../rmst-design/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -32,8 +28,7 @@
     ".next\\dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts",
     "dist/types/**/*.ts",
-    "dist/dev/types/**/*.ts",
-    "src/app/spa/sku/page.tsx"
+    "dist/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,14 +1,9 @@
 {
-  "name": "rmst-design",
+  "name": "rmst-design-root",
   "version": "0.0.1",
   "description": "",
   "private": true,
   "license": "MIT",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "dev": "pnpm -F playground dev",
     "dev-rmst-design": "pnpm -F rmst-design dev",

@@ -47,13 +47,13 @@ export default class Node {
       this.node.setFlex(flex)
     }
     if (!isUndefined(flexDirection)) {
-      this.node.setFlexDirection(FlexDirection[flexDirection])
+      // this.node.setFlexDirection(FlexDirection[flexDirection])
     }
     if (!isUndefined(alignItems)) {
-      this.node.setAlignItems(FlexAlignItems[alignItems])
+      // this.node.setAlignItems(FlexAlignItems[alignItems])
     }
     if (!isUndefined(justifyContent)) {
-      this.node.setJustifyContent(FlexJustifyContent[justifyContent])
+      // this.node.setJustifyContent(FlexJustifyContent[justifyContent])
     }
   }
 
