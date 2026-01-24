@@ -30,6 +30,8 @@ import ImageContainer from './ImageContainer/ImageContainer'
 
 import './page.scss'
 import { GSDevTools } from 'gsap/GSDevTools'
+import S1 from './s1'
+import S2 from './s2'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
@@ -58,7 +60,7 @@ export default function Client() {
           // }
         })
 
-        GSDevTools.create({ animation: tl })
+        // GSDevTools.create({ animation: tl })
         tl.to('.logo-head', { opacity: 0 }, '<')
 
         // 20vh
@@ -233,6 +235,12 @@ export default function Client() {
 
         <Image src={videoImage_3} alt="" className="w-full h-auto" />
       </main> */}
+
+      <div className="h-[10vh] bg-pink-300"></div>
+
+      <S1 />
+
+      <S2 />
 
       <div className="h-screen text-white">哈哈哈</div>
       <div className="h-screen text-white">哈哈哈</div>

@@ -36,3 +36,7 @@
   background-size: var(--bg-size) auto;
   background-origin: content-box;
 }
+
+.gs-dev-tools {
+  z-index: 999;
+}
