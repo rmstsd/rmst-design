@@ -50,6 +50,8 @@ export default function S1(props) {
       ]
 
       list.forEach(item => {
+        gsap.set(item.imgCls, { marginTop: '-100vh' })
+
         const tl = gsap.timeline({
           defaults: { duration: 2 },
           scrollTrigger: {
@@ -119,7 +121,7 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_2} alt="" className="s1-img-2 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-2 relative " style={{ marginTop: '50vh' }}>
+      <section className="s1-content-2 relative z-10" style={{ marginTop: '50vh' }}>
         <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2] " style={{ color: '#fff9cb' }}>
           要是情况不对，转
           <br />
@@ -145,18 +147,18 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_3} alt="" className="s1-img-3 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-3 text-white relative z-30 border" style={{ marginTop: '50vh' }}>
+      <section className="s1-content-3 text-white border relative z-10 " style={{ marginTop: '50vh' }}>
         {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center p-10">
+          <div key={index} className=" text-center m-10 bg-slate-700">
             {index}
           </div>
         ))}
       </section>
 
       <Image src={videoImage_4} alt="" className="s1-img-4 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-4 text-white border relative z-30" style={{ marginTop: '50vh' }}>
+      <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '50vh' }}>
         {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center p-10">
+          <div key={index} className=" text-center m-10 bg-slate-700">
             {index}
           </div>
         ))}

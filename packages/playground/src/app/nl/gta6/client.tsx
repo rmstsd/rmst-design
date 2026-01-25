@@ -4,7 +4,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
-import { Button } from 'rmst-design'
+import { Button, isClient } from 'rmst-design'
 
 import './page.scss'
 
@@ -33,9 +33,28 @@ import { GSDevTools } from 'gsap/GSDevTools'
 import S1 from './s1'
 import S2 from './s2'
 
+import Lenis from 'lenis'
+
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
 gsap.registerPlugin(GSDevTools)
+
+if (isClient) {
+  // Initialize a new Lenis instance for smooth scrolling
+  const lenis = new Lenis()
+
+  // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
+  lenis.on('scroll', ScrollTrigger.update)
+
+  // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
+  // This ensures Lenis's smooth scroll animation updates on each GSAP tick
+  gsap.ticker.add(time => {
+    lenis.raf(time * 1000) // Convert time from seconds to milliseconds
+  })
+
+  // Disable lag smoothing in GSAP to prevent any delay in scroll animations
+  gsap.ticker.lagSmoothing(0)
+}
 
 export default function Client() {
   const container = useRef(null)
