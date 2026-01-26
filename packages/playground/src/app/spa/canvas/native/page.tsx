@@ -3,19 +3,29 @@
 import { useEffect } from 'react'
 import { genRects } from '../constant'
 import { throttle } from 'es-toolkit'
+import { fps } from '@/utils/fps'
 
 export default function Native() {
   useEffect(() => {
-    const canvas = document.querySelector('canvas')
+    fps(fps => {
+      document.querySelector('.fps-cc').textContent = fps.toString()
+    })
 
+    const offscreen = new OffscreenCanvas(400, 800)
+    const offscreenCtx = offscreen.getContext('2d')
+
+    const wait = 1000 / 90
+
+    const canvas = document.querySelector('canvas')
     canvas.width = canvas.parentElement.clientWidth
     canvas.height = canvas.parentElement.clientHeight
 
     const ctx = canvas.getContext('2d')
 
-    const rects = genRects(1_0000, canvas.clientWidth, canvas.clientHeight)
-
+    const rects = genRects(5_0000, canvas.clientWidth, canvas.clientHeight)
+    let now = performance.now()
     drawCanvas()
+    const bitImage = offscreen.transferToImageBitmap()
 
     let isPointerDown = false
     let prevX = 0
@@ -41,17 +51,17 @@ export default function Native() {
         prevY = event.clientY
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        {
-          // ctx.putImageData(dd, tx, ty)
-          // return
-        }
 
         ctx.save()
         ctx.translate(tx, ty)
-        drawCanvas()
+
+        // drawCanvas()
+        // const bitImage = offscreen.transferToImageBitmap()
+
+        ctx.drawImage(bitImage, 0, 0)
         ctx.restore()
       }
-    }, 1000 / 144)
+    }, 1000 / 90)
 
     document.addEventListener('pointermove', moveHandler)
 
@@ -63,29 +73,33 @@ export default function Native() {
     })
 
     function drawRect(rect) {
-      // ctx.beginPath()
+      offscreenCtx.beginPath()
 
-      const { x, y, width, height } = rect
-      ctx.rect(x, y, width, height)
+      const { x, y, width, height, fill } = rect
+      offscreenCtx.rect(x, y, width, height)
+
+      offscreenCtx.fillStyle = fill
+      offscreenCtx.fill()
     }
 
     function drawCanvas() {
-      ctx.beginPath()
+      offscreenCtx.beginPath()
 
       rects.forEach(rect => {
         drawRect(rect)
       })
-
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
-      ctx.fill()
-
-      // dd = ctx.getImageData(0, 0, canvas.width, canvas.height)
     }
   }, [])
 
   return (
     <div className="h-full">
+      <div className="fps-cc fixed top-2 left-2 bg-amber-400 p-2 text-white select-none"></div>
       <canvas width="400" height="800" className="touch-none"></canvas>
     </div>
   )
+}
+
+// 随机颜色
+function randomColor() {
+  return `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
 }

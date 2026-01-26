@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Konva from 'konva'
 
 export default function Page(props) {
+  const groupRef = useRef<Konva.Group>(null)
+
   useEffect(() => {
     const stage = new Konva.Stage({
       container: 'container',
@@ -66,8 +68,12 @@ export default function Page(props) {
     layer.add(countText)
 
     // Create animation
+    const period = 3000
     const anim = new Konva.Animation(frame => {
-      group.rotation(frame.time * 0.05)
+      // group.rotation(frame.time * 0.05)
+
+      const scale = Math.sin((frame.time * 3 * Math.PI) / period) + 2
+      group.scale({ x: scale, y: scale })
 
       // Update FPS counter
       fpsText.text('FPS: ' + frame.frameRate.toFixed(1))
@@ -115,6 +121,16 @@ export default function Page(props) {
 
   return (
     <div>
+      <div className="fixed top-0 left-0 p-2 bg-amber-200 z-20">
+        <button
+          onClick={() => {
+            groupRef.current.scale()
+          }}
+        >
+          scale +0.3
+        </button>
+        <button>scale -0.3</button>
+      </div>
       <div id="container"></div>
     </div>
   )

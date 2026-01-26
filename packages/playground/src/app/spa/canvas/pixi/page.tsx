@@ -3,12 +3,14 @@
 import { useEffect } from 'react'
 import { Application, Container, Graphics } from 'pixi.js'
 import { randomInt } from 'es-toolkit'
+import { fps } from '@/utils/fps'
 
 export default function PixiTest() {
   useEffect(() => {
     fps(fps => {
       document.querySelector('.fps-cc').textContent = fps.toString()
     })
+
     const init = async () => {
       const container: HTMLDivElement = document.querySelector('.pixi')
       const rect = container.getBoundingClientRect()
@@ -66,23 +68,4 @@ export default function PixiTest() {
       <div className="pixi h-full"></div>
     </>
   )
-}
-
-function fps(cb) {
-  let frameCount = 0
-  let lastTime = performance.now()
-
-  function loop(now) {
-    frameCount++
-    if (now - lastTime >= 1000) {
-      cb?.(frameCount)
-
-      frameCount = 0
-      lastTime = now
-    }
-
-    requestAnimationFrame(loop)
-  }
-
-  requestAnimationFrame(loop)
 }
