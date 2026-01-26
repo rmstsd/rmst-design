@@ -1,9 +1,14 @@
+'use client'
+
 import { useEffect } from 'react'
 import { Application, Container, Graphics } from 'pixi.js'
 import { randomInt } from 'es-toolkit'
 
 export default function PixiTest() {
   useEffect(() => {
+    fps(fps => {
+      document.querySelector('.fps-cc').textContent = fps.toString()
+    })
     const init = async () => {
       const container: HTMLDivElement = document.querySelector('.pixi')
       const rect = container.getBoundingClientRect()
@@ -23,7 +28,11 @@ export default function PixiTest() {
           prevPosition.x = evt.clientX
           prevPosition.y = evt.clientY
 
-          app.stage.position.set(app.stage.position._x + dx, app.stage.position._y + dy)
+          // app.stage.position.set(app.stage.position._x + dx, app.stage.position._y + dy)
+
+          randomRects.forEach(({ rectGh }) => {
+            rectGh.position.set(rectGh.position._x + dx, rectGh.position._y + dy)
+          })
         }
       })
 
@@ -31,19 +40,18 @@ export default function PixiTest() {
 
       await app.init({ width: container.clientWidth, height: container.clientHeight, backgroundColor: '#fff' })
 
-      const randomRects = Array.from({ length: 15000 }, () => {
+      const randomRects = Array.from({ length: 10_0000 }, () => {
         const x = randomInt(20, rect.width - 40)
         const y = randomInt(20, rect.height - 40)
         const width = randomInt(10, 20)
         const height = randomInt(10, 20)
         const fill = Math.floor(Math.random() * 0xffffff)
-        return { x, y, width, height, fill }
-      })
 
-      randomRects.forEach(({ x, y, width, height, fill }) => {
         const gh = new Graphics()
-        const rect = gh.rect(x, y, width, height).fill(fill)
-        app.stage.addChild(rect)
+        const rectGh = gh.rect(x, y, width, height).fill(fill)
+        app.stage.addChild(rectGh)
+
+        return { x, y, width, height, fill, rectGh }
       })
 
       container.appendChild(app.canvas)
@@ -52,5 +60,29 @@ export default function PixiTest() {
     init()
   }, [])
 
-  return <div className="pixi h-full"></div>
+  return (
+    <>
+      <div className="fps-cc fixed top-2 left-2 bg-amber-400 p-2 text-white select-none"></div>
+      <div className="pixi h-full"></div>
+    </>
+  )
+}
+
+function fps(cb) {
+  let frameCount = 0
+  let lastTime = performance.now()
+
+  function loop(now) {
+    frameCount++
+    if (now - lastTime >= 1000) {
+      cb?.(frameCount)
+
+      frameCount = 0
+      lastTime = now
+    }
+
+    requestAnimationFrame(loop)
+  }
+
+  requestAnimationFrame(loop)
 }
