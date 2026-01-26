@@ -72,6 +72,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      konva:
+        specifier: ^10.2.0
+        version: 10.2.0
       leafer-ui:
         specifier: ^1.12.4
         version: 1.12.4
@@ -1443,6 +1446,9 @@ packages:
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
+
+  konva@10.2.0:
+    resolution: {integrity: sha512-JBoz0Xjbf49UPxCZegZ4WseqOzJ+C4AUDOtJ9eBve5RS5Fcq/u8TdBD5fDl/uPFInpC3a9uycm0sRyZpF4hheg==}
 
   leafer-ui@1.12.4:
     resolution: {integrity: sha512-7wY433MtoJcytrB4dNro7/ue930GfbifaxLhwPhGSAoCA0qhmwcmYO2IqY4oButRWbhpzS6hOlzt15OC82ezCg==}
@@ -3129,6 +3135,8 @@ snapshots:
   js-binary-schema-parser@2.0.3: {}
 
   js-cookie@3.0.5: {}
+
+  konva@10.2.0: {}
 
   leafer-ui@1.12.4:
     dependencies:
