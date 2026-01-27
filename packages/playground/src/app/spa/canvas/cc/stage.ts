@@ -52,11 +52,11 @@ export class Stage {
     const padding = 5
 
     this.rects = Array.from(
-      { length: 1_0000 },
+      { length: 5_0000 },
       () =>
         new Rect(
-          padding + Math.random() * (this.canvas.width - width - padding * 2),
-          padding + Math.random() * (this.canvas.height - height - padding * 2),
+          padding + Math.random() * (this.canvas.clientWidth - width - padding * 2),
+          padding + Math.random() * (this.canvas.clientHeight - height - padding * 2),
           width,
           height,
           `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
@@ -69,10 +69,20 @@ export class Stage {
         downEvt.preventDefault()
         let downMt = { ...this.rootMt }
 
+        const downPos = {
+          x: downEvt.clientX, //* this.dpr,
+          y: downEvt.clientY //* this.dpr
+        }
+
         startDrag(downEvt, {
           onDragMove: moveEvt => {
-            let dx = moveEvt.clientX - downEvt.clientX
-            let dy = moveEvt.clientY - downEvt.clientY
+            const movePos = {
+              x: moveEvt.clientX, // * this.dpr,
+              y: moveEvt.clientY //* this.dpr
+            }
+
+            let dx = movePos.x - downPos.x
+            let dy = movePos.y - downPos.y
             this.rootMt.tx = downMt.tx + dx
             this.rootMt.ty = downMt.ty + dy
 
@@ -87,6 +97,13 @@ export class Stage {
       'wheel',
       evt => {
         evt.preventDefault()
+
+        let newScale = this.rootMt.scale * (evt.deltaY > 0 ? 0.8 : 1.2)
+        newScale = Math.max(0.1, Math.min(9, newScale))
+
+        this.rootMt.scale = newScale
+
+        this.draw()
       },
       { signal: this.abCt.signal }
     )
@@ -100,11 +117,13 @@ export class Stage {
     canvas.style.height = `${container.clientHeight}px`
   }
 
+  offscreenCanvas: OffscreenCanvas
   imageBitmap: ImageBitmap
 
-  offscreenCanvas() {
+  drawOffscreenCanvas() {
     const { canvas } = this
     const offscreen = new OffscreenCanvas(canvas.width, canvas.height)
+    this.offscreenCanvas = offscreen
     const ctx = offscreen.getContext('2d')
 
     ctx.resetTransform()
@@ -113,7 +132,10 @@ export class Stage {
     ctx.scale(this.dpr, this.dpr)
 
     ctx.translate(this.rootMt.tx, this.rootMt.ty)
+
+    ctx.translate(this.canvas.width / 2, this.canvas.height / 2)
     ctx.scale(this.rootMt.scale, this.rootMt.scale)
+    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2)
 
     this.rects.forEach(rect => {
       ctx.beginPath()
@@ -128,24 +150,25 @@ export class Stage {
   }
 
   draw() {
-    const ctx = this.canvas.getContext('2d')!
+    const ctx = this.canvas.getContext('2d')
     ctx.resetTransform()
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    ctx.scale(this.dpr, this.dpr)
 
-    if (!this.imageBitmap) {
-      this.offscreenCanvas()
-    }
+    // if (!this.imageBitmap) {
+    //   this.offscreenCanvas()
+    // }
 
-    // ctx.scale(this.dpr, this.dpr)
-
-    // ctx.translate(this.rootMt.tx * this.dpr, this.rootMt.ty * this.dpr)
     ctx.translate(this.rootMt.tx, this.rootMt.ty)
+
+    ctx.translate(this.canvas.width / 2, this.canvas.height / 2)
     ctx.scale(this.rootMt.scale, this.rootMt.scale)
+    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2)
 
-    ctx.drawImage(this.imageBitmap, 0, 0)
+    // ctx.drawImage(this.imageBitmap, 0, 0)
 
-    return
+    // return
     this.rects.forEach(rect => {
       ctx.beginPath()
 
