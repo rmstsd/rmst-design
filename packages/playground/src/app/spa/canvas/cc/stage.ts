@@ -1,30 +1,23 @@
-import { startDrag } from 'node_modules/rmst-design/src/components/_util/drag'
-
-class Rect {
-  constructor(
-    public x: number,
-    public y: number,
-    public width: number,
-    public height: number,
-    public fillStyle: string
-  ) {}
-}
+import { startDrag } from 'rmst-design'
+import { compose, scale, translate } from 'transformation-matrix'
+import { Rect } from './Rect'
+import { create } from './util'
 
 export class Stage {
+  dpr = window.devicePixelRatio
+  abCt: AbortController
+
   container: HTMLElement
   canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+
+  offscreenCanvas: OffscreenCanvas
+  oCtx: OffscreenCanvasRenderingContext2D
+  imageBitmap: ImageBitmap
 
   rects: Rect[] = []
 
-  dpr = window.devicePixelRatio
-
-  abCt: AbortController
-
-  rootMt = {
-    tx: 0,
-    ty: 0,
-    scale: 1
-  }
+  rootMt = { tx: 0, ty: 0, scale: 1 }
 
   constructor() {}
 
@@ -42,26 +35,35 @@ export class Stage {
     canvas.style.top = '0'
 
     this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
     this.abCt = new AbortController()
 
-    this.updateSize()
+    this.updateMainCanvasSize()
+
+    this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height)
+    this.oCtx = this.offscreenCanvas.getContext('2d')
 
     const width = 10
     const height = 20
 
     const padding = 5
 
-    this.rects = Array.from(
-      { length: 5_0000 },
-      () =>
-        new Rect(
-          padding + Math.random() * (this.canvas.clientWidth - width - padding * 2),
-          padding + Math.random() * (this.canvas.clientHeight - height - padding * 2),
-          width,
-          height,
-          `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
-        )
-    )
+    // 所有矩形有规律的分布在 canvas 中, 不要重叠
+    const rects = create(5)
+
+    this.rects = rects.map(item => new Rect(item.x, item.y, item.width, item.height, item.color))
+
+    // this.rects = Array.from(
+    //   { length: 5_0000 },
+    //   () =>
+    //     new Rect(
+    //       padding + Math.random() * (this.canvas.clientWidth - width - padding * 2),
+    //       padding + Math.random() * (this.canvas.clientHeight - height - padding * 2),
+    //       width,
+    //       height,
+    //       `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
+    //     )
+    // )
 
     this.canvas.addEventListener(
       'pointerdown',
@@ -86,7 +88,7 @@ export class Stage {
             this.rootMt.tx = downMt.tx + dx
             this.rootMt.ty = downMt.ty + dy
 
-            this.draw()
+            this.drawMainCanvas()
           }
         })
       },
@@ -103,13 +105,13 @@ export class Stage {
 
         this.rootMt.scale = newScale
 
-        this.draw()
+        this.drawMainCanvas()
       },
       { signal: this.abCt.signal }
     )
   }
 
-  updateSize() {
+  updateMainCanvasSize() {
     const { canvas, container } = this
     canvas.width = container.clientWidth * this.dpr
     canvas.height = container.clientHeight * this.dpr
@@ -117,25 +119,17 @@ export class Stage {
     canvas.style.height = `${container.clientHeight}px`
   }
 
-  offscreenCanvas: OffscreenCanvas
-  imageBitmap: ImageBitmap
-
   drawOffscreenCanvas() {
-    const { canvas } = this
-    const offscreen = new OffscreenCanvas(canvas.width, canvas.height)
-    this.offscreenCanvas = offscreen
-    const ctx = offscreen.getContext('2d')
+    const offscreen = this.offscreenCanvas
+    const ctx = this.oCtx
 
     ctx.resetTransform()
     ctx.clearRect(0, 0, offscreen.width, offscreen.height)
 
     ctx.scale(this.dpr, this.dpr)
 
-    ctx.translate(this.rootMt.tx, this.rootMt.ty)
-
-    ctx.translate(this.canvas.width / 2, this.canvas.height / 2)
-    ctx.scale(this.rootMt.scale, this.rootMt.scale)
-    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2)
+    const mt = this.getZoomFitViewportMt()
+    ctx.transform(mt.a, mt.b, mt.c, mt.d, mt.e, mt.f)
 
     this.rects.forEach(rect => {
       ctx.beginPath()
@@ -149,38 +143,126 @@ export class Stage {
     this.imageBitmap = offscreen.transferToImageBitmap()
   }
 
-  draw() {
-    const ctx = this.canvas.getContext('2d')
+  drawMainCanvas() {
+    const ctx = this.ctx
     ctx.resetTransform()
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     ctx.scale(this.dpr, this.dpr)
 
-    // if (!this.imageBitmap) {
-    //   this.offscreenCanvas()
-    // }
+    if (!this.imageBitmap) {
+      this.drawOffscreenCanvas()
+    }
 
-    ctx.translate(this.rootMt.tx, this.rootMt.ty)
-
-    ctx.translate(this.canvas.width / 2, this.canvas.height / 2)
-    ctx.scale(this.rootMt.scale, this.rootMt.scale)
-    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2)
-
-    // ctx.drawImage(this.imageBitmap, 0, 0)
-
-    // return
-    this.rects.forEach(rect => {
-      ctx.beginPath()
-
-      ctx.fillStyle = rect.fillStyle
-      ctx.rect(rect.x, rect.y, rect.width, rect.height)
-
-      ctx.fill()
-    })
+    ctx.drawImage(this.offscreenCanvas, 0, 0)
   }
 
   clear() {
-    const ctx = this.canvas.getContext('2d')!
+    const ctx = this.ctx
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+
+  updateColor() {
+    this.rects.forEach(rect => {
+      rect.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
+    })
+
+    this.multiBatchDraw()
+  }
+
+  multiBatchDraw() {
+    const rects = this.rects
+    const per = 5000
+    let start = 0
+
+    const offCtx = this.oCtx
+
+    const renderLoop = () => {
+      console.log('renderLoop')
+      const end = start + per
+      const partRects = rects.slice(start, end)
+
+      start = end
+
+      offCtx.resetTransform()
+      offCtx.scale(this.dpr, this.dpr)
+
+      const minX = Math.min(...partRects.map(rect => rect.x))
+      const minY = Math.min(...partRects.map(rect => rect.y))
+      const maxX = Math.max(...partRects.map(rect => rect.x + rect.width))
+      const maxY = Math.max(...partRects.map(rect => rect.y + rect.height))
+
+      offCtx.clearRect(minX, minY, maxX - minX, maxY - minY)
+
+      partRects.forEach(rect => {
+        offCtx.beginPath()
+
+        offCtx.fillStyle = rect.fillStyle
+        offCtx.rect(rect.x, rect.y, rect.width, rect.height)
+
+        offCtx.fill()
+      })
+
+      this.drawMainCanvas()
+
+      if (end >= rects.length) {
+        return
+      }
+
+      setTimeout(() => {
+        renderLoop()
+      }, 1000)
+    }
+
+    renderLoop()
+  }
+
+  zoomIn() {
+    this.rootMt.scale *= 1.2
+    this.multiBatchDraw()
+  }
+
+  zoomOut() {
+    this.rootMt.scale *= 0.8
+    this.multiBatchDraw()
+  }
+
+  get viewportSize() {
+    return { width: this.canvas.clientWidth, height: this.canvas.clientHeight }
+  }
+
+  getZoomFitViewportMt() {
+    // const { minX, minY, maxX, maxY } = mergeBox(selRects) // 场景坐标系
+    const minX = Math.min(...this.rects.map(rect => rect.x))
+    const minY = Math.min(...this.rects.map(rect => rect.y))
+    const maxX = Math.max(...this.rects.map(rect => rect.x + rect.width))
+    const maxY = Math.max(...this.rects.map(rect => rect.y + rect.height))
+
+    const contentRect = { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
+
+    const viewportSize = this.viewportSize
+    const padding = 10
+    const viewportRect = {
+      x: padding,
+      y: padding,
+      width: viewportSize.width - padding * 2,
+      height: viewportSize.height - padding * 2
+    }
+    const zoomX = viewportRect.width / contentRect.width
+    const zoomY = viewportRect.height / contentRect.height
+    const zoom = Math.min(zoomX, zoomY)
+    // this.zoom = zoom
+
+    const scaleMt = compose(
+      translate(-contentRect.x + viewportRect.x, -contentRect.y + viewportRect.y),
+      scale(zoom, zoom, contentRect.x, contentRect.y)
+    )
+
+    const tx = (viewportRect.width / zoom - contentRect.width) / 2
+    const ty = (viewportRect.height / zoom - contentRect.height) / 2
+
+    const newMt = compose(scaleMt, translate(tx, ty))
+
+    return newMt
   }
 }
