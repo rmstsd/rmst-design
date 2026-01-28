@@ -33,6 +33,9 @@ export default function Header() {
       <Link href="/blog-2" className={rootPathSegment === 'blog-2' ? 'header-link-active' : ''}>
         blog-2
       </Link>
+      <Link href="/todo" className={rootPathSegment === 'todo' ? 'header-link-active' : ''}>
+        todo
+      </Link>
 
       <SelectTheme />
     </header>

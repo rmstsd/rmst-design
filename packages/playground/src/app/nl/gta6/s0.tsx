@@ -1,0 +1,153 @@
+import firstBanner from './assets/firstBanner.webp'
+import logoHeadCorner from './assets/logoHeadCorner.webp'
+import logoMaskSvg from './assets/logoMaskSvg.svg'
+import gtaVi from './assets/gtaVi.png'
+import Image from 'next/image'
+
+import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react'
+
+import { useRef } from 'react'
+
+export function S0(props) {
+  const container = useRef(null)
+
+  useGSAP(
+    () => {
+      p_1()
+
+      function p_1() {
+        let tl = gsap.timeline({
+          defaults: { duration: 2 },
+          scrollTrigger: {
+            trigger: '.playground-1',
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            // pinSpacing: false,
+            toggleActions: 'restart pause resume reset',
+            scrub: true
+          }
+        })
+
+        // GSDevTools.create({ animation: tl })
+        tl.to('.logo-head', { opacity: 0 }, '<')
+
+        // 20vh
+        gsap.set('.banner-container', { backgroundColor: 'white', maskPosition: 'center', maskSize: '3000vw' })
+        // tl.to('.banner-container', { maskPosition: 'center center', maskSize: 'auto 140px' })
+
+        tl.to('.banner-inner', { autoAlpha: 0 }, '<')
+
+        gsap.set('.colourful-logo', {
+          autoAlpha: 0,
+          maskImage: 'radial-gradient(circle at 50% 200%, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%)'
+        })
+        tl.to('.colourful-logo', {
+          autoAlpha: 1,
+          maskImage: 'radial-gradient(circle at 50% 50%, rgb(0, 0, 0) 100%, rgba(0, 0, 0, 0) 100%)'
+        })
+
+        tl.to(['.fs-text-wrap', '.colourful-logo'], { scale: 0.8 }, '<')
+        tl.to('.banner-container', { opacity: 0 }, '<')
+
+        gsap.set('.fs-text', {
+          opacity: 0,
+          backgroundImage: `radial-gradient(circle at 50% 150vh, rgb(255, 210, 123) 0vh, rgb(223, 58, 147) 50vh, rgb(92, 22, 99) 90vh, rgba(32, 31, 66, 0) 100vh)`
+        })
+        tl.to(
+          '.fs-text',
+          {
+            opacity: 1,
+            backgroundImage: `radial-gradient(circle at 50% -30vh, rgb(255, 214, 135) 0px, rgb(252, 82, 67) 50vh, rgb(157, 47, 106) 90vh, rgba(32, 31, 66, 0) 150vh)`,
+            duration: 2
+          },
+          '<'
+        )
+
+        gsap.set('.plg-1', {
+          maskImage: 'radial-gradient(circle at 50% 18.7395vh, rgb(0, 0, 0) 100.696vh, rgba(0, 0, 0, 0) 113.565vh)'
+        })
+        tl.to('.plg-1', { maskImage: 'radial-gradient(circle at 50% -40vh, rgb(0, 0, 0) 0vh, rgba(0, 0, 0, 0) 50vh)' }, '-=1')
+
+        tl.pause()
+      }
+
+      p2()
+      function p2() {
+        let tl = gsap.timeline({
+          defaults: { duration: 2 },
+          scrollTrigger: {
+            trigger: '.playground-2',
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            toggleActions: 'restart pause resume reset',
+            scrub: true,
+            markers: true,
+            id: 'p2'
+          }
+        })
+
+        gsap.set('.playground-2', { marginTop: '-100vh' })
+        tl.fromTo('.mgzec', { opacity: 0 }, { opacity: 1 })
+      }
+    },
+    { scope: container.current }
+  )
+
+  let p_1 = (
+    <section className="playground-1 bg-gray-900 h-screen flow-root overflow-clip">
+      <div className="plg-1 relative flow-root h-screen">
+        {/* 第一屏 */}
+        <div className="banner-container overflow-clip h-full" style={{ maskImage: `url(${logoMaskSvg.src})` }}>
+          <div className="banner-inner h-full">
+            <Image src={firstBanner} alt="" className="first-banner object-cover" />
+            <Image src={logoHeadCorner} alt="" className="logo-head object-cover absolute top-0" />
+          </div>
+        </div>
+
+        <div className="colourful-logo absolute inset-0 h-full">
+          <Image src={gtaVi} alt="" className="mx-auto" style={{ height: 140, width: 'auto', marginTop: '20vh' }} />
+        </div>
+
+        {/* 第二屏 */}
+        <main className="fs-text-wrap h-full flow-root absolute inset-0  ">
+          <Image src={gtaVi} alt="" className="mx-auto invisible" style={{ height: 140, width: 'auto', marginTop: '20vh' }} />
+
+          <div className="fs-text text-center font-bold bg-clip-text" style={{ fontSize: 88, lineHeight: 1.2 }}>
+            2026年 <br /> 11月19日 <br /> 敬请期待
+          </div>
+        </main>
+      </div>
+    </section>
+  )
+
+  let p_2 = (
+    <section className="playground-2 ze-text h-screen w-full bg-gray-900 flow-root" style={{ padding: '20vh' }}>
+      <div
+        className="mgzec bg-clip-text font-bold"
+        style={{
+          color: 'transparent',
+          backgroundImage:
+            'radial-gradient(circle at 42.792% 55.84vh, rgb(255, 188, 132) 0%, rgb(244, 75, 89) 54.644%, rgb(139, 40, 104) 80.456%, rgba(32, 31, 66, 0) 122.08%)'
+        }}
+      >
+        <div style={{ fontSize: 77 }}>美国罪恶城</div>
+        <div style={{ fontSize: 26 }}>
+          杰森和露西娅心里一直清楚，命运对他们不公。本应简单的行动出了差错，美国阳光最灿烂的地方向两人展露出它最阴暗的一面，将他们卷入一场横跨雷奥奈达的犯罪阴谋。若想活着逃出生天，他们比以往任何时候都更需要彼此依靠。
+        </div>
+      </div>
+    </section>
+  )
+  return (
+    <div>
+      <Image src={logoMaskSvg} alt=""></Image>
+
+      {/* 第一部分 */}
+      {p_1}
+      {/* 第二部分 */}
+      {p_2}
+    </div>
+  )
+}

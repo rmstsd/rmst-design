@@ -11,3 +11,7 @@ export function on<El extends Window | HTMLElement>(
     ac.abort()
   }
 }
+
+export function forceReflow() {
+  document.body.offsetTop
+}

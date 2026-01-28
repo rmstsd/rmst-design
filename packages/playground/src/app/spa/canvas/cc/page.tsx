@@ -1,3 +1,5 @@
+'use client'
+
 import { ClientOnly } from '@/components/ClientOnly'
 import Client from './client'
 

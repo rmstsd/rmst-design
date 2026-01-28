@@ -1,7 +1,26 @@
 packages:
   - packages/*
 
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@swc/core': true
+  core-js: true
+  prisma: true
+  sharp: true
+
+ignoredBuiltDependencies:
+  - prisma
+
+minimumReleaseAgeExclude:
+  - '@ai-sdk/gateway@4.0.28'
+  - '@ai-sdk/openai@4.0.20'
+  - '@ai-sdk/react@4.0.40'
+  - ai@7.0.37
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - '@swc/core'
+  - better-sqlite3
   - core-js
   - sharp

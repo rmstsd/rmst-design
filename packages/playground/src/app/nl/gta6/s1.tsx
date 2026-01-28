@@ -5,15 +5,23 @@ import videoImage_2 from './assets/videoImage_2.webp'
 import videoImage_3 from './assets/videoImage_3.webp'
 import videoImage_4 from './assets/videoImage_4.webp'
 
-import Jason_Duval_01 from './assets/Jason_Duval_01.webp'
-import Jason_Duval_02 from './assets/Jason_Duval_02.webp'
-import Jason_Duval_06 from './assets/Jason_Duval_06.webp'
+import Jason_Duval_01 from './assets/杰森·杜瓦/Jason_Duval_01.webp'
+import Jason_Duval_02 from './assets/杰森·杜瓦/Jason_Duval_02.webp'
+import Jason_Duval_06 from './assets/杰森·杜瓦/Jason_Duval_06.webp'
 
-import Jason_Duval_05 from './assets/Jason_Duval_05.webp'
-import Jason_Duval_03 from './assets/Jason_Duval_03.webp'
-import Jason_Duval_04 from './assets/Jason_Duval_04.webp'
+import Jason_Duval_05 from './assets/杰森·杜瓦/Jason_Duval_05.webp'
+import Jason_Duval_03 from './assets/杰森·杜瓦/Jason_Duval_03.webp'
+import Jason_Duval_04 from './assets/杰森·杜瓦/Jason_Duval_04.webp'
 
-import ImageContainer from './ImageContainer/ImageContainer'
+import Lucia_Caminos_01 from './assets/露西娅·卡米诺斯/Lucia_Caminos_01.webp'
+import Lucia_Caminos_02 from './assets/露西娅·卡米诺斯/Lucia_Caminos_02.webp'
+import Lucia_Caminos_05 from './assets/露西娅·卡米诺斯/Lucia_Caminos_05.webp'
+
+import Lucia_Caminos_03 from './assets/刚出狱，露西娅/Lucia_Caminos_03.webp'
+import Lucia_Caminos_04 from './assets/刚出狱，露西娅/Lucia_Caminos_04.webp'
+import Lucia_Caminos_06 from './assets/刚出狱，露西娅/Lucia_Caminos_06.webp'
+
+import ImageContainer from './components/ImageContainer/ImageContainer'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
 import gsap from 'gsap'
@@ -50,7 +58,7 @@ export default function S1(props) {
       ]
 
       list.forEach(item => {
-        gsap.set(item.imgCls, { marginTop: '-100vh' })
+        gsap.set(item.imgCls, { marginTop: '-50vh' })
 
         const tl = gsap.timeline({
           defaults: { duration: 2 },
@@ -61,33 +69,42 @@ export default function S1(props) {
             end: 'top top',
             scrub: true,
             pin: true,
-            pinSpacing: false,
-            markers: true
+            pinSpacing: false
+            // markers: true
           }
         })
         tl.from(item.imgCls, { opacity: 0 })
         tl.to(item.imgCls, { opacity: 0 })
       })
 
+      const tl = gsap.timeline({
+        defaults: { duration: 2 },
+        scrollTrigger: {
+          trigger: '.s1-main-img-2',
+          start: 'bottom bottom',
+          endTrigger: '.s1-content-2',
+          end: 'top bottom',
+          scrub: true,
+          pin: true,
+          pinSpacing: false
+        }
+      })
+      tl.from('.s1-main-img-2', { opacity: 0, y: 100 })
+
       {
-        return
         const tl = gsap.timeline({
           defaults: { duration: 2 },
           scrollTrigger: {
-            trigger: '.s1-img-2',
-            start: 'top top',
-            endTrigger: '.s1-content-2',
-            end: 'top top',
+            trigger: '.s1-main-img-4',
+            start: 'bottom bottom',
+            endTrigger: '.s1-content-4',
+            end: 'top bottom',
             scrub: true,
             pin: true,
-            pinSpacing: false,
-            markers: true
+            pinSpacing: false
           }
         })
-        // tl.pause()
-        // GSDevTools.create({ animation: tl })
-        tl.from('.s1-img-2', { opacity: 0 })
-        tl.to('.s1-img-2', { opacity: 0 })
+        tl.from('.s1-main-img-4', { opacity: 0, y: 100 })
       }
     },
     { scope: s1Ref.current }
@@ -95,6 +112,7 @@ export default function S1(props) {
 
   return (
     <main ref={s1Ref} className="bg-gray-900 relative z-10">
+      <div className="h-screen"></div>
       <Image src={videoImage_1} alt="" className="s1-img-1 w-full h-screen object-cover" />
       <section className="s1-content-1 flex gap-10 relative z-10" style={{ padding: '10vh 15vw' }}>
         <div className="grow w-0 shrink-0">
@@ -121,24 +139,23 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_2} alt="" className="s1-img-2 w-full h-screen object-cover" style={{ marginTop: '' }} />
+      <div className="s1-main-img-2 relative z-10 px-[10vw] text-5xl py-9 font-bold" style={{ color: '#fff9cb' }}>
+        要是情况不对，转
+        <br />
+        头叫我就好。
+      </div>
       <section className="s1-content-2 relative z-10" style={{ marginTop: '50vh' }}>
-        <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2] " style={{ color: '#fff9cb' }}>
-          要是情况不对，转
-          <br />
-          头叫我就好。
-        </div>
-
-        <section className="flex gap-10" style={{ padding: '10vh 15vw' }}>
-          <div className="grow w-0 shrink-0 pt-32">
-            <div className="text-5xl font-bold w-[300px] leading-[1.2] mx-auto" style={{ color: '#ffb0c4' }}>
+        <section className="flex gap-10" style={{ padding: '80px 15vw' }}>
+          <div className="grow w-0 shrink-0 ">
+            <div className="text-5xl font-bold w-[300px] mx-auto" style={{ color: '#ffb0c4' }}>
               又一天快活日子，对吧？
             </div>
             <ImageContainer src={Jason_Duval_05} className="mt-8 aspect-square" style={{ objectPosition: '30% center' }} />
             <ImageContainer src={Jason_Duval_03} className="mt-8 aspect-square" style={{ objectPosition: '10% center' }} />
           </div>
 
-          <div className="grow w-0 shrink-0 pt-32">
-            <div className="text-2xl leading-normal text-white">
+          <div className="grow w-0 shrink-0 ">
+            <div className="text-2xl  text-white">
               遇见露西娅，可能是他这辈子的万幸，又或者是不幸。杰森清楚自己想要的结果，但此刻，他有些彷徨。
             </div>
             <ImageContainer src={Jason_Duval_04} className="mt-8 aspect-9/16" style={{ objectPosition: '25% center' }} />
@@ -147,21 +164,57 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_3} alt="" className="s1-img-3 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-3 text-white border relative z-10 " style={{ marginTop: '50vh' }}>
-        {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center m-10 bg-slate-700">
-            {index}
+      <section className="s1-content-3 text-white  relative z-10 " style={{ marginTop: '50vh' }}>
+        <div className="flex px-[10vw] gap-10">
+          <div className="mt-60">
+            <ImageContainer src={Lucia_Caminos_01} className="aspect-square" />
+            <ImageContainer src={Lucia_Caminos_05} className="mt-20 aspect-9/16" style={{ objectPosition: '60%' }} />
           </div>
-        ))}
+          <div>
+            <div className="text-7xl py-9 font-bold " style={{ color: '#fff9cb' }}>
+              露西娅·卡米诺斯
+            </div>
+            <div className="text-5xl px-4 m-4" style={{ color: '#ffb0c4' }}>
+              露西娅刚会走路，她的父亲就教会了她打架。
+            </div>
+            <div className="text-white text-3xl m-8">
+              此后，生活与她便成了擂台上的对手。为了家人，她进了雷奥奈达监狱，却又阴差阳错得以获释。露西娅从中吸取了教训，接下来，每一步都得精打细算。
+            </div>
+
+            <ImageContainer src={Lucia_Caminos_02} className="mt-20 aspect-square" />
+
+            <div className="text-white text-3xl leading-relaxed mt-10 mx-8">
+              早在母女二人住在自由城时，露西娅的母亲就梦想着更美好的生活。这种生活也是露西娅最执着的追求。如今她不再沉浸于不切实际的幻想，而是准备亲手争取出一片未来。
+            </div>
+          </div>
+        </div>
       </section>
 
-      <Image src={videoImage_4} alt="" className="s1-img-4 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '50vh' }}>
-        {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center m-10 bg-slate-700">
-            {index}
+      <div className="relative s1-img-4 w-full h-screen " style={{ marginTop: '' }}>
+        <Image src={videoImage_4} alt="" className="w-full h-full object-cover" />
+      </div>
+      <div className="s1-main-img-4 relative text-5xl font-bold" style={{ color: '#fff9cb' }}>
+        <div className="mx-24" style={{ width: 700 }}>
+          这世上最重要的，只有你打交道的人，和手里的钱。
+        </div>
+      </div>
+
+      <section className="s1-content-4 text-white  relative z-10 pb-32" style={{ marginTop: '100vh' }}>
+        <div className="flex px-[10vw] gap-10 pt-20">
+          <div>
+            <div className="text-3xl text-white px-20">
+              刚出狱，露西娅就准备改变命运。无论付出什么代价，她都准备坚持自己的计划。
+            </div>
+            <ImageContainer src={Lucia_Caminos_06} className="mt-20 aspect-9/16" />
           </div>
-        ))}
+          <div className="">
+            <div className="text-5xl font-bold px-20" style={{ color: '#ffb0c4' }}>
+              与杰森一起展开新生活或许是她最好的选择。
+            </div>
+            <ImageContainer src={Lucia_Caminos_04} className="mt-20 aspect-square" />
+            <ImageContainer src={Lucia_Caminos_03} className="mt-20 aspect-square" />
+          </div>
+        </div>
       </section>
     </main>
   )

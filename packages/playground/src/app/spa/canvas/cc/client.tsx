@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Stage } from './stage'
+import { Stage } from './_stage'
 
 export default function Client(props) {
   const [stage, setStage] = useState<Stage>()
@@ -19,6 +19,9 @@ export default function Client(props) {
     observer.observe(container)
 
     stage.init(container)
+
+    stage.zoomToFit()
+    stage.drawOffscreenCanvas()
 
     stage.drawMainCanvas()
 
