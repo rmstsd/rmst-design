@@ -20,6 +20,9 @@ export default function Client(props) {
 
     stage.init(container)
 
+    stage.zoomToFit()
+    stage.drawOffscreenCanvas()
+
     stage.drawMainCanvas()
 
     return () => {

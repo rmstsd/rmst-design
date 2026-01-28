@@ -1,7 +1,8 @@
 import { startDrag } from 'rmst-design'
-import { compose, scale, translate } from 'transformation-matrix'
+import { compose, identity, scale, translate } from 'transformation-matrix'
 import { Rect } from './Rect'
 import { create } from './util'
+import { cloneDeep } from 'es-toolkit'
 
 export class Stage {
   dpr = window.devicePixelRatio
@@ -17,7 +18,9 @@ export class Stage {
 
   rects: Rect[] = []
 
-  rootMt = { tx: 0, ty: 0, scale: 1 }
+  rootMt = identity() //
+
+  mainMt = identity() // 主变换矩阵 用于平移
 
   constructor() {}
 
@@ -69,24 +72,25 @@ export class Stage {
       'pointerdown',
       downEvt => {
         downEvt.preventDefault()
-        let downMt = { ...this.rootMt }
+        let downMt = cloneDeep(this.mainMt)
 
         const downPos = {
-          x: downEvt.clientX, //* this.dpr,
-          y: downEvt.clientY //* this.dpr
+          x: downEvt.clientX * this.dpr,
+          y: downEvt.clientY * this.dpr
         }
 
         startDrag(downEvt, {
           onDragMove: moveEvt => {
             const movePos = {
-              x: moveEvt.clientX, // * this.dpr,
-              y: moveEvt.clientY //* this.dpr
+              x: moveEvt.clientX * this.dpr,
+              y: moveEvt.clientY * this.dpr
             }
 
             let dx = movePos.x - downPos.x
             let dy = movePos.y - downPos.y
-            this.rootMt.tx = downMt.tx + dx
-            this.rootMt.ty = downMt.ty + dy
+
+            // this.rootMt = compose(translate(dx, dy), downMt)
+            this.mainMt = compose(translate(dx, dy), downMt)
 
             this.drawMainCanvas()
           }
@@ -99,6 +103,7 @@ export class Stage {
       'wheel',
       evt => {
         evt.preventDefault()
+        return
 
         let newScale = this.rootMt.scale * (evt.deltaY > 0 ? 0.8 : 1.2)
         newScale = Math.max(0.1, Math.min(9, newScale))
@@ -128,7 +133,7 @@ export class Stage {
 
     ctx.scale(this.dpr, this.dpr)
 
-    const mt = this.getZoomFitViewportMt()
+    const mt = this.rootMt
     ctx.transform(mt.a, mt.b, mt.c, mt.d, mt.e, mt.f)
 
     this.rects.forEach(rect => {
@@ -139,8 +144,6 @@ export class Stage {
 
       ctx.fill()
     })
-
-    // this.imageBitmap = offscreen.transferToImageBitmap()
   }
 
   drawMainCanvas() {
@@ -148,7 +151,8 @@ export class Stage {
     ctx.resetTransform()
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    ctx.scale(this.dpr, this.dpr)
+
+    ctx.setTransform(this.mainMt)
 
     // if (!this.imageBitmap) {
     // this.drawOffscreenCanvas()
@@ -218,13 +222,18 @@ export class Stage {
   }
 
   zoomIn() {
-    this.rootMt.scale *= 1.2
+    this.mainMt.scale *= 1.2
     this.multiBatchDraw()
   }
 
   zoomOut() {
     this.rootMt.scale *= 0.8
     this.multiBatchDraw()
+  }
+
+  zoomToFit() {
+    this.rootMt = this.getZoomFitViewportMt()
+    // this.multiBatchDraw()
   }
 
   get viewportSize() {
