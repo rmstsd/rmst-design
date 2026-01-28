@@ -140,7 +140,7 @@ export class Stage {
       ctx.fill()
     })
 
-    this.imageBitmap = offscreen.transferToImageBitmap()
+    // this.imageBitmap = offscreen.transferToImageBitmap()
   }
 
   drawMainCanvas() {
@@ -150,9 +150,9 @@ export class Stage {
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     ctx.scale(this.dpr, this.dpr)
 
-    if (!this.imageBitmap) {
-      this.drawOffscreenCanvas()
-    }
+    // if (!this.imageBitmap) {
+    // this.drawOffscreenCanvas()
+    // }
 
     ctx.drawImage(this.offscreenCanvas, 0, 0)
   }
