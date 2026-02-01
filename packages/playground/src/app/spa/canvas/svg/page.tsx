@@ -1,5 +1,7 @@
 'use client'
 
+// https://aistudio.google.com/prompts/1p6y-XQrXVbwcjrUcCE1aWCfx_aqx9Y66
+
 import { useRef, useState } from 'react'
 import { applyToPoint, identity, inverse, scale, toCSS, transform, translate } from 'transformation-matrix'
 import { Matrix } from 'pixi.js'
@@ -9,13 +11,10 @@ mt.scale(2, 2)
 
 let zoom = 1
 export default function Page(props) {
-  const [mt, setMt] = useState(() => new Matrix())
+  const [mt, setMt] = useState(() => identity())
   const domRef = useRef<HTMLDivElement>(null)
 
-  const transformString = `matrix(${mt.a}, ${mt.b}, ${mt.c}, ${mt.d}, ${mt.tx}, ${mt.ty})`
-
-  console.log(new Matrix().translate(100, 100).append(new Matrix().scale(2, 2)))
-  console.log(transform(translate(100, 100), scale(2, 2)))
+  const transformString = `matrix(${mt.a}, ${mt.b}, ${mt.c}, ${mt.d}, ${mt.e}, ${mt.f})`
 
   return (
     <div
@@ -32,20 +31,18 @@ export default function Page(props) {
         let origin = { x: clientX - rect.left, y: clientY - rect.top }
 
         {
-          // origin = applyToPoint(inverse(mt), origin)
-          // const newMt = transform(
-          //   mt,
-          //   transform(translate(origin.x, origin.y), scale(deltaZoom, deltaZoom), translate(-origin.x, -origin.y))
-          // )
-          // setMt(newMt)
+          origin = applyToPoint(inverse(mt), origin)
+          const deltaMt = transform(translate(origin.x, origin.y), scale(deltaZoom, deltaZoom), translate(-origin.x, -origin.y))
+          const newMt = transform(mt, deltaMt)
+          setMt(newMt)
         }
 
-        {
-          const deltaMt = new Matrix()
-          mt.translate(-origin.x, -origin.y).scale(deltaZoom, deltaZoom).translate(origin.x, origin.y)
-          // mt.append(deltaMt)
-          setMt(mt.clone())
-        }
+        // {
+        //   const deltaMt = new Matrix()
+        //   deltaMt.translate(-origin.x, -origin.y).scale(deltaZoom, deltaZoom).translate(origin.x, origin.y)
+        //   mt.prepend(deltaMt)
+        //   setMt(mt.clone())
+        // }
 
         zoom = newZoom
       }}
