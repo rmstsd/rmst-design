@@ -13,6 +13,10 @@ import Jason_Duval_05 from './assets/Jason_Duval_05.webp'
 import Jason_Duval_03 from './assets/Jason_Duval_03.webp'
 import Jason_Duval_04 from './assets/Jason_Duval_04.webp'
 
+import Lucia_Caminos_01 from './assets/露西娅·卡米诺斯/Lucia_Caminos_01.webp'
+import Lucia_Caminos_02 from './assets/露西娅·卡米诺斯/Lucia_Caminos_02.webp'
+import Lucia_Caminos_05 from './assets/露西娅·卡米诺斯/Lucia_Caminos_05.webp'
+
 import ImageContainer from './ImageContainer/ImageContainer'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
@@ -122,7 +126,7 @@ export default function S1(props) {
 
       <Image src={videoImage_2} alt="" className="s1-img-2 w-full h-screen object-cover" style={{ marginTop: '' }} />
       <section className="s1-content-2 relative z-10" style={{ marginTop: '50vh' }}>
-        <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2] " style={{ color: '#fff9cb' }}>
+        <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2]" style={{ color: '#fff9cb' }}>
           要是情况不对，转
           <br />
           头叫我就好。
@@ -148,14 +152,38 @@ export default function S1(props) {
 
       <Image src={videoImage_3} alt="" className="s1-img-3 w-full h-screen object-cover" style={{ marginTop: '' }} />
       <section className="s1-content-3 text-white border relative z-10 " style={{ marginTop: '50vh' }}>
-        {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center m-10 bg-slate-700">
-            {index}
+        <div className="flex px-[10vw] gap-10">
+          <div>
+            <ImageContainer src={Lucia_Caminos_01} className="mt-20 aspect-square" />
+            <ImageContainer src={Lucia_Caminos_05} className="mt-20 aspect-9/16" style={{ objectPosition: '60%' }} />
           </div>
-        ))}
+          <div>
+            <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2]" style={{ color: '#fff9cb' }}>
+              露西娅·卡米诺斯
+            </div>
+            <div className="text-5xl px-4 m-4" style={{ color: '#ffb0c4' }}>
+              露西娅刚会走路，她的父亲就教会了她打架。
+            </div>
+            <div className="text-white text-3xl m-8">
+              此后，生活与她便成了擂台上的对手。为了家人，她进了雷奥奈达监狱，却又阴差阳错得以获释。露西娅从中吸取了教训，接下来，每一步都得精打细算。
+            </div>
+
+            <ImageContainer src={Lucia_Caminos_02} className="mt-20 aspect-square" />
+
+            <div className="text-white text-3xl leading-relaxed" style={{ margin: 100 }}>
+              早在母女二人住在自由城时，露西娅的母亲就梦想着更美好的生活。这种生活也是露西娅最执着的追求。如今她不再沉浸于不切实际的幻想，而是准备亲手争取出一片未来。
+            </div>
+          </div>
+        </div>
       </section>
 
-      <Image src={videoImage_4} alt="" className="s1-img-4 w-full h-screen object-cover" style={{ marginTop: '' }} />
+      <div className="relative s1-img-4 w-full h-screen " style={{ marginTop: '' }}>
+        <Image src={videoImage_4} alt="" className=" w-full h-full object-cover" />
+        <div className="absolute bottom-0 text-7xl font-bold " style={{ color: '#fff9cb', margin: 60 }}>
+          这世上最重要的，只有你打交道的人，和手里的钱。
+        </div>
+      </div>
+
       <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '50vh' }}>
         {[...Array(20).keys()].map((item, index) => (
           <div key={index} className=" text-center m-10 bg-slate-700">
