@@ -5,17 +5,21 @@ import videoImage_2 from './assets/videoImage_2.webp'
 import videoImage_3 from './assets/videoImage_3.webp'
 import videoImage_4 from './assets/videoImage_4.webp'
 
-import Jason_Duval_01 from './assets/Jason_Duval_01.webp'
-import Jason_Duval_02 from './assets/Jason_Duval_02.webp'
-import Jason_Duval_06 from './assets/Jason_Duval_06.webp'
+import Jason_Duval_01 from './assets/杰森·杜瓦/Jason_Duval_01.webp'
+import Jason_Duval_02 from './assets/杰森·杜瓦/Jason_Duval_02.webp'
+import Jason_Duval_06 from './assets/杰森·杜瓦/Jason_Duval_06.webp'
 
-import Jason_Duval_05 from './assets/Jason_Duval_05.webp'
-import Jason_Duval_03 from './assets/Jason_Duval_03.webp'
-import Jason_Duval_04 from './assets/Jason_Duval_04.webp'
+import Jason_Duval_05 from './assets/杰森·杜瓦/Jason_Duval_05.webp'
+import Jason_Duval_03 from './assets/杰森·杜瓦/Jason_Duval_03.webp'
+import Jason_Duval_04 from './assets/杰森·杜瓦/Jason_Duval_04.webp'
 
 import Lucia_Caminos_01 from './assets/露西娅·卡米诺斯/Lucia_Caminos_01.webp'
 import Lucia_Caminos_02 from './assets/露西娅·卡米诺斯/Lucia_Caminos_02.webp'
 import Lucia_Caminos_05 from './assets/露西娅·卡米诺斯/Lucia_Caminos_05.webp'
+
+import Lucia_Caminos_03 from './assets/刚出狱，露西娅/Lucia_Caminos_03.webp'
+import Lucia_Caminos_04 from './assets/刚出狱，露西娅/Lucia_Caminos_04.webp'
+import Lucia_Caminos_06 from './assets/刚出狱，露西娅/Lucia_Caminos_06.webp'
 
 import ImageContainer from './ImageContainer/ImageContainer'
 import { useGSAP } from '@gsap/react'
@@ -185,11 +189,17 @@ export default function S1(props) {
       </div>
 
       <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '50vh' }}>
-        {[...Array(20).keys()].map((item, index) => (
-          <div key={index} className=" text-center m-10 bg-slate-700">
-            {index}
+        <div className="flex  px-[10vw] gap-10">
+          <div>
+            <div>刚出狱，露西娅就准备改变命运。无论付出什么代价，她都准备坚持自己的计划。</div>
+            <ImageContainer src={Lucia_Caminos_06} className="mt-20 aspect-9/16" />
           </div>
-        ))}
+          <div className="">
+            <div>与杰森一起展开新生活或许是她最好的选择。</div>
+            <ImageContainer src={Lucia_Caminos_04} className="mt-20 aspect-square" />
+            <ImageContainer src={Lucia_Caminos_03} className="mt-20 aspect-square" />
+          </div>
+        </div>
       </section>
     </main>
   )

@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
 import { Button, isClient } from 'rmst-design'
+import outro from './assets/outro.webp'
 
 import './page.scss'
 
@@ -31,9 +32,11 @@ import ImageContainer from './ImageContainer/ImageContainer'
 import './page.scss'
 import { GSDevTools } from 'gsap/GSDevTools'
 import S1 from './s1'
-import S2 from './s2'
 
 import Lenis from 'lenis'
+import { CalHampton } from './Cal_Hampton'
+import { SunState } from './SunState'
+import BoobieIke from './Boobie_Ike'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
@@ -258,11 +261,18 @@ export default function Client() {
       <div className="h-[10vh] bg-pink-300"></div>
 
       <S1 />
+      <Image src={outro} alt="" className=" w-full h-screen object-cover" />
 
-      <S2 />
+      <div className="h-screen text-white">
+        <div>只在雷奥奈达遇得上</div>
+        <div>当夕阳西下，霓虹灯亮起，每个人都有自己的抱负，也有要承受的代价。</div>
+      </div>
 
-      <div className="h-screen text-white">哈哈哈</div>
-      <div className="h-screen text-white">哈哈哈</div>
+      <CalHampton />
+
+      <SunState />
+
+      <BoobieIke />
     </div>
   )
 }
