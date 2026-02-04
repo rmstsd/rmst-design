@@ -8,24 +8,19 @@ import Cal_canvas_poster from './assets/卡尔·汉普顿/Cal_canvas_poster.webp
 
 import Hero_BG from './assets/卡尔·汉普顿/Hero_BG.webp'
 import Hero_FG from './assets/卡尔·汉普顿/Hero_FG.webp'
-import ImageContainer from './ImageContainer/ImageContainer'
+import ImageContainer from '../components/ImageContainer/ImageContainer'
+import { Person } from '../components/Person'
 
 export function CalHampton(props) {
   return (
     <div>
-      <div className="relative h-screen">
-        <Image src={Hero_BG} alt="" className=" w-full h-full absolute object-cover" />
-        <Image src={Hero_FG} alt="" className="h-full w-auto absolute right-0 bottom-0 " />
-
-        <section className="absolute">
-          <div>卡尔·汉普顿</div>
-          <div>万一网上说的都是真的呢？</div>
-
-          <div>
-            卡尔是杰森的朋友，跟着布莱恩干活。卡尔觉得最有安全感的事就是宅在家里，喝着啤酒，偷听海岸警卫队的通讯，用无痕模式逛逛网页。
-          </div>
-        </section>
-      </div>
+      <Person
+        Hero_BG={Hero_BG}
+        Hero_FG={Hero_FG}
+        name="卡尔·汉普顿"
+        desc_1="万一网上说的都是真的呢？"
+        desc_2="卡尔是杰森的朋友，跟着布莱恩干活。卡尔觉得最有安全感的事就是宅在家里，喝着啤酒，偷听海岸警卫队的通讯，用无痕模式逛逛网页。"
+      />
 
       <div className="flex  px-[10vw] gap-10">
         <div>

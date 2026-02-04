@@ -21,7 +21,7 @@ import Lucia_Caminos_03 from './assets/刚出狱，露西娅/Lucia_Caminos_03.we
 import Lucia_Caminos_04 from './assets/刚出狱，露西娅/Lucia_Caminos_04.webp'
 import Lucia_Caminos_06 from './assets/刚出狱，露西娅/Lucia_Caminos_06.webp'
 
-import ImageContainer from './ImageContainer/ImageContainer'
+import ImageContainer from './components/ImageContainer/ImageContainer'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'react'
 import gsap from 'gsap'

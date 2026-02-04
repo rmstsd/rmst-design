@@ -27,16 +27,16 @@ import Jason_Duval_05 from './assets/Jason_Duval_05.webp'
 import Jason_Duval_03 from './assets/Jason_Duval_03.webp'
 import Jason_Duval_04 from './assets/Jason_Duval_04.webp'
 
-import ImageContainer from './ImageContainer/ImageContainer'
+import ImageContainer from './components/ImageContainer/ImageContainer'
 
 import './page.scss'
 import { GSDevTools } from 'gsap/GSDevTools'
 import S1 from './s1'
 
 import Lenis from 'lenis'
-import { CalHampton } from './Cal_Hampton'
+import { CalHampton } from './figure/Cal_Hampton'
 import { SunState } from './SunState'
-import BoobieIke from './Boobie_Ike'
+import BoobieIke from './figure/Boobie_Ike'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
@@ -263,9 +263,13 @@ export default function Client() {
       <S1 />
       <Image src={outro} alt="" className=" w-full h-screen object-cover" />
 
-      <div className="h-screen text-white">
-        <div>只在雷奥奈达遇得上</div>
-        <div>当夕阳西下，霓虹灯亮起，每个人都有自己的抱负，也有要承受的代价。</div>
+      <div className="flex gap-20 justify-center items-center px-20" style={{ height: '50vh' }}>
+        <div className="font-bold text-7xl" style={{ color: '#ffb0c4' }}>
+          只在雷奥奈达遇得上
+        </div>
+        <div className="text-5xl" style={{ color: '#ffb99c' }}>
+          当夕阳西下，霓虹灯亮起，每个人都有自己的抱负，也有要承受的代价。
+        </div>
       </div>
 
       <CalHampton />

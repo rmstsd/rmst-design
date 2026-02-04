@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Boobie_Ike_01 from './assets/波比·艾克/Boobie_Ike_01.webp'
 import Boobie_Ike_02 from './assets/波比·艾克/Boobie_Ike_02.webp'
 import Boobie_Ike_03 from './assets/波比·艾克/Boobie_Ike_03.webp'
@@ -8,23 +7,19 @@ import canvas_poster from './assets/波比·艾克/canvas_poster.webp'
 import Hero_BG from './assets/波比·艾克/Hero_BG.webp'
 import Hero_FG from './assets/波比·艾克/Hero_FG.webp'
 
-import ImageContainer from './ImageContainer/ImageContainer'
+import ImageContainer from '../components/ImageContainer/ImageContainer'
+import { Person } from '../components/Person'
 
 export default function BoobieIke(props) {
   return (
     <div>
-      <div className="relative h-screen">
-        <Image src={Hero_BG} alt="" className=" w-full h-full absolute object-cover" />
-        <Image src={Hero_FG} alt="" className="h-full w-auto absolute right-0 bottom-0 " />
-
-        <section className="absolute">
-          <div>波比·艾克</div>
-          <div>一切源于心：红心杰克。</div>
-          <div>
-            波比是罪恶城的本地传奇，行事也如传奇一般。能从混迹街头走到坐拥合法产业帝国的人并不多，波比便是其中一个。他的疆域涵盖房地产、脱衣舞俱乐部和录音棚。波比总是笑容可掬，但谈生意的时候例外。
-          </div>
-        </section>
-      </div>
+      <Person
+        Hero_BG={Hero_BG}
+        Hero_FG={Hero_FG}
+        name="波比·艾克"
+        desc_1="一切源于心：红心杰克。"
+        desc_2="波比是罪恶城的本地传奇，行事也如传奇一般。能从混迹街头走到坐拥合法产业帝国的人并不多，波比便是其中一个。他的疆域涵盖房地产、脱衣舞俱乐部和录音棚。波比总是笑容可掬，但谈生意的时候例外。"
+      />
 
       <div className="flex  px-[10vw] gap-10">
         <div>
