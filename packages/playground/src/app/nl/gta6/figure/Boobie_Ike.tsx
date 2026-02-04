@@ -1,11 +1,11 @@
-import Boobie_Ike_01 from './assets/波比·艾克/Boobie_Ike_01.webp'
-import Boobie_Ike_02 from './assets/波比·艾克/Boobie_Ike_02.webp'
-import Boobie_Ike_03 from './assets/波比·艾克/Boobie_Ike_03.webp'
-import Boobie_Ike_04 from './assets/波比·艾克/Boobie_Ike_04.webp'
+import Boobie_Ike_01 from '../assets/波比·艾克/Boobie_Ike_01.webp'
+import Boobie_Ike_02 from '../assets/波比·艾克/Boobie_Ike_02.webp'
+import Boobie_Ike_03 from '../assets/波比·艾克/Boobie_Ike_03.webp'
+import Boobie_Ike_04 from '../assets/波比·艾克/Boobie_Ike_04.webp'
 
-import canvas_poster from './assets/波比·艾克/canvas_poster.webp'
-import Hero_BG from './assets/波比·艾克/Hero_BG.webp'
-import Hero_FG from './assets/波比·艾克/Hero_FG.webp'
+import canvas_poster from '../assets/波比·艾克/canvas_poster.webp'
+import Hero_BG from '../assets/波比·艾克/Hero_BG.webp'
+import Hero_FG from '../assets/波比·艾克/Hero_FG.webp'
 
 import ImageContainer from '../components/ImageContainer/ImageContainer'
 import { Person } from '../components/Person'

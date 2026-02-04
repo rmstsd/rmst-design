@@ -78,7 +78,6 @@ export default function S1(props) {
       })
 
       {
-        return
         const tl = gsap.timeline({
           defaults: { duration: 2 },
           scrollTrigger: {
@@ -103,6 +102,7 @@ export default function S1(props) {
 
   return (
     <main ref={s1Ref} className="bg-gray-900 relative z-10">
+      <div className="h-screen"></div>
       <Image src={videoImage_1} alt="" className="s1-img-1 w-full h-screen object-cover" />
       <section className="s1-content-1 flex gap-10 relative z-10" style={{ padding: '10vh 15vw' }}>
         <div className="grow w-0 shrink-0">
@@ -182,20 +182,26 @@ export default function S1(props) {
       </section>
 
       <div className="relative s1-img-4 w-full h-screen " style={{ marginTop: '' }}>
-        <Image src={videoImage_4} alt="" className=" w-full h-full object-cover" />
-        <div className="absolute bottom-0 text-7xl font-bold " style={{ color: '#fff9cb', margin: 60 }}>
-          这世上最重要的，只有你打交道的人，和手里的钱。
-        </div>
+        <Image src={videoImage_4} alt="" className="w-full h-full object-cover" />
       </div>
 
-      <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '50vh' }}>
-        <div className="flex  px-[10vw] gap-10">
+      {/* pin-spacer */}
+      <div className="relative text-7xl font-bold h-screen" style={{ color: '#fff9cb', margin: 60 }}>
+        这世上最重要的，只有你打交道的人，和手里的钱。
+      </div>
+
+      <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '100vh' }}>
+        <div className="flex px-[10vw] gap-10 pt-20">
           <div>
-            <div>刚出狱，露西娅就准备改变命运。无论付出什么代价，她都准备坚持自己的计划。</div>
+            <div className="text-3xl text-white px-20">
+              刚出狱，露西娅就准备改变命运。无论付出什么代价，她都准备坚持自己的计划。
+            </div>
             <ImageContainer src={Lucia_Caminos_06} className="mt-20 aspect-9/16" />
           </div>
           <div className="">
-            <div>与杰森一起展开新生活或许是她最好的选择。</div>
+            <div className="text-5xl font-bold px-20" style={{ color: '#ffb0c4' }}>
+              与杰森一起展开新生活或许是她最好的选择。
+            </div>
             <ImageContainer src={Lucia_Caminos_04} className="mt-20 aspect-square" />
             <ImageContainer src={Lucia_Caminos_03} className="mt-20 aspect-square" />
           </div>
