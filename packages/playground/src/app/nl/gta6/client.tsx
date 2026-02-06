@@ -24,7 +24,8 @@ gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
 gsap.registerPlugin(GSDevTools)
 
-if (isClient) {
+// initLenis()
+function initLenis() {
   // Initialize a new Lenis instance for smooth scrolling
   const lenis = new Lenis()
 
@@ -44,7 +45,7 @@ if (isClient) {
 export default function Client() {
   return (
     <div className="Gta6-V2">
-      <S0 />
+      {/* <S0 /> */}
       <S1 />
 
       <Image src={outro} alt="" className=" w-full h-screen object-cover" />

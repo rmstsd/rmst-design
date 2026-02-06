@@ -58,7 +58,7 @@ export default function S1(props) {
       ]
 
       list.forEach(item => {
-        gsap.set(item.imgCls, { marginTop: '-100vh' })
+        gsap.set(item.imgCls, { marginTop: '-50vh' })
 
         const tl = gsap.timeline({
           defaults: { duration: 2 },
@@ -76,26 +76,6 @@ export default function S1(props) {
         tl.from(item.imgCls, { opacity: 0 })
         tl.to(item.imgCls, { opacity: 0 })
       })
-
-      {
-        const tl = gsap.timeline({
-          defaults: { duration: 2 },
-          scrollTrigger: {
-            trigger: '.s1-img-2',
-            start: 'top top',
-            endTrigger: '.s1-content-2',
-            end: 'top top',
-            scrub: true,
-            pin: true,
-            pinSpacing: false,
-            markers: true
-          }
-        })
-        // tl.pause()
-        // GSDevTools.create({ animation: tl })
-        tl.from('.s1-img-2', { opacity: 0 })
-        tl.to('.s1-img-2', { opacity: 0 })
-      }
     },
     { scope: s1Ref.current }
   )
@@ -155,7 +135,7 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_3} alt="" className="s1-img-3 w-full h-screen object-cover" style={{ marginTop: '' }} />
-      <section className="s1-content-3 text-white border relative z-10 " style={{ marginTop: '50vh' }}>
+      <section className="s1-content-3 text-white  relative z-10 " style={{ marginTop: '50vh' }}>
         <div className="flex px-[10vw] gap-10">
           <div>
             <ImageContainer src={Lucia_Caminos_01} className="mt-20 aspect-square" />
@@ -190,7 +170,7 @@ export default function S1(props) {
         这世上最重要的，只有你打交道的人，和手里的钱。
       </div>
 
-      <section className="s1-content-4 text-white border relative z-10" style={{ marginTop: '100vh' }}>
+      <section className="s1-content-4 text-white  relative z-10" style={{ marginTop: '100vh' }}>
         <div className="flex px-[10vw] gap-10 pt-20">
           <div>
             <div className="text-3xl text-white px-20">
