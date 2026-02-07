@@ -69,13 +69,43 @@ export default function S1(props) {
             end: 'top top',
             scrub: true,
             pin: true,
-            pinSpacing: false,
-            markers: true
+            pinSpacing: false
+            // markers: true
           }
         })
         tl.from(item.imgCls, { opacity: 0 })
         tl.to(item.imgCls, { opacity: 0 })
       })
+
+      const tl = gsap.timeline({
+        defaults: { duration: 2 },
+        scrollTrigger: {
+          trigger: '.s1-main-img-2',
+          start: 'bottom bottom',
+          endTrigger: '.s1-content-2',
+          end: 'top bottom',
+          scrub: true,
+          pin: true,
+          pinSpacing: false
+        }
+      })
+      tl.from('.s1-main-img-2', { opacity: 0, y: 100 })
+
+      {
+        const tl = gsap.timeline({
+          defaults: { duration: 2 },
+          scrollTrigger: {
+            trigger: '.s1-main-img-4',
+            start: 'bottom bottom',
+            endTrigger: '.s1-content-4',
+            end: 'top bottom',
+            scrub: true,
+            pin: true,
+            pinSpacing: false
+          }
+        })
+        tl.from('.s1-main-img-4', { opacity: 0, y: 100 })
+      }
     },
     { scope: s1Ref.current }
   )
@@ -109,24 +139,23 @@ export default function S1(props) {
       </section>
 
       <Image src={videoImage_2} alt="" className="s1-img-2 w-full h-screen object-cover" style={{ marginTop: '' }} />
+      <div className="s1-main-img-2 relative z-10 px-[10vw] text-5xl py-9 font-bold" style={{ color: '#fff9cb' }}>
+        要是情况不对，转
+        <br />
+        头叫我就好。
+      </div>
       <section className="s1-content-2 relative z-10" style={{ marginTop: '50vh' }}>
-        <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2]" style={{ color: '#fff9cb' }}>
-          要是情况不对，转
-          <br />
-          头叫我就好。
-        </div>
-
-        <section className="flex gap-10" style={{ padding: '10vh 15vw' }}>
-          <div className="grow w-0 shrink-0 pt-32">
-            <div className="text-5xl font-bold w-[300px] leading-[1.2] mx-auto" style={{ color: '#ffb0c4' }}>
+        <section className="flex gap-10" style={{ padding: '80px 15vw' }}>
+          <div className="grow w-0 shrink-0 ">
+            <div className="text-5xl font-bold w-[300px] mx-auto" style={{ color: '#ffb0c4' }}>
               又一天快活日子，对吧？
             </div>
             <ImageContainer src={Jason_Duval_05} className="mt-8 aspect-square" style={{ objectPosition: '30% center' }} />
             <ImageContainer src={Jason_Duval_03} className="mt-8 aspect-square" style={{ objectPosition: '10% center' }} />
           </div>
 
-          <div className="grow w-0 shrink-0 pt-32">
-            <div className="text-2xl leading-normal text-white">
+          <div className="grow w-0 shrink-0 ">
+            <div className="text-2xl  text-white">
               遇见露西娅，可能是他这辈子的万幸，又或者是不幸。杰森清楚自己想要的结果，但此刻，他有些彷徨。
             </div>
             <ImageContainer src={Jason_Duval_04} className="mt-8 aspect-9/16" style={{ objectPosition: '25% center' }} />
@@ -137,12 +166,12 @@ export default function S1(props) {
       <Image src={videoImage_3} alt="" className="s1-img-3 w-full h-screen object-cover" style={{ marginTop: '' }} />
       <section className="s1-content-3 text-white  relative z-10 " style={{ marginTop: '50vh' }}>
         <div className="flex px-[10vw] gap-10">
-          <div>
-            <ImageContainer src={Lucia_Caminos_01} className="mt-20 aspect-square" />
+          <div className="mt-60">
+            <ImageContainer src={Lucia_Caminos_01} className="aspect-square" />
             <ImageContainer src={Lucia_Caminos_05} className="mt-20 aspect-9/16" style={{ objectPosition: '60%' }} />
           </div>
           <div>
-            <div className="px-[10vw] text-7xl py-9 font-bold leading-[1.2]" style={{ color: '#fff9cb' }}>
+            <div className="text-7xl py-9 font-bold " style={{ color: '#fff9cb' }}>
               露西娅·卡米诺斯
             </div>
             <div className="text-5xl px-4 m-4" style={{ color: '#ffb0c4' }}>
@@ -154,7 +183,7 @@ export default function S1(props) {
 
             <ImageContainer src={Lucia_Caminos_02} className="mt-20 aspect-square" />
 
-            <div className="text-white text-3xl leading-relaxed" style={{ margin: 100 }}>
+            <div className="text-white text-3xl leading-relaxed mt-10 mx-8">
               早在母女二人住在自由城时，露西娅的母亲就梦想着更美好的生活。这种生活也是露西娅最执着的追求。如今她不再沉浸于不切实际的幻想，而是准备亲手争取出一片未来。
             </div>
           </div>
@@ -164,13 +193,13 @@ export default function S1(props) {
       <div className="relative s1-img-4 w-full h-screen " style={{ marginTop: '' }}>
         <Image src={videoImage_4} alt="" className="w-full h-full object-cover" />
       </div>
-
-      {/* pin-spacer */}
-      <div className="relative text-7xl font-bold h-screen" style={{ color: '#fff9cb', margin: 60 }}>
-        这世上最重要的，只有你打交道的人，和手里的钱。
+      <div className="s1-main-img-4 relative text-5xl font-bold" style={{ color: '#fff9cb' }}>
+        <div className="mx-24" style={{ width: 700 }}>
+          这世上最重要的，只有你打交道的人，和手里的钱。
+        </div>
       </div>
 
-      <section className="s1-content-4 text-white  relative z-10" style={{ marginTop: '100vh' }}>
+      <section className="s1-content-4 text-white  relative z-10 pb-32" style={{ marginTop: '100vh' }}>
         <div className="flex px-[10vw] gap-10 pt-20">
           <div>
             <div className="text-3xl text-white px-20">
