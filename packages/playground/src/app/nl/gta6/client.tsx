@@ -4,11 +4,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { isClient } from 'rmst-design'
-import outro from './assets/outro.webp'
 
 import './page.scss'
-
-import Image from 'next/image'
 
 import './page.scss'
 import { GSDevTools } from 'gsap/GSDevTools'
@@ -19,6 +16,7 @@ import { CalHampton } from './figure/Cal_Hampton'
 import { SunState } from './SunState'
 import BoobieIke from './figure/Boobie_Ike'
 import { S0 } from './s0'
+import MainCharacterOutro from './MainCharacterOutro'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(useGSAP)
@@ -48,7 +46,7 @@ export default function Client() {
       {/* <S0 /> */}
       <S1 />
 
-      <Image src={outro} alt="" className=" w-full h-screen object-cover" />
+      <MainCharacterOutro />
 
       <div className="flex gap-20 justify-center items-center px-20" style={{ height: '50vh' }}>
         <div className="font-bold text-7xl" style={{ color: '#ffb0c4' }}>

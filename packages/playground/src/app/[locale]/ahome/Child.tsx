@@ -1,13 +1,16 @@
 'use client'
 
-import { Fragment, PointerEvent, useEffectEvent, useState, ViewTransition } from 'react'
+import { Fragment, PointerEvent, useEffectEvent, useRef, useState, ViewTransition } from 'react'
 
 import './child.scss'
-import { startDrag } from '../../../../../rmst-design/src/components/_util/drag'
-import { clamp } from 'es-toolkit'
+import { startDrag } from 'rmst-design'
+import { clamp, isNil } from 'es-toolkit'
 
 export default function Child() {
   const [widths, setWidths] = useState([20, 20, 20, 20, 20])
+
+  const widthsRef = useRef(widths)
+  widthsRef.current = widths
 
   const validate = useEffectEvent(() => {
     const total = widths.reduce((acc, item) => acc + item, 0)
@@ -17,45 +20,42 @@ export default function Child() {
     }
   })
 
-  const onPointerDown = (downEvt: PointerEvent, index: number) => {
-    console.log(index)
+  const onPointerDown = (downEvt: PointerEvent, downIndex: number) => {
+    console.log(downIndex)
     downEvt.preventDefault()
 
     const container = document.querySelector('.att-container') as HTMLDivElement
     const containerRect = container.getBoundingClientRect()
 
-    const total = 100
-    const min = 5
-    const snapWidths = [...widths]
+    const Min_Width = 5
+
+    let initWidth = [...widths]
 
     startDrag(downEvt, {
       onDragMove: moveEvt => {
+        const newWidths = [...initWidth]
+
         if (moveEvt.clientX < downEvt.clientX) {
-          let distance = Math.abs(moveEvt.clientX - downEvt.clientX)
-          let delta = (distance / containerRect.width) * total
+          let dPx = Math.abs(moveEvt.clientX - downEvt.clientX)
+          let dRatio = (dPx / containerRect.width) * 100
 
-          const newWidths = [...snapWidths]
-
-          let availableLeftShrink = 0
-          for (let i = index; i >= 0; i--) {
-            availableLeftShrink += Math.max(0, newWidths[i] - min)
+          // 总的可压缩的
+          let totalCanShrink = 0
+          for (let index = 0; index <= downIndex; index++) {
+            totalCanShrink += newWidths[index] - Min_Width
           }
-          const actualDelta = Math.min(delta, availableLeftShrink)
+          dRatio = Math.min(dRatio, totalCanShrink)
 
-          // 2. Shrink left columns cascadingly (starting from immediate left neighbor)
-          let toShrink = actualDelta
-          for (let i = index; i >= 0 && toShrink > 0; i--) {
-            const currentShrink = Math.min(toShrink, newWidths[i] - min)
-            newWidths[i] -= currentShrink
-            toShrink -= currentShrink
+          let toShrink = dRatio
+          for (let index = downIndex; index >= 0; index--) {
+            const currentDis = newWidths[index] - Min_Width // 当前列能缩减的的最大值
+            const amount = Math.min(toShrink, currentDis)
+
+            newWidths[index] -= amount
+            toShrink -= amount
           }
 
-          // newWidths[index] -= actualDelta
-          newWidths[index + 1] += actualDelta
-
-          if (newWidths[index] < 0) {
-            newWidths[index] = 0
-          }
+          newWidths[downIndex + 1] += dRatio
 
           setWidths(newWidths)
 

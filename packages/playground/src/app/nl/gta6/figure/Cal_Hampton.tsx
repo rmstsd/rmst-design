@@ -10,10 +10,33 @@ import Hero_BG from '../assets/卡尔·汉普顿/Hero_BG.webp'
 import Hero_FG from '../assets/卡尔·汉普顿/Hero_FG.webp'
 import ImageContainer from '../components/ImageContainer/ImageContainer'
 import { Person } from '../components/Person'
+import { useGSAP } from '@gsap/react'
+import { useRef } from 'react'
+import gsap from 'gsap'
 
 export function CalHampton(props) {
+  const ref = useRef(null)
+  useGSAP(
+    () => {
+      let tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.canvas-poster-container',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+          markers: true,
+          pin: true
+          // pinSpacing: false
+        }
+      })
+
+      // tl.to
+    },
+    { scope: ref }
+  )
+
   return (
-    <div>
+    <div ref={ref}>
       <Person
         Hero_BG={Hero_BG}
         Hero_FG={Hero_FG}
@@ -25,18 +48,24 @@ export function CalHampton(props) {
       <div className="flex  px-[10vw] gap-10">
         <div>
           <ImageContainer src={Cal_Hampton_04} className="mt-20 aspect-square" />
-          <ImageContainer src={Cal_canvas_poster} className="mt-20 aspect-square" />
+          <div className="canvas-poster-container h-screen content-center">
+            <ImageContainer src={Cal_canvas_poster} className=" aspect-square" />
+          </div>
           <ImageContainer src={Cal_Hampton_02} className="mt-20 aspect-square" />
         </div>
 
         <div>
-          <ImageContainer src={Cal_Hampton_01} className="mt-20 aspect-square" />
-          <div className="px-20 py-40 font-bold text-7xl" style={{ color: '#fff9cb' }}>
+          <ImageContainer src={Cal_Hampton_01} className="mt-20 aspect-9/16 object-cover" style={{ objectPosition: '70%' }} />
+          <div className="px-20 py-40 font-bold text-7xl" style={{ color: '#fff9cb', paddingTop: '100vh' }}>
             那些鸟飞得也太整齐了。
           </div>
           <ImageContainer src={Cal_Hampton_03} className="mt-20 aspect-square" />
-          <div>疯子当道。习惯就好。</div>
-          <div>卡尔身处美国的底层社会，不过他乐在其中，偶尔有点偏执，喜欢有人陪伴。但他的朋友杰森却有更远大的抱负。</div>
+          <div className="text-5xl font-bold m-14" style={{ color: '#91dfec' }}>
+            疯子当道。习惯就好。
+          </div>
+          <div className="text-white text-2xl">
+            卡尔身处美国的底层社会，不过他乐在其中，偶尔有点偏执，喜欢有人陪伴。但他的朋友杰森却有更远大的抱负。
+          </div>
         </div>
       </div>
     </div>
