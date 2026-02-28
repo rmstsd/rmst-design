@@ -60,7 +60,7 @@ export default function TransitionGroup(props: PropsWithChildren) {
     oldPosRef.current = newPosition
   })
 
-  return <div className="flex flex-col gap-4 self-stretch">{childList}</div>
+  return <div className="grid grid-cols-4 gap-4 self-stretch">{childList}</div>
 }
 
 function forceReflow() {
