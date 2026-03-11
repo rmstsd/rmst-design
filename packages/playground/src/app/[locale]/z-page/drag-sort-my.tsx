@@ -1,8 +1,9 @@
 import { cn } from '@/utils/cn'
 import { configure } from 'mobx'
 import { observer, useLocalObservable } from 'mobx-react-lite'
-import { PointerEvent, useRef, useState } from 'react'
+import { PointerEvent, useCallback, useRef, useState } from 'react'
 import { startDrag } from 'rmst-design'
+import { initialItems } from './claude-sort'
 
 configure({ enforceActions: 'never' })
 
@@ -12,17 +13,9 @@ interface Item {
   height?: number
 }
 
-const initialItems: Item[] = [
-  { id: 'a-1', text: '1 Design', height: 40 },
-  { id: 'a-2', text: '2 Implement', height: 50 },
-  { id: 'a-3', text: '3 Setup', height: 60 },
-  { id: 'a-4', text: '4 Write API', height: 70 },
-  { id: 'a-5', text: '5 Deploy to', height: 80 },
-  { id: 'a-6', text: '6 Deploy to', height: 90 },
-  { id: 'a-7', text: '7 Deploy to', height: 100 }
-]
-
 export const DragSortMy = observer(() => {
+  console.log('render')
+
   const state = useLocalObservable(() => {
     return {
       items: initialItems,
@@ -33,31 +26,29 @@ export const DragSortMy = observer(() => {
     }
   })
 
-  const domsRef = useRef<HTMLDivElement[]>([])
+  const domsMapRef = useRef<Map<string, DOMRect>>(new Map())
 
   const handlePointerDown = (downEvt: PointerEvent, id: string, index: number) => {
     state.activeIndex = index
 
-    const rects = domsRef.current.map((item, index) => {
-      const rect = item.getBoundingClientRect()
-      const nextRect = domsRef.current[index + 1]?.getBoundingClientRect()
-
-      return {
-        y_start: index === 0 ? -Infinity : rect.top,
-        y_end: index === domsRef.current.length - 1 ? Infinity : nextRect?.top,
-        rect
-      }
+    const rects = Array.from(domsMapRef.current).map(([id, rect], index) => {
+      return { id, rect }
     })
 
     startDrag(downEvt, {
       onDragMove: moveEvent => {
-        let overIndex = rects.findIndex(item => moveEvent.clientY > item.y_start && moveEvent.clientY < item.y_end)
+        // closestCenter
+        const overIndex = rects.reduce(
+          (closest, item, i) => {
+            const center = item.rect.top + item.rect.height / 2
+            const distance = Math.abs(moveEvent.clientY - center)
+            return distance < closest.distance ? { index: i, distance } : closest
+          },
+          { index: -1, distance: Infinity }
+        ).index
+
         state.overIndex = overIndex
         const { activeIndex } = state
-
-        if (overIndex === -1) {
-          return
-        }
 
         const translateY = []
 
@@ -122,15 +113,21 @@ export const DragSortMy = observer(() => {
 
         const style: React.CSSProperties = {
           transition: isActive ? 'none' : 'transform 0.3s',
-          transform: `translateY(${state.translateY[index] ?? 0}px)`,
-          height: item.height
+          transform: `translateY(${state.translateY[index] ?? 0}px)`
         }
 
         return (
           <div
             key={item.id}
             ref={el => {
-              domsRef.current[index] = el
+              if (el) {
+                const ty = new DOMMatrix(getComputedStyle(el).transform).f
+                console.log(ty)
+                const rect = el.getBoundingClientRect().toJSON()
+                rect.top -= ty
+                rect.bottom -= ty
+                domsMapRef.current.set(item.id, rect)
+              }
             }}
             style={style}
             onPointerDown={evt => handlePointerDown(evt, item.id, index)}
@@ -139,7 +136,8 @@ export const DragSortMy = observer(() => {
               isActive ? 'ring-sky-500 shadow-lg bg-slate-800 relative z-10' : ''
             )}
           >
-            {item.text}
+            <div className="mt-2">{item.id}</div>
+            <div className="mt-2">{item.text}</div>
           </div>
         )
       })}

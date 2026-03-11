@@ -33,7 +33,7 @@ const textPool = [
   'Build the admin dashboard with role-based access control, comprehensive activity logging, user management tools, and system health monitoring capabilities for operations team'
 ]
 
-const initialItems: Item[] = Array.from({ length: 100 }, (_, i) => ({
+export const initialItems: Item[] = Array.from({ length: 100 }, (_, i) => ({
   id: `a-${i + 1}`,
   text: `${i + 1}. ${textPool[i % textPool.length]}`
 }))
