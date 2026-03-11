@@ -13,6 +13,7 @@
     "@formatjs/intl-localematcher": "^0.6.2",
     "@gsap/react": "^2.1.2",
     "@leafer-in/viewport": "^1.12.4",
+    "@tanstack/react-virtual": "^3.13.21",
     "bezier-js": "^6.1.4",
     "cross-env": "^10.1.0",
     "gsap": "^3.14.1",
