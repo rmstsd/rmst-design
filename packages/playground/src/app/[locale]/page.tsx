@@ -1,7 +1,6 @@
 'use client'
 
 import { ClaudeSort } from './z-page/claude-sort'
-import DragSortFlip from './z-page/drag-sort-flip'
 import { DragSortMy } from './z-page/drag-sort-my'
 
 export default function page() {

@@ -10,7 +10,7 @@ configure({ enforceActions: 'never' })
 export const DragSortMy = observer(() => {
   const state = useLocalObservable(() => {
     return {
-      items: initialItems.slice(0, 5),
+      items: initialItems,
       activeIndex: null,
       overIndex: null,
       translateY: []
@@ -30,16 +30,22 @@ export const DragSortMy = observer(() => {
     const down_clientY = downEvt.clientY
     state.activeIndex = index
 
+    const container = document.getElementById('rmst-container')
+    let down_scrollTop = container.scrollTop
+
     startDrag(downEvt, {
       onDragMove: moveEvent => {
-        const move_clientY = moveEvent.clientY
+        let move_clientY = moveEvent.clientY
+
+        const dy = container.scrollTop - down_scrollTop
+        move_clientY += dy
 
         const rects = Array.from(domsMapRef.current).map(([id, rect]) => ({ id, rect }))
         // 寻找到最近的一个元素
         const overIndex = rects.reduce(
           (closest, item, i) => {
             const center = item.rect.top + item.rect.height / 2
-            const distance = Math.abs(moveEvent.clientY - center)
+            const distance = Math.abs(move_clientY - center)
             return distance < closest.distance ? { index: i, distance } : closest
           },
           { index: -1, distance: Infinity }
@@ -51,11 +57,13 @@ export const DragSortMy = observer(() => {
         const translateY = []
         if (overIndex > activeIndex) {
           const offset = rects[activeIndex].rect.top - rects[activeIndex + 1].rect.top
+
           for (let i = activeIndex + 1; i <= overIndex; i++) {
             translateY[i] = offset
           }
         } else if (overIndex < activeIndex) {
           const offset = rects[activeIndex].rect.bottom - rects[activeIndex - 1].rect.bottom
+
           for (let i = activeIndex - 1; i >= overIndex; i--) {
             translateY[i] = offset
           }
@@ -92,7 +100,7 @@ export const DragSortMy = observer(() => {
 
   return (
     <div className="rmstsd-dsm-c relative mt-10">
-      <div className="px-4 space-y-2">
+      <div id="rmst-container" className="px-4 space-y-2 overflow-auto" style={{ height: 600 }}>
         {state.items.map((item, index) => {
           const isActive = state.activeIndex === index
 
