@@ -287,14 +287,15 @@ const SortItem = observer<any>(props => {
       for (const record of records) {
         const { type, target } = record
 
-        if (type === 'childList' && target instanceof HTMLElement && target.contains(domRef.current)) {
+        if (target.contains(domRef.current)) {
+          console.log('mt')
           const rect = new Rect(domRef.current, container)
           domRectMapRef.current.set(item.id, rect)
           break
         }
       }
     })
-    mutationObserver?.observe(document.body, {
+    mutationObserver?.observe(container, {
       childList: true,
       subtree: true
     })
