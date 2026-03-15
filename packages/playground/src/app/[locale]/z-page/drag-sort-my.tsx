@@ -1,17 +1,73 @@
 import { cn } from '@/utils/cn'
 import { configure } from 'mobx'
 import { observer, useLocalObservable } from 'mobx-react-lite'
-import { PointerEvent, useRef } from 'react'
+import { PointerEvent, useLayoutEffect, useRef } from 'react'
 import { startDrag } from 'rmst-design'
 import { initialItems } from './claude-sort'
+import { useVirtualizer } from '@tanstack/react-virtual'
 
 configure({ enforceActions: 'never' })
+
+class Rect {
+  constructor(
+    el: HTMLDivElement,
+    private scrollContainer: HTMLDivElement
+  ) {
+    const rect = el.getBoundingClientRect().toJSON()
+
+    const ty = new DOMMatrix(getComputedStyle(el).transform).f
+
+    rect.top -= ty
+    rect.bottom -= ty
+
+    this.rect = rect
+
+    this.scrollTop = scrollContainer.scrollTop
+  }
+
+  private scrollTop = 0
+
+  private rect: DOMRect
+
+  get top() {
+    // 在读取 rect.top 的时候获取所有可滚动祖先的 scrollTop 的和
+    const currentOffsets = this.scrollTop
+    const scrollOffsetsDeltla = this.scrollContainer.scrollTop - currentOffsets
+
+    return this.rect.top + scrollOffsetsDeltla
+  }
+
+  get bottom() {
+    // 在读取 rect.top 的时候获取所有可滚动祖先的 scrollTop 的和
+    const currentOffsets = this.scrollTop
+    const scrollOffsetsDeltla = this.scrollContainer.scrollTop - currentOffsets
+    return this.rect.bottom + scrollOffsetsDeltla
+  }
+
+  get height() {
+    return this.rect.height
+  }
+
+  get width() {
+    return this.rect.width
+  }
+
+  toJSON() {
+    return {
+      top: this.top,
+      bottom: this.bottom,
+      height: this.height,
+      width: this.width
+    }
+  }
+}
 
 export const DragSortMy = observer(() => {
   const state = useLocalObservable(() => {
     return {
       items: initialItems,
       activeIndex: null,
+      activeId: null,
       overIndex: null,
       translateY: [],
 
@@ -23,23 +79,39 @@ export const DragSortMy = observer(() => {
     }
   })
 
-  const domsMapRef = useRef<Map<string, DOMRect>>(new Map())
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const domRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const virtualizer = useVirtualizer({
+    count: state.items.length,
+    getScrollElement: () => containerRef.current,
+    estimateSize: index => 70,
+    // gap: 10,
+    getItemKey: index => state.items[index].id,
+    overscan: 0
+  })
+
+  const domRectMapRef = useRef<Map<string, DOMRect>>(new Map())
+
+  const domMapRef = useRef<Map<string, HTMLDivElement>>(new Map())
   const setDomRef = (id, el) => {
-    domRefs.current.set(id, el)
+    domMapRef.current.set(id, el)
+  }
+  const removeDomRef = id => {
+    domMapRef.current.delete(id)
+    domRectMapRef.current.delete(id)
   }
 
   const handlePointerDown = async (downEvt: PointerEvent, id: string, index: number) => {
     state.dragState.down_clientY = downEvt.clientY
     state.dragState.move_clientY = downEvt.clientY
     state.activeIndex = index
+    state.activeId = id
 
     const container = document.getElementById('rmst-container')
     const containerRect = container.getBoundingClientRect()
     state.dragState.down_scrollTop = container.scrollTop
 
-    calcListPosition()
+    // calcListPosition()
 
     autoScroll()
 
@@ -57,8 +129,8 @@ export const DragSortMy = observer(() => {
         }
       },
       onDragEnd: () => {
-        if (state.overIndex !== state.activeIndex) {
-        }
+        // if (state.overIndex !== state.activeIndex) {
+        // }
 
         reset()
       },
@@ -70,7 +142,12 @@ export const DragSortMy = observer(() => {
     const reset = () => {
       state.activeIndex = null
       state.overIndex = null
+      state.activeId = null
       state.translateY = []
+
+      state.dragState.move_clientY = 0
+      state.dragState.down_clientY = 0
+      state.dragState.down_scrollTop = 0
 
       speedRef.current = 0
 
@@ -79,9 +156,9 @@ export const DragSortMy = observer(() => {
   }
 
   const calcListPosition = () => {
-    for (const [id, el] of domRefs.current) {
+    for (const [id, el] of domMapRef.current) {
       const rect = el.getBoundingClientRect().toJSON()
-      domsMapRef.current.set(id, rect)
+      domRectMapRef.current.set(id, rect)
     }
   }
 
@@ -90,31 +167,43 @@ export const DragSortMy = observer(() => {
 
     const container = containerRef.current
     const dy = container.scrollTop - down_scrollTop
-    move_clientY += dy
+    // move_clientY += dy
 
-    const rects = Array.from(domsMapRef.current).map(([id, rect]) => ({ id, rect }))
+    const domRectMap = domRectMapRef.current
+    const rects = Array.from(domRectMap).map(([id, rect]) => ({ id, rect: rect.toJSON() }))
+
+    console.log(
+      move_clientY,
+      rects.map(item => item.rect.top).toSorted((a, b) => a - b)
+    )
+
     // 寻找到最近的一个元素
-    const overIndex = rects.reduce(
-      (closest, item, i) => {
+    const over = rects.reduce(
+      (closest, item) => {
         const center = item.rect.top + item.rect.height / 2
         const distance = Math.abs(move_clientY - center)
-        return distance < closest.distance ? { index: i, distance } : closest
+        return distance < closest.distance ? { id: item.id, distance } : closest
       },
-      { index: -1, distance: Infinity }
-    ).index
+      { id: null, distance: Infinity }
+    )
+
+    const overIndex = state.items.findIndex(item => item.id === over.id)
 
     state.overIndex = overIndex
-    const { activeIndex } = state
+    const { activeIndex, activeId } = state
 
-    const translateY = []
+    const translateY = state.items.map(() => 0)
     if (overIndex > activeIndex) {
-      const offset = rects[activeIndex].rect.top - rects[activeIndex + 1].rect.top
+      const nextId = state.items[activeIndex + 1].id
+      const offset = domRectMap.get(activeId).top - domRectMap.get(nextId).top
 
       for (let i = activeIndex + 1; i <= overIndex; i++) {
         translateY[i] = offset
       }
     } else if (overIndex < activeIndex) {
-      const offset = rects[activeIndex].rect.bottom - rects[activeIndex - 1].rect.bottom
+      const prevId = state.items[activeIndex - 1].id
+
+      const offset = domRectMap.get(activeId).bottom - domRectMap.get(prevId).bottom
 
       for (let i = activeIndex - 1; i >= overIndex; i--) {
         translateY[i] = offset
@@ -123,6 +212,7 @@ export const DragSortMy = observer(() => {
     }
 
     translateY[activeIndex] = move_clientY - down_clientY
+
     state.translateY = [...translateY]
   }
 
@@ -140,38 +230,98 @@ export const DragSortMy = observer(() => {
     rafId.current = requestAnimationFrame(autoScroll)
   }
 
-  const containerRef = useRef<HTMLDivElement>(null)
-
   return (
-    <div className="rmstsd-dsm-c relative mt-10">
-      <div id="rmst-container" ref={containerRef} className="px-4 space-y-2 overflow-auto" style={{ height: 600 }}>
-        {state.items.map((item, index) => {
-          const isActive = state.activeIndex === index
-
-          const style: React.CSSProperties = {
-            transition: isActive ? 'none' : 'transform 0.3s',
-            transform: `translateY(${state.translateY[index] ?? 0}px)`
-          }
-
-          return (
-            <div
-              key={item.id}
-              ref={el => setDomRef(item.id, el)}
-              style={style}
-              onPointerDown={evt => handlePointerDown(evt, item.id, index)}
-              className={cn(
-                'rounded-xl bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none',
-                isActive ? 'ring-sky-500 shadow-lg bg-slate-800 relative z-10' : ''
-              )}
-            >
-              <div className="mt-2">{item.id}</div>
-              <div className="mt-2">{item.text}</div>
-            </div>
-          )
-        })}
+    <div className="rmstsd-dsm-c fixed z-20 top-0 left-0 " style={{ width: 300 }}>
+      <div id="rmst-container" ref={containerRef} className=" overflow-auto" style={{ height: 600 }}>
+        <div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
+          {virtualizer.getVirtualItems().map(virtualRow => {
+            return (
+              <SortItem
+                key={virtualRow.index}
+                state={state}
+                virtualRow={virtualRow}
+                virtualizer={virtualizer}
+                setDomRef={setDomRef}
+                removeDomRef={removeDomRef}
+                handlePointerDown={handlePointerDown}
+                domRectMapRef={domRectMapRef}
+                containerRef={containerRef}
+              />
+            )
+          })}
+        </div>
       </div>
     </div>
   )
 })
 
 // 不能在 onDragMove 中调用 reCalc, 因为 transform 和 动画的存在 会导致 getBoundingClientRect 不准确
+
+const SortItem = observer<any>(props => {
+  const { state, virtualRow, virtualizer, setDomRef, removeDomRef, handlePointerDown, domRectMapRef, containerRef } = props
+
+  const index = virtualRow.index
+  const item = state.items[index]
+  const isActive = state.activeIndex === index
+
+  const domRef = useRef<HTMLDivElement>(null)
+
+  const style: React.CSSProperties = {
+    height: 100,
+    position: 'absolute',
+    top: virtualRow.start,
+    left: 0,
+    width: '100%',
+    transition: isActive ? 'none' : 'transform 0.3s',
+    transform: `translateY(${state.translateY[index] ?? 0}px)`
+  }
+
+  useLayoutEffect(() => {
+    setDomRef(item.id, domRef.current)
+    const container = containerRef.current as HTMLDivElement
+
+    const rect = new Rect(domRef.current, container)
+    domRectMapRef.current.set(item.id, rect)
+
+    const mutationObserver = new MutationObserver(records => {
+      for (const record of records) {
+        const { type, target } = record
+
+        if (type === 'childList' && target instanceof HTMLElement && target.contains(domRef.current)) {
+          const rect = new Rect(domRef.current, container)
+          domRectMapRef.current.set(item.id, rect)
+          break
+        }
+      }
+    })
+    mutationObserver?.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+
+    return () => {
+      removeDomRef(item.id)
+      mutationObserver.disconnect()
+    }
+  }, [])
+
+  return (
+    <div
+      key={item.id}
+      data-index={virtualRow.index}
+      ref={el => {
+        virtualizer.measureElement(el)
+        domRef.current = el
+      }}
+      style={style}
+      onPointerDown={evt => handlePointerDown(evt, item.id, index)}
+      className={cn(
+        'rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none',
+        isActive ? 'ring-sky-500 shadow-lg bg-slate-800 relative z-10' : ''
+      )}
+    >
+      <div className="mt-2">{item.id}</div>
+      <div className="mt-2">{item.text.slice(0, 10)}</div>
+    </div>
+  )
+})

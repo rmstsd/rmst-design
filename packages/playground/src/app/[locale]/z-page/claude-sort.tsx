@@ -34,7 +34,7 @@ const textPool = [
 ]
 
 export const initialItems: Item[] = Array.from({ length: 100 }, (_, i) => ({
-  id: `a-${i + 1}`,
+  id: `index-${i}`,
   text: `${i + 1}. ${textPool[i % textPool.length]}`
 }))
 
