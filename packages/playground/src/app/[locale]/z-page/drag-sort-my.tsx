@@ -5,6 +5,7 @@ import { PointerEvent, useLayoutEffect, useRef } from 'react'
 import { startDrag } from 'rmst-design'
 import { initialItems } from './claude-sort'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { isNil } from 'es-toolkit'
 
 configure({ enforceActions: 'never' })
 
@@ -68,13 +69,18 @@ export const DragSortMy = observer(() => {
       items: initialItems,
       activeIndex: null,
       activeId: null,
+      activeRect: null, // 虚拟滚动的时候， active dom 会销毁
+
       overIndex: null,
       translateY: [],
 
       dragState: {
         down_clientY: 0,
         down_scrollTop: 0,
-        move_clientY: 0
+        move_clientY: 0,
+
+        offsetTop: null,
+        offsetBottom: null
       }
     }
   })
@@ -118,6 +124,7 @@ export const DragSortMy = observer(() => {
     state.dragState.move_clientY = downEvt.clientY
     state.activeIndex = index
     state.activeId = id
+    state.activeRect = domRectMapRef.current.get(id).toJSON()
 
     const container = document.getElementById('rmst-container')
     const containerRect = container.getBoundingClientRect()
@@ -155,11 +162,14 @@ export const DragSortMy = observer(() => {
       state.activeIndex = null
       state.overIndex = null
       state.activeId = null
+      state.activeRect = null
       state.translateY = []
 
       state.dragState.move_clientY = 0
       state.dragState.down_clientY = 0
       state.dragState.down_scrollTop = 0
+      state.dragState.offsetTop = null
+      state.dragState.offsetBottom = null
 
       speedRef.current = 0
 
@@ -175,8 +185,8 @@ export const DragSortMy = observer(() => {
     move_clientY += dy
 
     const domRectMap = domRectMapRef.current
-    const rects = Array.from(domRectMap).map(([id, rect]) => ({ id, rect: rect.toJSON() }))
-    console.log(rects.map(p => Math.round(p.rect.top)))
+    const rects = Array.from(domRectMapRef.current).map(([id, rect]) => ({ id, rect: rect.toJSON() }))
+    // console.log(rects.sort((a, b) => a.rect.top - b.rect.top).map(p => Math.round(p.rect.top)))
 
     // 寻找到最近的一个元素
     const over = rects.reduce(
@@ -189,6 +199,7 @@ export const DragSortMy = observer(() => {
     )
 
     const overIndex = state.items.findIndex(item => item.id === over.id)
+    console.log(overIndex)
 
     state.overIndex = overIndex
     const { activeIndex, activeId } = state
@@ -196,28 +207,28 @@ export const DragSortMy = observer(() => {
     const translateY = state.items.map(() => 0)
     if (overIndex > activeIndex) {
       const nextId = state.items[activeIndex + 1].id
-      if (!domRectMap.get(activeId) || !domRectMap.get(nextId)) {
-        return
+
+      if (isNil(state.dragState.offsetTop)) {
+        state.dragState.offsetTop = state.activeRect.top - domRectMap.get(nextId).top
       }
 
-      const offset = domRectMap.get(activeId).top - domRectMap.get(nextId).top
       for (let i = activeIndex + 1; i <= overIndex; i++) {
-        translateY[i] = offset
+        translateY[i] = state.dragState.offsetTop
       }
     } else if (overIndex < activeIndex) {
       const prevId = state.items[activeIndex - 1].id
-      if (!domRectMap.get(activeId) || !domRectMap.get(prevId)) {
-        return
+
+      if (isNil(state.dragState.offsetBottom)) {
+        state.dragState.offsetBottom = state.activeRect.bottom - domRectMap.get(prevId).bottom
       }
 
-      const offset = domRectMap.get(activeId).bottom - domRectMap.get(prevId).bottom
       for (let i = activeIndex - 1; i >= overIndex; i--) {
-        translateY[i] = offset
+        translateY[i] = state.dragState.offsetBottom
       }
     } else if (overIndex === activeIndex) {
     }
 
-    translateY[activeIndex] = move_clientY - down_clientY
+    // translateY[activeIndex] = move_clientY - down_clientY
 
     state.translateY = [...translateY]
   }
@@ -236,8 +247,26 @@ export const DragSortMy = observer(() => {
     rafId.current = requestAnimationFrame(autoScroll)
   }
 
+  const renderActive = () => {
+    if (state.activeId) {
+      return (
+        <div
+          className=" fixed rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none"
+          style={{
+            left: 0,
+            top: state.dragState.move_clientY
+          }}
+        >
+          {state.activeId}
+        </div>
+      )
+    }
+
+    return null
+  }
+
   return (
-    <div className="rmstsd-dsm-c fixed z-20 top-0 left-0 " style={{ width: 300 }}>
+    <div className="rmstsd-dsm-c m-10" style={{ width: 300 }}>
       <div id="rmst-container" ref={containerRef} className="overflow-auto" style={{ height: 600 }}>
         <div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
           {virtualizer.getVirtualItems().map(virtualRow => {
@@ -257,6 +286,8 @@ export const DragSortMy = observer(() => {
           })}
         </div>
       </div>
+
+      {renderActive()}
     </div>
   )
 })
@@ -303,7 +334,7 @@ const SortItem = observer<any>(props => {
       onPointerDown={evt => handlePointerDown(evt, item.id, index)}
       className={cn(
         'rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none border-b border-red-300',
-        isActive ? 'ring-sky-500 shadow-lg bg-slate-800 relative z-10' : ''
+        isActive ? 'invisible' : ''
       )}
     >
       <div className="mt-2">{item.id}</div>
