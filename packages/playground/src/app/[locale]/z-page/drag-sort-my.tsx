@@ -90,15 +90,27 @@ export const DragSortMy = observer(() => {
     overscan: 0
   })
 
-  const domRectMapRef = useRef<Map<string, DOMRect>>(new Map())
-
+  const domRectMapRef = useRef<Map<string, Rect>>(new Map())
   const domMapRef = useRef<Map<string, HTMLDivElement>>(new Map())
   const setDomRef = (id, el) => {
     domMapRef.current.set(id, el)
+
+    setTimeout(() => {
+      measureAll()
+    })
   }
   const removeDomRef = id => {
     domMapRef.current.delete(id)
     domRectMapRef.current.delete(id)
+  }
+
+  const measureAll = () => {
+    const container = containerRef.current as HTMLDivElement
+
+    for (const [id, el] of domMapRef.current) {
+      const rect = new Rect(el, container)
+      domRectMapRef.current.set(id, rect)
+    }
   }
 
   const handlePointerDown = async (downEvt: PointerEvent, id: string, index: number) => {
@@ -111,7 +123,7 @@ export const DragSortMy = observer(() => {
     const containerRect = container.getBoundingClientRect()
     state.dragState.down_scrollTop = container.scrollTop
 
-    // calcListPosition()
+    measureAll()
 
     autoScroll()
 
@@ -155,27 +167,16 @@ export const DragSortMy = observer(() => {
     }
   }
 
-  const calcListPosition = () => {
-    for (const [id, el] of domMapRef.current) {
-      const rect = el.getBoundingClientRect().toJSON()
-      domRectMapRef.current.set(id, rect)
-    }
-  }
-
   const calcTranslateY = () => {
     let { down_clientY, down_scrollTop, move_clientY } = state.dragState
 
     const container = containerRef.current
     const dy = container.scrollTop - down_scrollTop
-    // move_clientY += dy
+    move_clientY += dy
 
     const domRectMap = domRectMapRef.current
     const rects = Array.from(domRectMap).map(([id, rect]) => ({ id, rect: rect.toJSON() }))
-
-    console.log(
-      move_clientY,
-      rects.map(item => item.rect.top).toSorted((a, b) => a - b)
-    )
+    console.log(rects.map(p => Math.round(p.rect.top)))
 
     // 寻找到最近的一个元素
     const over = rects.reduce(
@@ -195,16 +196,21 @@ export const DragSortMy = observer(() => {
     const translateY = state.items.map(() => 0)
     if (overIndex > activeIndex) {
       const nextId = state.items[activeIndex + 1].id
-      const offset = domRectMap.get(activeId).top - domRectMap.get(nextId).top
+      if (!domRectMap.get(activeId) || !domRectMap.get(nextId)) {
+        return
+      }
 
+      const offset = domRectMap.get(activeId).top - domRectMap.get(nextId).top
       for (let i = activeIndex + 1; i <= overIndex; i++) {
         translateY[i] = offset
       }
     } else if (overIndex < activeIndex) {
       const prevId = state.items[activeIndex - 1].id
+      if (!domRectMap.get(activeId) || !domRectMap.get(prevId)) {
+        return
+      }
 
       const offset = domRectMap.get(activeId).bottom - domRectMap.get(prevId).bottom
-
       for (let i = activeIndex - 1; i >= overIndex; i--) {
         translateY[i] = offset
       }
@@ -232,7 +238,7 @@ export const DragSortMy = observer(() => {
 
   return (
     <div className="rmstsd-dsm-c fixed z-20 top-0 left-0 " style={{ width: 300 }}>
-      <div id="rmst-container" ref={containerRef} className=" overflow-auto" style={{ height: 600 }}>
+      <div id="rmst-container" ref={containerRef} className="overflow-auto" style={{ height: 600 }}>
         <div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
           {virtualizer.getVirtualItems().map(virtualRow => {
             return (
@@ -277,32 +283,11 @@ const SortItem = observer<any>(props => {
   }
 
   useLayoutEffect(() => {
+    // 有新元素进来后, 全都重新测量
     setDomRef(item.id, domRef.current)
-    const container = containerRef.current as HTMLDivElement
-
-    const rect = new Rect(domRef.current, container)
-    domRectMapRef.current.set(item.id, rect)
-
-    const mutationObserver = new MutationObserver(records => {
-      for (const record of records) {
-        const { type, target } = record
-
-        if (target.contains(domRef.current)) {
-          console.log('mt')
-          const rect = new Rect(domRef.current, container)
-          domRectMapRef.current.set(item.id, rect)
-          break
-        }
-      }
-    })
-    mutationObserver?.observe(container, {
-      childList: true,
-      subtree: true
-    })
 
     return () => {
       removeDomRef(item.id)
-      mutationObserver.disconnect()
     }
   }, [])
 
@@ -317,7 +302,7 @@ const SortItem = observer<any>(props => {
       style={style}
       onPointerDown={evt => handlePointerDown(evt, item.id, index)}
       className={cn(
-        'rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none',
+        'rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none border-b border-red-300',
         isActive ? 'ring-sky-500 shadow-lg bg-slate-800 relative z-10' : ''
       )}
     >
