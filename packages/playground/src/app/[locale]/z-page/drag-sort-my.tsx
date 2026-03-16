@@ -35,14 +35,14 @@ class Rect {
     const currentOffsets = this.scrollTop
     const scrollOffsetsDeltla = this.scrollContainer.scrollTop - currentOffsets
 
-    return this.rect.top + scrollOffsetsDeltla
+    return this.rect.top //+ scrollOffsetsDeltla
   }
 
   get bottom() {
     // 在读取 rect.top 的时候获取所有可滚动祖先的 scrollTop 的和
     const currentOffsets = this.scrollTop
     const scrollOffsetsDeltla = this.scrollContainer.scrollTop - currentOffsets
-    return this.rect.bottom + scrollOffsetsDeltla
+    return this.rect.bottom //+ scrollOffsetsDeltla
   }
 
   get height() {
@@ -102,7 +102,7 @@ export const DragSortMy = observer(() => {
     domMapRef.current.set(id, el)
 
     setTimeout(() => {
-      measureAll()
+      // measureAll()
     })
   }
   const removeDomRef = id => {
@@ -120,6 +120,8 @@ export const DragSortMy = observer(() => {
   }
 
   const handlePointerDown = async (downEvt: PointerEvent, id: string, index: number) => {
+    measureAll()
+
     state.dragState.down_clientY = downEvt.clientY
     state.dragState.move_clientY = downEvt.clientY
     state.activeIndex = index
@@ -129,8 +131,6 @@ export const DragSortMy = observer(() => {
     const container = document.getElementById('rmst-container')
     const containerRect = container.getBoundingClientRect()
     state.dragState.down_scrollTop = container.scrollTop
-
-    measureAll()
 
     autoScroll()
 
@@ -178,6 +178,7 @@ export const DragSortMy = observer(() => {
   }
 
   const calcTranslateY = () => {
+    measureAll()
     let { down_clientY, down_scrollTop, move_clientY } = state.dragState
 
     const container = containerRef.current
