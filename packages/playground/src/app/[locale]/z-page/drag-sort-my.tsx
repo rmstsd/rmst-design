@@ -182,7 +182,7 @@ export const DragSortMy = observer(() => {
 
     const container = containerRef.current
     const dy = container.scrollTop - down_scrollTop
-    move_clientY += dy
+    // move_clientY += dy
 
     const domRectMap = domRectMapRef.current
     const rects = Array.from(domRectMapRef.current).map(([id, rect]) => ({ id, rect: rect.toJSON() }))
@@ -199,7 +199,6 @@ export const DragSortMy = observer(() => {
     )
 
     const overIndex = state.items.findIndex(item => item.id === over.id)
-    console.log(overIndex)
 
     state.overIndex = overIndex
     const { activeIndex, activeId } = state
@@ -209,7 +208,7 @@ export const DragSortMy = observer(() => {
       const nextId = state.items[activeIndex + 1].id
 
       if (isNil(state.dragState.offsetTop)) {
-        state.dragState.offsetTop = state.activeRect.top - domRectMap.get(nextId).top
+        state.dragState.offsetTop = -100 // state.activeRect.top - domRectMap.get(nextId).top
       }
 
       for (let i = activeIndex + 1; i <= overIndex; i++) {
@@ -219,7 +218,7 @@ export const DragSortMy = observer(() => {
       const prevId = state.items[activeIndex - 1].id
 
       if (isNil(state.dragState.offsetBottom)) {
-        state.dragState.offsetBottom = state.activeRect.bottom - domRectMap.get(prevId).bottom
+        state.dragState.offsetBottom = 100 // state.activeRect.bottom - domRectMap.get(prevId).bottom
       }
 
       for (let i = activeIndex - 1; i >= overIndex; i--) {
@@ -251,7 +250,7 @@ export const DragSortMy = observer(() => {
     if (state.activeId) {
       return (
         <div
-          className=" fixed rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none"
+          className="fixed rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none"
           style={{
             left: 0,
             top: state.dragState.move_clientY
