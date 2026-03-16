@@ -63,6 +63,23 @@ class Rect {
   }
 }
 
+const DragHandle = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    className="text-gray-300 shrink-0 cursor-grab active:cursor-grabbing"
+  >
+    <circle cx="5" cy="4" r="1.5" fill="currentColor" />
+    <circle cx="5" cy="8" r="1.5" fill="currentColor" />
+    <circle cx="5" cy="12" r="1.5" fill="currentColor" />
+    <circle cx="11" cy="4" r="1.5" fill="currentColor" />
+    <circle cx="11" cy="8" r="1.5" fill="currentColor" />
+    <circle cx="11" cy="12" r="1.5" fill="currentColor" />
+  </svg>
+)
+
 export const DragSortMy = observer(() => {
   const state = useLocalObservable(() => {
     return {
@@ -77,6 +94,7 @@ export const DragSortMy = observer(() => {
       dragState: {
         down_clientY: 0,
         down_scrollTop: 0,
+        move_clientX: 0,
         move_clientY: 0,
 
         offsetTop: null,
@@ -91,7 +109,7 @@ export const DragSortMy = observer(() => {
     count: state.items.length,
     getScrollElement: () => containerRef.current,
     estimateSize: index => 70,
-    // gap: 10,
+    gap: 10,
     getItemKey: index => state.items[index].id,
     overscan: 0
   })
@@ -100,10 +118,6 @@ export const DragSortMy = observer(() => {
   const domMapRef = useRef<Map<string, HTMLDivElement>>(new Map())
   const setDomRef = (id, el) => {
     domMapRef.current.set(id, el)
-
-    setTimeout(() => {
-      // measureAll()
-    })
   }
   const removeDomRef = id => {
     domMapRef.current.delete(id)
@@ -124,6 +138,8 @@ export const DragSortMy = observer(() => {
 
     state.dragState.down_clientY = downEvt.clientY
     state.dragState.move_clientY = downEvt.clientY
+    state.dragState.move_clientX = downEvt.clientX
+
     state.activeIndex = index
     state.activeId = id
     state.activeRect = domRectMapRef.current.get(id).toJSON()
@@ -138,6 +154,7 @@ export const DragSortMy = observer(() => {
       onDragMove: moveEvent => {
         let move_clientY = moveEvent.clientY
         state.dragState.move_clientY = move_clientY
+        state.dragState.move_clientX = moveEvent.clientX
 
         if (containerRect.top <= move_clientY && move_clientY <= containerRect.bottom) {
           speedRef.current = 0
@@ -209,7 +226,7 @@ export const DragSortMy = observer(() => {
       const nextId = state.items[activeIndex + 1].id
 
       if (isNil(state.dragState.offsetTop)) {
-        state.dragState.offsetTop = -100 // state.activeRect.top - domRectMap.get(nextId).top
+        state.dragState.offsetTop = state.activeRect.top - domRectMap.get(nextId).top
       }
 
       for (let i = activeIndex + 1; i <= overIndex; i++) {
@@ -219,7 +236,7 @@ export const DragSortMy = observer(() => {
       const prevId = state.items[activeIndex - 1].id
 
       if (isNil(state.dragState.offsetBottom)) {
-        state.dragState.offsetBottom = 100 // state.activeRect.bottom - domRectMap.get(prevId).bottom
+        state.dragState.offsetBottom = state.activeRect.bottom - domRectMap.get(prevId).bottom
       }
 
       for (let i = activeIndex - 1; i >= overIndex; i--) {
@@ -249,15 +266,28 @@ export const DragSortMy = observer(() => {
 
   const renderActive = () => {
     if (state.activeId) {
+      const activeItem = state.items.find(it => it.id === state.activeId)
+
       return (
         <div
-          className="fixed rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none"
+          className="fixed touch-none select-none"
           style={{
-            left: 0,
-            top: state.dragState.move_clientY
+            left: state.activeRect.left,
+            top: state.dragState.move_clientY - (state.dragState.down_clientY - state.activeRect.top),
+            width: state.activeRect.width,
+            height: state.activeRect.height,
+            zIndex: 9999,
+            filter: 'drop-shadow(0 16px 24px rgba(99,102,241,0.2))'
           }}
         >
-          {state.activeId}
+          <div className="h-full rounded-xl bg-white border border-indigo-200 px-3 py-3 flex items-center gap-3 shadow-lg">
+            <DragHandle />
+            <div className="w-1 h-8 rounded-full bg-indigo-400 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-indigo-500 ">{activeItem?.id}</div>
+              <div className="text-sm text-gray-600 mt-0.5">{activeItem?.text}</div>
+            </div>
+          </div>
         </div>
       )
     }
@@ -266,9 +296,14 @@ export const DragSortMy = observer(() => {
   }
 
   return (
-    <div className="rmstsd-dsm-c m-10" style={{ width: 300 }}>
-      <div id="rmst-container" ref={containerRef} className="overflow-auto" style={{ height: 600 }}>
-        <div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
+    <div className="rmstsd-dsm-c m-10" style={{ width: 340 }}>
+      <div
+        id="rmst-container"
+        ref={containerRef}
+        className="overflow-auto rounded-2xl border border-gray-200 bg-gray-50 shadow-sm"
+        style={{ height: 560 }}
+      >
+        <div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%', padding: '8px' }}>
           {virtualizer.getVirtualItems().map(virtualRow => {
             return (
               <SortItem
@@ -292,8 +327,6 @@ export const DragSortMy = observer(() => {
   )
 })
 
-// 不能在 onDragMove 中调用 reCalc, 因为 transform 和 动画的存在 会导致 getBoundingClientRect 不准确
-
 const SortItem = observer<any>(props => {
   const { state, virtualRow, virtualizer, setDomRef, removeDomRef, handlePointerDown, domRectMapRef, containerRef } = props
 
@@ -304,17 +337,15 @@ const SortItem = observer<any>(props => {
   const domRef = useRef<HTMLDivElement>(null)
 
   const style: React.CSSProperties = {
-    height: 100,
     position: 'absolute',
     top: virtualRow.start,
     left: 0,
     width: '100%',
-    transition: isActive ? 'none' : 'transform 0.3s',
+    transition: isActive ? 'none' : 'transform 0.25s cubic-bezier(0.2,0,0,1)',
     transform: `translateY(${state.translateY[index] ?? 0}px)`
   }
 
   useLayoutEffect(() => {
-    // 有新元素进来后, 全都重新测量
     setDomRef(item.id, domRef.current)
 
     return () => {
@@ -332,13 +363,23 @@ const SortItem = observer<any>(props => {
       }}
       style={style}
       onPointerDown={evt => handlePointerDown(evt, item.id, index)}
-      className={cn(
-        'rounded-xl touch-none bg-slate-500 px-4 py-3 text-sm shadow-sm text-white select-none border-b border-red-300',
-        isActive ? 'invisible' : ''
-      )}
+      className="touch-none select-none"
     >
-      <div className="mt-2">{item.id}</div>
-      <div className="mt-2">{item.text.slice(0, 10)}</div>
+      <div
+        className={cn(
+          'rounded-xl bg-white border px-3 py-3 flex items-center gap-3 shadow-sm',
+          'hover:border-indigo-200 hover:shadow-md',
+          isActive ? 'invisible' : 'border-gray-200'
+        )}
+      >
+        <DragHandle />
+        <div className={cn('w-1 h-8 rounded-full shrink-0', isActive ? 'bg-indigo-200' : 'bg-indigo-400')} />
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-semibold text-indigo-500 ">{item.id}</div>
+          <div className="text-sm text-gray-600  mt-0.5">{item.text}</div>
+        </div>
+        <div className="text-xs text-gray-300 font-mono shrink-0">#{index + 1}</div>
+      </div>
     </div>
   )
 })
