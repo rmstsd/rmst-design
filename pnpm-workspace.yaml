@@ -1,6 +1,14 @@
 packages:
   - packages/*
 
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@swc/core': true
+  core-js: true
+  prisma: true
+  sharp: true
+
 ignoredBuiltDependencies:
   - prisma
 
