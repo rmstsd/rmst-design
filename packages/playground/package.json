@@ -10,11 +10,15 @@
     "experimental-analyze": " next experimental-analyze --output"
   },
   "dependencies": {
+    "@ai-sdk/devtools": "^1.0.7",
+    "@ai-sdk/openai": "^4.0.20",
+    "@ai-sdk/react": "^4.0.40",
     "@formatjs/intl-localematcher": "^0.6.2",
     "@gsap/react": "^2.1.2",
     "@leafer-in/viewport": "^1.12.4",
     "@libsql/client": "^0.17.2",
     "@tanstack/react-virtual": "^3.13.21",
+    "ai": "^7.0.37",
     "bezier-js": "^6.1.4",
     "cross-env": "^10.1.0",
     "gsap": "^3.14.1",
@@ -41,7 +45,8 @@
     "scheduler": "^0.27.0",
     "tailwind-merge": "^3.4.0",
     "transformation-matrix": "^3.1.0",
-    "yoga-layout": "^3.2.1"
+    "yoga-layout": "^3.2.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
