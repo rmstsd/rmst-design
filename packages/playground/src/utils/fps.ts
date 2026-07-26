@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react'
+
 export function fps(cb) {
   let frameCount = 0
   let lastTime = performance.now()
+
+  let timer
 
   function loop(now) {
     frameCount++
@@ -11,8 +15,23 @@ export function fps(cb) {
       lastTime = now
     }
 
-    requestAnimationFrame(loop)
+    timer = requestAnimationFrame(loop)
   }
 
-  requestAnimationFrame(loop)
+  timer = requestAnimationFrame(loop)
+
+  return () => {
+    cancelAnimationFrame(timer)
+  }
+}
+
+export const useFps = () => {
+  const [_fps, setFps] = useState(0)
+  useEffect(() => {
+    const cancel = fps(setFps)
+
+    return cancel
+  }, [])
+
+  return _fps
 }
