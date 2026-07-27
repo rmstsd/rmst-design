@@ -6,7 +6,8 @@ import {
   createUIMessageStreamResponse,
   toUIMessageStream,
   isStepCount,
-  ToolLoopAgent
+  ToolLoopAgent,
+  Output
 } from 'ai'
 import { createOpenAI, openai } from '@ai-sdk/openai'
 import { z } from 'zod'
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: customOpenAI('gpt-5.6-luna'),
-    instructions: '你是一个前端开发架构师, 前端开发的你都懂, 在询问你问题的时候, 按步骤给出详细信息和答案,回答的风格是幽默些.',
+    // instructions: '你是一个前端开发架构师, 前端开发的你都懂, 在询问你问题的时候, 按步骤给出详细信息和答案,回答的风格是幽默些.',
     messages: await convertToModelMessages(messages),
     providerOptions: {
       openai: {
