@@ -14,8 +14,6 @@ const keyframes = [{ opacity: 0 }, { opacity: 1 }]
 export function Mask(props: MaskProps) {
   const { open, isRenderToBody, className, ...rest } = props
 
-  return <Demo />
-
   const maskElement = (
     <RmstViewTransition keyframes={keyframes} open={open}>
       <div {...rest} className="mask"></div>
