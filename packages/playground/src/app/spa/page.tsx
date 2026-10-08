@@ -8,8 +8,9 @@ let measureCtx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | n
 
 function getMeasureCtx() {
   if (measureCtx) return measureCtx
-  const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(0, 0) : document.createElement('canvas')
-  measureCtx = canvas.getContext('2d')!
+  measureCtx = typeof OffscreenCanvas !== 'undefined'
+    ? new OffscreenCanvas(0, 0).getContext('2d')
+    : document.createElement('canvas').getContext('2d')
   return measureCtx
 }
 

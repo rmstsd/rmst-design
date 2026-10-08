@@ -1,0 +1,36 @@
+.visibility-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  &__button {
+    padding: 8px 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    background: #fff;
+    color: #344054;
+    cursor: pointer;
+  }
+
+  &__content {
+    padding: 16px 20px;
+    border-radius: 6px;
+    background: #e8f3ef;
+    color: #245c4b;
+  }
+
+  &__animated {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  &__following {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+

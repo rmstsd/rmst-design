@@ -15,7 +15,9 @@ import { z } from 'zod'
 import { registerTelemetry } from 'ai'
 import { DevToolsTelemetry } from '@ai-sdk/devtools'
 
-registerTelemetry(DevToolsTelemetry())
+if (process.env.NODE_ENV === 'development') {
+  registerTelemetry(DevToolsTelemetry())
+}
 
 const customOpenAI = createOpenAI({
   baseURL: 'https://api-sp.claudecode.net.cn/api/codex/backend-api/codex',
