@@ -105,10 +105,10 @@ export class Stage {
         evt.preventDefault()
         return
 
-        let newScale = this.rootMt.scale * (evt.deltaY > 0 ? 0.8 : 1.2)
+        let newScale = this.rootMt.a * (evt.deltaY > 0 ? 0.8 : 1.2)
         newScale = Math.max(0.1, Math.min(9, newScale))
 
-        this.rootMt.scale = newScale
+        this.rootMt = compose(this.rootMt, scale(newScale / this.rootMt.a))
 
         this.drawMainCanvas()
       },
@@ -222,12 +222,12 @@ export class Stage {
   }
 
   zoomIn() {
-    this.mainMt.scale *= 1.2
+    this.mainMt = compose(this.mainMt, scale(1.2))
     this.multiBatchDraw()
   }
 
   zoomOut() {
-    this.rootMt.scale *= 0.8
+    this.rootMt = compose(this.rootMt, scale(0.8))
     this.multiBatchDraw()
   }
 
