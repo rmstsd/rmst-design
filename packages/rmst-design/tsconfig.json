@@ -11,6 +11,7 @@
     "declarationMap": true,
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
+    "types": ["react/canary"],
     "useDefineForClassFields": true
   },
   "include": ["src"]
