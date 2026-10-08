@@ -1,4 +1,4 @@
-import { PropsWithChildren, startTransition, useLayoutEffect, useState } from 'react'
+import { PropsWithChildren } from 'react'
 import { Mask } from '../Mask'
 import { Portal } from '../Portal'
 
@@ -26,22 +26,20 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
   ]
 
   return (
-    open && (
-      <Portal>
-        <Mask open={open} style={{ zIndex: 1000 }} onClick={onCancel}></Mask>
+    <Portal>
+      <Mask open={open} style={{ zIndex: 1000 }} onClick={onCancel}></Mask>
 
-        <RmstViewTransition open={open} keyframes={keyframes}>
-          <div className="rmst-modal-content">
-            <div className="rmst-modal-header">
-              <div>标题</div>
+      <RmstViewTransition open={open} keyframes={keyframes}>
+        <div className="rmst-modal-content">
+          <div className="rmst-modal-header">
+            <div>标题</div>
 
-              <Button className="close" type="text" icon={<X />} onClick={onCancel} />
-            </div>
-
-            <div className="rmst-modal-body">{children}</div>
+            <Button className="close" type="text" icon={<X />} onClick={onCancel} />
           </div>
-        </RmstViewTransition>
-      </Portal>
-    )
+
+          <div className="rmst-modal-body">{children}</div>
+        </div>
+      </RmstViewTransition>
+    </Portal>
   )
 }
