@@ -1,22 +1,24 @@
-import React from 'react'
+import React, { startTransition, useLayoutEffect, useState, ViewTransition } from 'react'
 import { Portal } from '../Portal'
 
 import './style.less'
 import { RmstViewTransition } from '../_util/RmstViewTransition'
+import { Demo } from '../_util/demo'
 
 interface MaskProps extends React.HTMLAttributes<HTMLDivElement> {
   open: boolean
   isRenderToBody?: boolean
 }
 
-const enterKeyframes = [{ opacity: 0 }, { opacity: 1 }]
-const exitKeyframes = [{ opacity: 1 }, { opacity: 0 }]
+const keyframes = [{ opacity: 0 }, { opacity: 1 }]
 export function Mask(props: MaskProps) {
   const { open, isRenderToBody, className, ...rest } = props
 
+  return <Demo />
+
   const maskElement = (
-    <RmstViewTransition enterKeyframes={enterKeyframes} exitKeyframes={exitKeyframes} open={open}>
-      <div {...rest} className={[className, 'mask'].filter(Boolean).join(' ')}></div>
+    <RmstViewTransition keyframes={keyframes} open={open}>
+      <div {...rest} className="mask"></div>
     </RmstViewTransition>
   )
 

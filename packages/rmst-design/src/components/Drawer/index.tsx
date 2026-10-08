@@ -20,21 +20,21 @@ export function Drawer(props: PropsWithChildren<DrawerProps>) {
   return (
     <Portal>
       <>
-        <div className="rmst-drawer-wrapper">
-          <Mask open={open} onClick={onCancel}></Mask>
+        {/* <div className="rmst-drawer-wrapper"> */}
+        <Mask open={open} onClick={onCancel}></Mask>
 
-          <RmstViewTransition open={open} keyframes={keyframes}>
-            <div className="rmst-drawer">
-              <header className="rmst-drawer-header">
-                <div>标题</div>
+        <RmstViewTransition open={open} keyframes={keyframes}>
+          <div className="rmst-drawer">
+            <header className="rmst-drawer-header">
+              <div>标题</div>
 
-                <Button className="rmst-drawer-header-close" icon={<X />} type="text" onClick={onCancel} />
-              </header>
+              <Button className="rmst-drawer-header-close" icon={<X />} type="text" onClick={onCancel} />
+            </header>
 
-              <div className="rmst-drawer-body">{children}</div>
-            </div>
-          </RmstViewTransition>
-        </div>
+            <div className="rmst-drawer-body">{children}</div>
+          </div>
+        </RmstViewTransition>
+        {/* </div> */}
       </>
     </Portal>
   )
