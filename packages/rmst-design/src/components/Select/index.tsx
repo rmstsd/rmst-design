@@ -68,6 +68,7 @@ export function Select(props: SelectProps) {
   }
 
   const scrollIntoView = (index: number) => {
+    console.log(optionRefList.current)
     const dom = optionRefList.current[index]
     if (dom) {
       scrollIntoViewIfNeeded(dom, { block: 'nearest', inline: 'nearest' })
@@ -185,7 +186,7 @@ export function Select(props: SelectProps) {
           disabled={disabled}
           placeholder={visible ? selectedItem?.label.toString() || placeholder : placeholder}
           readOnly={readOnly}
-          value={visible ? searchValue : selectedItem?.label ?? ''}
+          value={visible ? searchValue : (selectedItem?.label ?? '')}
           onChange={evt => setSearchValue(evt.target.value)}
         />
 

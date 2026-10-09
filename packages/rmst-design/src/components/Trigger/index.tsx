@@ -1,11 +1,10 @@
 import React, { isValidElement, ReactNode } from 'react'
 import { mergeRefs } from 'react-merge-refs'
-import { mergeProps, useAnTransition, useControllableValue } from '../_util/hooks'
+import { mergeProps, useControllableValue } from '../_util/hooks'
 import { Portal } from '../Portal'
 import {
   autoUpdate,
   flip,
-  FloatingPortal,
   offset,
   size,
   useClick,
@@ -17,6 +16,7 @@ import {
 } from '@floating-ui/react'
 
 import './style.less'
+import { RmstViewTransition } from '../_util/RmstViewTransition'
 
 type TriggerProps = {
   popup?: ReactNode
@@ -97,32 +97,22 @@ export function Trigger(props: TriggerProps) {
     ...referencePropsMerged
   })
 
-  const { shouldMount, setDomRef } = useAnTransition({
-    appear: false,
-    open: popupVisible,
-    keyframes: [
-      { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },
-      { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
-    ],
-    onExited
-  })
+  const keyframes = [
+    { opacity: 0, transformOrigin: '0 0', transform: 'scaleY(0.9) translateZ(0)' },
+    { opacity: 1, transformOrigin: '0 0', transform: 'scaleY(1) translateZ(0)' }
+  ]
 
   return (
     <>
       {childElement}
 
-      {shouldMount && (
+      <RmstViewTransition open={popupVisible} keyframes={keyframes} onExited={onExited}>
         <Portal>
-          <div
-            className="rmst-popup-content"
-            ref={mergeRefs([setDomRef, refs.setFloating])}
-            {...getFloatingProps()}
-            style={floatingStyles}
-          >
+          <div className="rmst-popup-content" ref={mergeRefs([refs.setFloating])} {...getFloatingProps()} style={floatingStyles}>
             {popup}
           </div>
         </Portal>
-      )}
+      </RmstViewTransition>
     </>
   )
 }
