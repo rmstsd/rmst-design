@@ -1,0 +1,6 @@
+::view-transition-group(.ahome-other),
+::view-transition-old(.ahome-other),
+::view-transition-new(.ahome-other) {
+  animation-duration: 200ms;
+  animation-timing-function: ease;
+}
