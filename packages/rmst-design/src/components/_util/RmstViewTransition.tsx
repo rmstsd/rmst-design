@@ -3,6 +3,7 @@ import { PropsWithChildren, startTransition, useLayoutEffect, useState, ViewTran
 type RmstViewTransitionProps = PropsWithChildren<{
   open: boolean
   keyframes: Keyframe[]
+  onEnter?: () => void
   onExited?: () => void
 }>
 const kfOptions: KeyframeAnimationOptions = {
@@ -11,7 +12,7 @@ const kfOptions: KeyframeAnimationOptions = {
 }
 
 export const RmstViewTransition = (props: RmstViewTransitionProps) => {
-  const { children, open, keyframes, onExited } = props
+  const { children, open, keyframes, onExited, onEnter } = props
 
   const [isVisible, setIsVisible] = useState(open)
 
@@ -25,16 +26,19 @@ export const RmstViewTransition = (props: RmstViewTransitionProps) => {
     isVisible && (
       <ViewTransition
         onEnter={instance => {
+          onEnter?.()
           const animation = instance.new.animate(keyframes, kfOptions)
 
-          return () => animation.cancel()
+          return () => {
+            animation.cancel()
+          }
         }}
         onExit={instance => {
           const animation = instance.old.animate(keyframes.toReversed(), kfOptions)
 
           return () => {
-            animation.cancel()
             onExited?.()
+            animation.cancel()
           }
         }}
       >

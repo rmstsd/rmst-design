@@ -68,7 +68,6 @@ export function Select(props: SelectProps) {
   }
 
   const scrollIntoView = (index: number) => {
-    console.log(optionRefList.current)
     const dom = optionRefList.current[index]
     if (dom) {
       scrollIntoViewIfNeeded(dom, { block: 'nearest', inline: 'nearest' })
@@ -166,6 +165,9 @@ export function Select(props: SelectProps) {
       }}
       onExited={() => {
         setSearchValue('')
+      }}
+      onEnter={() => {
+        scrollIntoView(hoverIndex)
       }}
     >
       <div

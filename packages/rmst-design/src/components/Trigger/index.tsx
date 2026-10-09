@@ -28,6 +28,7 @@ type TriggerProps = {
   disabled?: boolean
 
   onExited?: () => void
+  onEnter?: () => void
   _debugName?: string
 }
 
@@ -40,7 +41,7 @@ const defaultProps: TriggerProps = {
 export function Trigger(props: TriggerProps) {
   props = mergeProps(defaultProps, props)
 
-  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited, _debugName } = props
+  const { value, popup, children, autoAlignPopupWidth, trigger, disabled, onExited, onEnter, _debugName } = props
 
   const [popupVisible, setPopupVisible] = useControllableValue(props, { defaultValue: value })
 
@@ -106,7 +107,7 @@ export function Trigger(props: TriggerProps) {
     <>
       {childElement}
 
-      <RmstViewTransition open={popupVisible} keyframes={keyframes} onExited={onExited}>
+      <RmstViewTransition open={popupVisible} keyframes={keyframes} onExited={onExited} onEnter={onEnter}>
         <Portal>
           <div className="rmst-popup-content" ref={mergeRefs([refs.setFloating])} {...getFloatingProps()} style={floatingStyles}>
             {popup}
